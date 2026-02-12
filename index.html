@@ -66,14 +66,9 @@
                     Update Excel
                 </button>
                 
-            <button onclick="toggleTheme()" id="themeBtn" 
-                        class="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 px-4 py-2 rounded-full text-[10px] font-black uppercase transition-all">
-                    🌙 Dark Mode
-                </button>
-
-                <button onclick="exportToPDF()" 
+                <button onclick="exportTocsv()" 
                         class="border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
-                    Export PDF
+                    Export csv
                 </button>
             </div>
         </div>
@@ -379,36 +374,82 @@ function showCustomerDetail(name) {
     document.getElementById('customerModal').classList.remove('hidden');
 }
 
-function toggleTheme() {
-        const body = document.getElementById('mainBody');
-        const btn = document.getElementById('themeBtn');
-        const cards = document.querySelectorAll('.bg-white, .bg-\\[\\#161616\\], .bg-\\[\\#1a1a1a\\]');
+function exportTocsv() {
+    if (!Array.isArray(globalData) || globalData.length === 0) {
+        alert("Data masih kosong / belum selesai load dari database.");
+        return;
+    }
 
-        if (body.classList.contains('bg-[#f8f9fa]')) {
-            // KE DARK MODE
-            body.classList.replace('bg-[#f8f9fa]', 'bg-[#0f0f0f]');
-            body.classList.replace('text-slate-800', 'text-white');
-            btn.innerText = "☀️ Light Mode";
-            btn.classList.replace('bg-gray-200', 'bg-gray-800');
-            btn.classList.replace('text-gray-800', 'text-white');
-            cards.forEach(c => {
-                if(c.classList.contains('bg-white')) c.classList.replace('bg-white', 'bg-[#161616]');
-                c.classList.add('border-gray-800');
-            });
-        } else {
-            // KE LIGHT MODE
-            body.classList.replace('bg-[#0f0f0f]', 'bg-[#f8f9fa]');
-            body.classList.replace('text-white', 'text-slate-800');
-            btn.innerText = "🌙 Dark Mode";
-            btn.classList.replace('bg-gray-800', 'bg-gray-200');
-            btn.classList.replace('text-white', 'text-gray-800');
-            cards.forEach(c => {
-                if(c.classList.contains('bg-[#161616]')) c.classList.replace('bg-[#161616]', 'bg-white');
-                c.classList.remove('border-gray-800');
-            });
-        }
-        if(typeof renderAllCharts === 'function') renderAllCharts(); 
+    // Mapping: key database -> judul kolom di CSV
+    const columns = [
+        { key: "prod_hier",       label: "Prod Hier" },
+        { key: "model_number",    label: "Model Number" },
+        { key: "plnt",            label: "PLNT" },
+        { key: "Typpe",           label: "Typpe" },
+        { key: "customer",        label: "Customer" },
+        { key: "area",            label: "Area" },
+        { key: "wrk_cntr",        label: "Work Center" },
+        { key: "warranty_status", label: "Warranty Status" },
+        { key: "indust",          label: "Industry" }
+    ];
+
+    // Delimiter yang lebih cocok untuk Excel Indonesia
+    const DELIM = ";";
+
+    // Rapikan value supaya tidak bikin CSV pecah
+    const clean = (v) => {
+        let s = String(v ?? "").trim();
+        // hilangkan line break & tab agar tidak pecah format
+        s = s.replace(/\r?\n|\r/g, " ").replace(/\t/g, " ");
+        // rapikan spasi ganda
+        s = s.replace(/\s{2,}/g, " ");
+        return s;
+    };
+
+    // Escape untuk CSV delimiter ; dan quote
+    const esc = (v) => {
+        const s = clean(v).replaceAll('"', '""');
+        return `"${s}"`;
+    };
+
+    // OPTIONAL: urutkan biar rapi (Customer -> Typpe -> Model Number)
+    const rows = [...globalData].sort((a, b) => {
+        const ac = String(a.customer ?? "").toUpperCase();
+        const bc = String(b.customer ?? "").toUpperCase();
+        if (ac !== bc) return ac.localeCompare(bc);
+
+        const at = String(a.Typpe ?? "").toUpperCase();
+        const bt = String(b.Typpe ?? "").toUpperCase();
+        if (at !== bt) return at.localeCompare(bt);
+
+        const am = String(a.model_number ?? "").toUpperCase();
+        const bm = String(b.model_number ?? "").toUpperCase();
+        return am.localeCompare(bm);
+    });
+
+    // Build CSV
+    const lines = [];
+    lines.push(columns.map(c => esc(c.label)).join(DELIM)); // header
+
+    for (const r of rows) {
+        lines.push(columns.map(c => esc(r[c.key])).join(DELIM));
+    }
+
+    // BOM UTF-8 biar Excel rapi
+    const csv = "\uFEFF" + lines.join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `UT_Sangkulirang_Data_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
 }
+
 
 // 2. Fungsi untuk Menutup Sub-Halaman
 function closeModal() {
@@ -758,5 +799,6 @@ if(charts.cust) charts.cust.destroy();
     </div>
 </div>
 </div>
+<div id="csvReport" class="hidden"></div>
 </body>
 </html>
