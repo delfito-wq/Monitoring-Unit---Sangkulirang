@@ -66,9 +66,9 @@
                     Update Excel
                 </button>
                 
-                <button onclick="exportTocsv()" 
+                <button onclick="exportToExcel()"
                         class="border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
-                    Export csv
+                     Export Excel
                 </button>
             </div>
         </div>
@@ -374,82 +374,30 @@ function showCustomerDetail(name) {
     document.getElementById('customerModal').classList.remove('hidden');
 }
 
-function exportTocsv() {
+function exportToExcel() {
     if (!Array.isArray(globalData) || globalData.length === 0) {
         alert("Data masih kosong / belum selesai load dari database.");
         return;
     }
 
-    // Mapping: key database -> judul kolom di CSV
-    const columns = [
-        { key: "prod_hier",       label: "Prod Hier" },
-        { key: "model_number",    label: "Model Number" },
-        { key: "plnt",            label: "PLNT" },
-        { key: "Typpe",           label: "Typpe" },
-        { key: "customer",        label: "Customer" },
-        { key: "area",            label: "Area" },
-        { key: "wrk_cntr",        label: "Work Center" },
-        { key: "warranty_status", label: "Warranty Status" },
-        { key: "indust",          label: "Industry" }
-    ];
+    const rows = globalData.map(d => ({
+        "Prod Hier": d.prod_hier || "",
+        "Model Number": d.model_number || "",
+        "PLNT": d.plnt || "",
+        "Typpe": d.Typpe || "",
+        "Customer": d.customer || "",
+        "Area": d.area || "",
+        "Work Center": d.wrk_cntr || "",
+        "Warranty Status": d.warranty_status || "",
+        "Industry": d.indust || ""
+    }));
 
-    // Delimiter yang lebih cocok untuk Excel Indonesia
-    const DELIM = ";";
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Report");
 
-    // Rapikan value supaya tidak bikin CSV pecah
-    const clean = (v) => {
-        let s = String(v ?? "").trim();
-        // hilangkan line break & tab agar tidak pecah format
-        s = s.replace(/\r?\n|\r/g, " ").replace(/\t/g, " ");
-        // rapikan spasi ganda
-        s = s.replace(/\s{2,}/g, " ");
-        return s;
-    };
-
-    // Escape untuk CSV delimiter ; dan quote
-    const esc = (v) => {
-        const s = clean(v).replaceAll('"', '""');
-        return `"${s}"`;
-    };
-
-    // OPTIONAL: urutkan biar rapi (Customer -> Typpe -> Model Number)
-    const rows = [...globalData].sort((a, b) => {
-        const ac = String(a.customer ?? "").toUpperCase();
-        const bc = String(b.customer ?? "").toUpperCase();
-        if (ac !== bc) return ac.localeCompare(bc);
-
-        const at = String(a.Typpe ?? "").toUpperCase();
-        const bt = String(b.Typpe ?? "").toUpperCase();
-        if (at !== bt) return at.localeCompare(bt);
-
-        const am = String(a.model_number ?? "").toUpperCase();
-        const bm = String(b.model_number ?? "").toUpperCase();
-        return am.localeCompare(bm);
-    });
-
-    // Build CSV
-    const lines = [];
-    lines.push(columns.map(c => esc(c.label)).join(DELIM)); // header
-
-    for (const r of rows) {
-        lines.push(columns.map(c => esc(r[c.key])).join(DELIM));
-    }
-
-    // BOM UTF-8 biar Excel rapi
-    const csv = "\uFEFF" + lines.join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `UT_Sangkulirang_Data_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    XLSX.writeFile(wb, `UT_Sangkulirang_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
-
 
 // 2. Fungsi untuk Menutup Sub-Halaman
 function closeModal() {
