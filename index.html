@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UT Sangkulirang - Fleet Analytics Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<body class="bg-[#0f0f0f] text-white min-h-screen font-sans">
+
+<header class="bg-white w-full shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-row justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="flex flex-col border-r-2 border-gray-100 pr-4">
+                <img src="logo ut.png" 
+                     alt="United Tractors" 
+                     class="h-8 md:h-10 object-contain">
+                <span class="text-[8px] md:text-[9px] font-bold text-[#005596] mt-0.5 tracking-widest uppercase">
+                    member of <span class="font-black">ASTRA</span>
+                </span>
+            </div>
+            
+            <div class="flex flex-col justify-center">
+                <h1 class="text-xl md:text-2xl text-black font-black italic uppercase tracking-tighter leading-none">
+                    United Tractors
+                </h1>
+                <p class="text-[8px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-1">
+                    Sangkulirang Analytics System
+                </p>
+            </div>
+        </div>
+        
+        <div class="flex items-center">
+            <span class="text-black italic font-black text-lg md:text-2xl mr-2 tracking-tighter uppercase">Moving as</span>
+            <div class="bg-[#ffcc00] rounded-full w-9 h-9 md:w-11 md:h-11 flex items-center justify-center shadow-sm">
+                <span class="text-black font-black text-[10px] md:text-xs uppercase">one</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bg-[#1a1a1a] w-full border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between py-2">
+            <div class="flex space-x-1 py-2 md:py-0">
+                <button onclick="switchTab('main')" id="btn-main" 
+                        class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all bg-[#ffcc00] text-black shadow-lg">
+                    Dashboard
+                </button>
+                <button onclick="switchTab('charts')" id="btn-charts" 
+                        class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white">
+                    Analytics
+                </button>
+                <button onclick="switchTab('customer')" id="btn-customer" 
+                        class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white">
+                    Customer
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-3 mt-2 md:mt-0 pb-2 md:pb-0">
+                <input type="file" id="uploadFile" accept=".xlsx, .xls" class="hidden" onchange="processData(event)"/>
+                
+                <button onclick="document.getElementById('uploadFile').click()" 
+                        class="bg-[#ffcc00] hover:bg-yellow-500 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase shadow-lg transition-all active:scale-95">
+                    Update Excel
+                </button>
+                
+                <button onclick="exportToPDF()" 
+                        class="border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
+                    Export PDF
+                </button>
+            </div>
+        </div>
+    </nav>
+    <div class="w-full h-[3px] bg-[#ffcc00]"></div>
+</header>
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+
+        <div id="page-main" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-[#ffcc00] shadow-xl text-center md:text-left">
+                    <span class="text-gray-500 font-black uppercase text-[10px]">Populasi Sangkulirang</span>
+                    <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter">0</span>
+                </div>
+                <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-green-500 shadow-xl text-center md:text-left">
+                    <span class="text-green-600 font-black uppercase text-[10px]">Warranty</span>
+                    <span id="res-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-green-500">0</span>
+                </div>
+                <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-red-600 shadow-xl text-center md:text-left">
+                    <span class="text-red-600 font-black uppercase text-[10px]">Out Warranty</span>
+                    <span id="res-out-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-red-600">0</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
+                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">SKL</span>
+                    <span id="res-skl" class="text-4xl font-black text-[#ffcc00]">0</span>
+                </div>
+                <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
+                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">SKU</span>
+                    <span id="res-sku" class="text-4xl font-black text-[#ffcc00]">0</span>
+                </div>
+                <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
+                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">SKH</span>
+                    <span id="res-skh" class="text-4xl font-black text-[#ffcc00]">0</span>
+                </div>
+                <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
+                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">KLA</span>
+                    <span id="res-kla" class="text-4xl font-black text-[#ffcc00]">0</span>
+                </div>
+            </div>
+
+            <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+                <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-8 flex items-center italic">
+                    <span class="w-8 h-1 bg-[#ffcc00] mr-3"></span> Grafik Populasi per Model Number
+                </h3>
+                <div class="w-full h-[450px]">
+                    <canvas id="chartModelUtama"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-charts" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col items-center">
+                    <h3 class="text-[#ffcc00] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi Per Wilayah (%)</h3>
+                    <div class="w-full h-[250px]"><canvas id="chartWilayah"></canvas></div>
+                </div>
+
+                <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col items-center">
+                    <h3 class="text-[#ffcc00] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Work Center Distribution (%)</h3>
+                    <div class="w-full h-[250px]"><canvas id="chartWorkCenter"></canvas></div>
+                </div>
+
+                <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col items-center">
+                    <h3 class="text-[#ffcc00] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Status Warranty (%)</h3>
+                    <div class="w-full h-[250px]"><canvas id="chartWarranty"></canvas></div>
+                </div>
+            </div>
+
+            <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl">
+                <h3 class="text-[#ffcc00] font-black uppercase text-[10px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
+                <div class="w-full h-[400px]"><canvas id="chartJenisBar"></canvas></div>
+            </div>
+        </div>
+
+<div id="page-customer" class="tab-content hidden">
+    <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col h-[750px]">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 flex-none">
+            <h3 class="text-[#ffcc00] font-black uppercase text-xs italic flex items-center">
+                <span class="w-8 h-1 bg-[#ffcc00] mr-3"></span> Distribusi Unit per Customer
+            </h3>
+            <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 mt-4 md:mt-0 text-center">
+                <span class="text-gray-500 text-[9px] uppercase font-bold block">Total Aktif Customer</span>
+                <span id="res-unique-cust" class="text-[#ffcc00] font-black text-2xl tracking-tighter">0</span>
+            </div>
+        </div>
+
+        <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar" style="position: relative;">
+            <div id="container-customer-chart">
+                <canvas id="chartCustomerBar"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #111; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #ffcc00; }
+</style>
+
+<script>
+    Chart.register(ChartDataLabels);
+
+    const SUPABASE_URL = 'https://nhubmgvjhuqayssohvei.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odWJtZ3ZqaHVxYXlzc29odmVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NTM4MTgsImV4cCI6MjA4NjMyOTgxOH0.hmEJgrZZzi1DYw-3zFNTE8do_5oVwKzu1cdo5L1vQ4A';
+    
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const NAMA_TABEL = 'Persebaran Unit_Sangkulirang';
+
+    let globalData = [];
+    let charts = {};
+
+    window.onload = loadDataFromCloud;
+
+    // 1. FUNGSI AMBIL DATA DARI SUPABASE
+    async function loadDataFromCloud() {
+        const { data, error } = await _supabase
+            .from(NAMA_TABEL)
+            .select('*')
+            .range(0, 2000); 
+
+        if (!error && data) {
+            globalData = data;
+            console.log("Data loaded:", globalData.length);
+            calculateSummary();
+            renderAllCharts();
+        } else {
+            console.error("Gagal ambil data:", error);
+        }
+    }
+
+    // 2. FUNGSI PROSES UPLOAD EXCEL KE SUPABASE
+    async function processData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const dataArr = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(dataArr, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                
+                // Cari header "NO"
+                const headerIdx = rawRows.findIndex(row => row.some(cell => String(cell).trim().toUpperCase() === "NO"));
+                if (headerIdx === -1) throw new Error("Kolom 'NO' tidak ditemukan di Excel!");
+
+                const headers = rawRows[headerIdx].map(h => String(h).trim().toLowerCase());
+                const dataRows = rawRows.slice(headerIdx + 1);
+
+                const getVal = (row, possibleNames) => {
+                    const idx = headers.findIndex(h => possibleNames.includes(h));
+                    return (idx !== -1 && row[idx] !== undefined) ? String(row[idx]).trim() : "";
+                };
+
+                const toUpload = dataRows.map(row => {
+                    const noIdx = headers.indexOf("no");
+                    const noVal = String(row[noIdx] || "").trim();
+                    if (!noVal || isNaN(noVal)) return null;
+
+                    return {
+                        "prod_hier":       getVal(row, ['prod_hier', 'prod.hier.', 'prod hier']),
+                        "model_number":    getVal(row, ['model_number', 'model number', 'model']),
+                        "plnt":            getVal(row, ['plnt']),
+                        "Typpe":           getVal(row, ['typpe', 'objecttype', 'object type']),
+                        "customer":        getVal(row, ['customer', 'name 1']),
+                        "area":            getVal(row, ['area']),
+                        "wrk_cntr":        getVal(row, ['wrk_cntr', 'wrk.cntr', 'work center']),
+                        "warranty_status": getVal(row, ['warranty_status', 'warranty status']),
+                        "indust":          getVal(row, ['indust', 'indust.'])
+                    };
+                }).filter(item => item !== null);
+
+                if (toUpload.length === 0) throw new Error("Tidak ada data valid yang bisa diimport.");
+
+                if(!confirm(`Ditemukan ${toUpload.length} data. Ganti database lama dengan data baru ini?`)) return;
+
+                // Proses Sinkronisasi Supabase
+                console.log("Menghapus data lama...");
+                const { error: delErr } = await _supabase.from(NAMA_TABEL).delete().neq('customer', 'xxx'); 
+                if(delErr) throw delErr;
+
+                console.log("Memasukkan data baru...");
+                const { error: insErr } = await _supabase.from(NAMA_TABEL).insert(toUpload);
+                if(insErr) throw insErr;
+                
+                alert("DATABASE BERHASIL DIUPDATE!");
+                location.reload(); // Refresh untuk melihat hasil
+            } catch (err) { 
+                console.error(err);
+                alert("GAGAL UPDATE: " + err.message); 
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function switchTab(target) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    document.getElementById('page-' + target).classList.remove('hidden');
+    
+    // Reset semua tombol ke abu-abu
+    ['main', 'charts', 'customer'].forEach(id => {
+        const btn = document.getElementById('btn-' + id);
+        if(btn) btn.className = 'px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-500';
+    });
+
+    // Aktifkan tombol yang dipilih
+    const activeBtn = document.getElementById('btn-' + target);
+    if(activeBtn) activeBtn.className = 'px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all bg-[#ffcc00] text-black shadow-lg';
+}
+
+    function calculateSummary() {
+        // 1. Update Total & Warranty
+        document.getElementById('res-total-ut').innerText = globalData.length;
+        const war = globalData.filter(d => String(d.warranty_status || "").trim().toUpperCase() === "WARRANTY").length;
+        const out = globalData.filter(d => String(d.warranty_status || "").trim().toUpperCase().includes("OUT")).length;
+        document.getElementById('res-warranty').innerText = war;
+        document.getElementById('res-out-warranty').innerText = out;
+
+        // 2. Update Work Center Stats (Mencari teks di kolom wrk_cntr)
+        const hitungWC = (kode) => {
+            return globalData.filter(d => {
+                const text = String(d.wrk_cntr || "").toUpperCase();
+                return text.includes(kode); // Mencari kata SKL, SKU, dll
+            }).length;
+        };
+
+        document.getElementById('res-skl').innerText = hitungWC("SKL");
+        document.getElementById('res-sku').innerText = hitungWC("SKU");
+        document.getElementById('res-skh').innerText = hitungWC("SKH");
+        document.getElementById('res-kla').innerText = hitungWC("KLA");
+
+        // Logika Grafik Batang Model Number
+        const modelMap = {};
+        globalData.forEach(d => {
+            const m = String(d.model_number || "N/A").trim();
+            if(m) modelMap[m] = (modelMap[m] || 0) + 1;
+        });
+
+        const sortedModels = Object.keys(modelMap).sort((a,b) => modelMap[b] - modelMap[a]); // Urutkan dari terbanyak
+        const counts = sortedModels.map(m => modelMap[m]);
+
+        if(charts.mainBar) charts.mainBar.destroy();
+        charts.mainBar = new Chart(document.getElementById('chartModelUtama'), {
+            type: 'bar',
+            data: {
+                labels: sortedModels,
+                datasets: [{
+                    label: 'Populasi Unit',
+                    data: counts,
+                    backgroundColor: '#ffcc00',
+                    borderRadius: 5,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#ffcc00',
+                        font: { weight: 'bold', size: 10 }
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#222' },
+                        ticks: { color: '#555' }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { 
+                            color: '#888', 
+                            font: { size: 9 },
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+function renderAllCharts() {
+    // --- KONFIGURASI UMUM PIE CHART ---
+    const commonPie = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { 
+                position: 'bottom', 
+                labels: { color: '#888', font: { size: 10, weight: 'bold' }, padding: 15 } 
+            },
+            datalabels: { 
+                color: '#fff', 
+                font: { weight: 'bold', size: 10 }, 
+                formatter: (v, c) => {
+                    let s = c.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    return s > 0 ? ((v * 100) / s).toFixed(1) + "%" : "0%";
+                }
+            }
+        }
+    };
+
+    // --- 1. GRAFIK WILAYAH (PIE) ---
+    const areas = [...new Set(globalData.map(d => String(d.area || "N/A").toUpperCase()))];
+    if(charts.w) charts.w.destroy();
+    charts.w = new Chart(document.getElementById('chartWilayah'), {
+        type: 'pie',
+        data: { 
+            labels: areas, 
+            datasets: [{ 
+                data: areas.map(a => globalData.filter(d => String(d.area || "").toUpperCase() === a).length), 
+                backgroundColor: ['#ffcc00', '#ffffff', '#444', '#888', '#10b981'], 
+                borderWidth: 0 
+            }] 
+        },
+        options: commonPie
+    });
+
+// --- 2. GRAFIK WORK CENTER (PIE) - FIX TARGET WRK_CNTR ---
+    const wcLabels = ['SKL', 'SKU', 'SKH', 'KLA'];
+    
+    // Langsung tembak ke kolom 'wrk_cntr' (huruf kecil/besar tidak masalah)
+    const wcDataValues = wcLabels.map(label => {
+        return globalData.filter(d => {
+            // Cari properti/kolom yang namanya 'wrk_cntr' secara case-insensitive
+            const targetKey = Object.keys(d).find(k => k.toLowerCase() === 'wrk_cntr');
+            const val = targetKey ? String(d[targetKey] || "").toUpperCase().trim() : "";
+            return val.includes(label);
+        }).length;
+    });
+
+    if(charts.wc) charts.wc.destroy();
+    const ctxWC = document.getElementById('chartWorkCenter');
+    if (ctxWC) {
+        charts.wc = new Chart(ctxWC, {
+            type: 'pie',
+            data: {
+                labels: wcLabels,
+                datasets: [{
+                    data: wcDataValues,
+                    backgroundColor: ['#ffcc00', '#ffffff', '#444444', '#1a1a1a'],
+                    borderWidth: 0
+                }]
+            },
+            options: commonPie
+        });
+    }
+
+    // --- 3. GRAFIK WARRANTY (PIE) ---
+    const wData = [
+        globalData.filter(d => String(d.warranty_status || "").trim().toUpperCase() === "WARRANTY").length,
+        globalData.filter(d => String(d.warranty_status || "").trim().toUpperCase().includes("OUT")).length
+    ];
+
+    if(charts.p) charts.p.destroy();
+    charts.p = new Chart(document.getElementById('chartWarranty'), {
+        type: 'pie',
+        data: { 
+            labels: ['Warranty', 'Out Warranty'], 
+            datasets: [{ 
+                data: wData, 
+                backgroundColor: ['#22c55e', '#ef4444', '#444'], 
+                borderWidth: 0 
+            }] 
+        },
+        options: commonPie
+    });
+
+    // --- 4. GRAFIK BRAND (HORIZONTAL BAR) ---
+    const prodMap = {};
+    globalData.forEach(d => { 
+        const p = String(d.prod_hier || "N/A").trim().toUpperCase();
+        prodMap[p] = (prodMap[p] || 0) + 1; 
+    });
+    const sortedBrands = Object.keys(prodMap).sort((a, b) => prodMap[b] - prodMap[a]);
+    const sortedValues = sortedBrands.map(b => prodMap[b]);
+
+    if(charts.j) charts.j.destroy();
+    charts.j = new Chart(document.getElementById('chartJenisBar'), {
+        type: 'bar',
+        data: { 
+            labels: sortedBrands, 
+            datasets: [{ 
+                label: 'Jumlah Unit', 
+                data: sortedValues, 
+                backgroundColor: '#ffcc00',
+                borderRadius: 5
+            }] 
+        },
+        options: { 
+            indexAxis: 'y', 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end', align: 'right', color: '#ffcc00', font: { weight: 'bold', size: 11 }
+                }
+            },
+            scales: { 
+                y: { grid: { display: false }, ticks: { color: '#fff', font: { weight: 'bold' } } }, 
+                x: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#555' } } 
+            } 
+        }
+    });
+
+    // --- 5. GRAFIK CUSTOMER (HORIZONTAL BAR DENGAN SCROLL) ---
+    const custMap = {};
+    globalData.forEach(d => {
+        const c = String(d.customer || "N/A").trim().toUpperCase();
+        if(c !== "" && c !== "N/A") custMap[c] = (custMap[c] || 0) + 1;
+    });
+
+    const sortedCust = Object.keys(custMap).sort((a, b) => custMap[b] - custMap[a]);
+    const sortedCustValues = sortedCust.map(c => custMap[c]);
+
+    const resUniqueCust = document.getElementById('res-unique-cust');
+    if(resUniqueCust) resUniqueCust.innerText = sortedCust.length;
+
+    const chartHeight = Math.max(500, sortedCust.length * 35);
+    const container = document.getElementById('container-customer-chart');
+    if(container) container.style.height = chartHeight + "px";
+
+    if(charts.cust) charts.cust.destroy();
+    charts.cust = new Chart(document.getElementById('chartCustomerBar'), {
+        type: 'bar',
+        data: {
+            labels: sortedCust,
+            datasets: [{
+                label: 'Populasi Unit',
+                data: sortedCustValues,
+                backgroundColor: sortedCustValues.map((v, i) => i === 0 ? '#ffcc00' : '#ffffff'),
+                borderRadius: 5,
+                barThickness: 20
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                datalabels: { anchor: 'end', align: 'right', color: '#fff', font: { weight: 'bold', size: 10 } }
+            },
+            scales: {
+                y: { grid: { display: false }, ticks: { color: '#fff', font: { size: 9, weight: 'bold' } } },
+                x: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#555' }, position: 'top' }
+            }
+        }
+    });
+}
+    document.getElementById('uploadExcel').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            try {
+                const dataArr = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(dataArr, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                
+                const headerIdx = rawRows.findIndex(row => row.some(cell => String(cell).trim().toUpperCase() === "NO"));
+                if (headerIdx === -1) throw new Error("Kolom 'NO' tidak ditemukan!");
+
+                const headers = rawRows[headerIdx].map(h => String(h).trim().toLowerCase());
+                const dataRows = rawRows.slice(headerIdx + 1);
+
+                const getVal = (row, possibleNames) => {
+                    const idx = headers.findIndex(h => possibleNames.includes(h));
+                    return (idx !== -1 && row[idx] !== undefined) ? String(row[idx]).trim() : "";
+                };
+
+                const toUpload = dataRows.map(row => {
+                    const noIdx = headers.indexOf("no");
+                    const noVal = String(row[noIdx] || "").trim();
+                    if (!noVal || isNaN(noVal)) return null;
+
+                    return {
+                        "prod_hier":       getVal(row, ['prod_hier', 'prod.hier.']),
+                        "model_number":    getVal(row, ['model_number', 'model number']),
+                        "plnt":            getVal(row, ['plnt']),
+                        "Typpe":           getVal(row, ['typpe', 'objecttype', 'object type']),
+                        "customer":        getVal(row, ['customer', 'name 1']),
+                        "area":            getVal(row, ['area']),
+                        "wrk_cntr":        getVal(row, ['wrk_cntr', 'wrk.cntr']),
+                        "warranty_status": getVal(row, ['warranty_status', 'warranty status']),
+                        "indust":          getVal(row, ['indust', 'indust.'])
+                    };
+                }).filter(item => item !== null);
+
+                if (toUpload.length === 0) throw new Error("Data tidak terbaca.");
+                if(!confirm("Ditemukan " + toUpload.length + " data. Update Database?")) return;
+
+                const { error: delErr } = await _supabase.from(NAMA_TABEL).delete().neq('id', 0);
+                if(delErr) throw delErr;
+
+                const { error: insErr } = await _supabase.from(NAMA_TABEL).insert(toUpload);
+                if(insErr) throw insErr;
+                
+                alert("Sukses Memperbarui Data!");
+                location.reload();
+            } catch (err) { alert("Gagal: " + err.message); }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+</script>
+</body>
+</html>
