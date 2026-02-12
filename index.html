@@ -9,8 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-<body class="bg-[#0f0f0f] text-white min-h-screen font-sans">
-
+<body class="bg-[#f8f9fa] text-slate-800 font-sans">
+    
 <header class="bg-white w-full shadow-md">
     <div class="max-w-7xl mx-auto px-6 py-4 flex flex-row justify-between items-center">
         <div class="flex items-center gap-4">
@@ -66,6 +66,11 @@
                     Update Excel
                 </button>
                 
+            <button onclick="toggleTheme()" id="themeBtn" 
+                        class="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 px-4 py-2 rounded-full text-[10px] font-black uppercase transition-all">
+                    🌙 Dark Mode
+                </button>
+
                 <button onclick="exportToPDF()" 
                         class="border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
                     Export PDF
@@ -82,7 +87,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-[#ffcc00] shadow-xl text-center md:text-left">
                     <span class="text-gray-500 font-black uppercase text-[10px]">Populasi Sangkulirang</span>
-                    <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter">0</span>
+                    <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[#ffcc00]">0</span>
                 </div>
                 <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-green-500 shadow-xl text-center md:text-left">
                     <span class="text-green-600 font-black uppercase text-[10px]">Warranty</span>
@@ -271,6 +276,145 @@
         reader.readAsArrayBuffer(file);
     }
 
+    // 1. Fungsi untuk Memunculkan Sub-Halaman
+function showCustomerDetail(name) {
+    const filtered = globalData
+        .filter(d => String(d.customer || "").trim().toUpperCase() === name.toUpperCase())
+        .sort((a, b) => {
+            const typeA = String(a.Typpe || "").toUpperCase();
+            const typeB = String(b.Typpe || "").toUpperCase();
+            return typeA.localeCompare(typeB); // Mengurutkan A ke Z (HD akan kumpul dengan HD)
+        });    
+    // 1. Hitung Ringkasan Typpe & Data Warranty per Tipe
+    const typeSummary = {};
+    filtered.forEach(d => {
+        const t = String(d.Typpe || "N/A").toUpperCase();
+        if (!typeSummary[t]) {
+            typeSummary[t] = { count: 0, war: 0, out: 0 };
+        }
+        typeSummary[t].count++;
+        if (String(d.warranty_status).toUpperCase() === "WARRANTY") {
+            typeSummary[t].war++;
+        } else {
+            typeSummary[t].out++;
+        }
+    });
+
+    // 2. Buat HTML untuk Grid Grafik & Ringkasan
+    let summaryHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">`;
+    
+    for (const [type, data] of Object.entries(typeSummary)) {
+        summaryHtml += `
+            <div class="bg-[#1a1a1a] p-4 rounded-2xl border border-gray-800 flex flex-col items-center">
+                <p class="text-[#ffcc00] text-xs font-black uppercase mb-3">${type} (${data.count} Unit)</p>
+                <div style="height: 120px; width: 100%;">
+                    <canvas id="chartModal-${type.replace(/\s+/g, '')}"></canvas>
+                </div>
+                <div class="flex gap-4 mt-3 text-[9px] font-bold">
+                    <span class="text-green-500">WAR: ${data.war}</span>
+                    <span class="text-red-500">OUT: ${data.out}</span>
+                </div>
+            </div>`;
+    }
+    summaryHtml += `</div>`;
+
+    // 3. Masukkan ke Modal
+    document.getElementById('modalCustName').innerText = name;
+    document.getElementById('modalContent').innerHTML = summaryHtml + `
+        <div class="bg-[#0f0f0f] rounded-xl border border-gray-800 overflow-hidden mt-6">
+            <table class="w-full text-[11px] text-left">
+                <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black">
+                    <tr><th class="p-4">Model Number</th><th class="p-4">Typpe</th><th class="p-4 text-right">Status</th></tr>
+                </thead>
+                <tbody>
+                    ${filtered.map(d => `
+                        <tr class="border-b border-gray-900 hover:bg-white/5">
+                            <td class="p-4 font-bold text-[#ffcc00]">${d.model_number || '-'}</td>
+                            <td class="p-4 font-bold text-white">${d.Typpe || '-'}</td>
+                            <td class="p-4 text-right font-black ${String(d.warranty_status).includes('OUT') ? 'text-red-500' : 'text-green-500'}">
+                                ${d.warranty_status || '-'}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>`;
+
+    // 4. Render Grafik Pie untuk Setiap Tipe
+    setTimeout(() => {
+        for (const [type, data] of Object.entries(typeSummary)) {
+            const canvasId = `chartModal-${type.replace(/\s+/g, '')}`;
+            const ctx = document.getElementById(canvasId);
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['War', 'Out'],
+                        datasets: [{
+                            data: [data.war, data.out],
+                            backgroundColor: ['#22c55e', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                color: '#fff',
+                                font: { size: 9, weight: 'bold' },
+                                formatter: (v, c) => {
+                                    let total = data.war + data.out;
+                                    return total > 0 ? ((v * 100) / total).toFixed(0) + "%" : "";
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }, 100);
+
+    document.getElementById('customerModal').classList.remove('hidden');
+}
+
+function toggleTheme() {
+        const body = document.getElementById('mainBody');
+        const btn = document.getElementById('themeBtn');
+        const cards = document.querySelectorAll('.bg-white, .bg-\\[\\#161616\\], .bg-\\[\\#1a1a1a\\]');
+
+        if (body.classList.contains('bg-[#f8f9fa]')) {
+            // KE DARK MODE
+            body.classList.replace('bg-[#f8f9fa]', 'bg-[#0f0f0f]');
+            body.classList.replace('text-slate-800', 'text-white');
+            btn.innerText = "☀️ Light Mode";
+            btn.classList.replace('bg-gray-200', 'bg-gray-800');
+            btn.classList.replace('text-gray-800', 'text-white');
+            cards.forEach(c => {
+                if(c.classList.contains('bg-white')) c.classList.replace('bg-white', 'bg-[#161616]');
+                c.classList.add('border-gray-800');
+            });
+        } else {
+            // KE LIGHT MODE
+            body.classList.replace('bg-[#0f0f0f]', 'bg-[#f8f9fa]');
+            body.classList.replace('text-white', 'text-slate-800');
+            btn.innerText = "🌙 Dark Mode";
+            btn.classList.replace('bg-gray-800', 'bg-gray-200');
+            btn.classList.replace('text-white', 'text-gray-800');
+            cards.forEach(c => {
+                if(c.classList.contains('bg-[#161616]')) c.classList.replace('bg-[#161616]', 'bg-white');
+                c.classList.remove('border-gray-800');
+            });
+        }
+        if(typeof renderAllCharts === 'function') renderAllCharts(); 
+}
+
+// 2. Fungsi untuk Menutup Sub-Halaman
+function closeModal() {
+    document.getElementById('customerModal').classList.add('hidden');
+}
+
     function switchTab(target) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
     document.getElementById('page-' + target).classList.remove('hidden');
@@ -345,13 +489,13 @@
                 scales: {
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: '#222' },
-                        ticks: { color: '#555' }
+                        grid: { color: '#005596' },
+                        ticks: { color: '#ffffff' }
                     },
                     x: { 
                         grid: { display: false },
                         ticks: { 
-                            color: '#888', 
+                            color: '#ffffff', 
                             font: { size: 9 },
                             maxRotation: 45,
                             minRotation: 45
@@ -392,8 +536,8 @@ function renderAllCharts() {
             labels: areas, 
             datasets: [{ 
                 data: areas.map(a => globalData.filter(d => String(d.area || "").toUpperCase() === a).length), 
-                backgroundColor: ['#ffcc00', '#ffffff', '#444', '#888', '#10b981'], 
-                borderWidth: 0 
+                backgroundColor: ['#1e3a8a', '#eab308', '#166534', '#6b21a8'], 
+                borderWidth: 2 
             }] 
         },
         options: commonPie
@@ -421,8 +565,8 @@ function renderAllCharts() {
                 labels: wcLabels,
                 datasets: [{
                     data: wcDataValues,
-                    backgroundColor: ['#ffcc00', '#ffffff', '#444444', '#1a1a1a'],
-                    borderWidth: 0
+                    backgroundColor: ['#1e3a8a', '#eab308', '#166534', '#6b21a8'],
+                    borderWidth: 2
                 }]
             },
             options: commonPie
@@ -504,7 +648,7 @@ function renderAllCharts() {
     const container = document.getElementById('container-customer-chart');
     if(container) container.style.height = chartHeight + "px";
 
-    if(charts.cust) charts.cust.destroy();
+if(charts.cust) charts.cust.destroy();
     charts.cust = new Chart(document.getElementById('chartCustomerBar'), {
         type: 'bar',
         data: {
@@ -521,17 +665,27 @@ function renderAllCharts() {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
+            // --- TAMBAHAN SENSOR KLIK DI SINI ---
+            onClick: (e, items) => {
+                if (items.length > 0) {
+                    const index = items[0].index;
+                    const customerName = charts.cust.data.labels[index];
+                    showCustomerDetail(customerName); // Memanggil fungsi sub-halaman
+                }
+            },
+            // ------------------------------------
             plugins: {
                 legend: { display: false },
                 datalabels: { anchor: 'end', align: 'right', color: '#fff', font: { weight: 'bold', size: 10 } }
             },
             scales: {
-                y: { grid: { display: false }, ticks: { color: '#fff', font: { size: 9, weight: 'bold' } } },
+                y: { grid: { display: false }, ticks: { color: '#ffffff', font: { size: 9, weight: 'bold' } } },
                 x: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#555' }, position: 'top' }
             }
         }
     });
-}
+} // Penutup fungsi renderAllCharts
+
     document.getElementById('uploadExcel').addEventListener('change', function(e) {
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -587,5 +741,22 @@ function renderAllCharts() {
         reader.readAsArrayBuffer(file);
     });
 </script>
+<div id="customerModal" class="hidden fixed inset-0 z-[100] bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col border border-gray-200">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+            <div>
+                <h2 id="modalCustName" class="text-blue-900 text-2xl font-black uppercase"></h2>
+                <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-1">Unit Type & Warranty Analysis</p>
+            </div>
+            <button onclick="closeModal()" class="text-gray-400 hover:text-blue-900 text-3xl font-light">&times;</button>
+        </div>
+        <div id="modalContent" class="p-6 overflow-y-auto flex-grow bg-white">
+            </div>
+        <div class="p-4 border-t border-gray-100 text-right bg-gray-50 rounded-b-2xl">
+            <button onclick="closeModal()" class="bg-blue-900 text-white px-8 py-2 rounded-lg text-[10px] font-black uppercase shadow-md hover:bg-blue-800">Tutup</button>
+        </div>
+    </div>
+</div>
+</div>
 </body>
 </html>
