@@ -28,7 +28,7 @@
                     United Tractors
                 </h1>
                 <p class="text-[8px] md:text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-1">
-                    Sangkulirang Analytics System
+                    Sangkulirang Analytics Unit System
                 </p>
             </div>
         </div>
@@ -81,7 +81,7 @@
         <div id="page-main" class="tab-content">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-[#ffcc00] shadow-xl text-center md:text-left">
-                    <span class="text-gray-500 font-black uppercase text-[10px]">Populasi Sangkulirang</span>
+                    <span class="text-white font-black uppercase text-[10px]">Populasi Sangkulirang</span>
                     <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[#ffcc00]">0</span>
                 </div>
                 <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-green-500 shadow-xl text-center md:text-left">
@@ -96,19 +96,19 @@
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
-                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">SKL</span>
+                    <span class="text-white font-black text-[10px] uppercase block mb-1">SKL</span>
                     <span id="res-skl" class="text-4xl font-black text-[#ffcc00]">0</span>
                 </div>
                 <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
-                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">SKU</span>
+                    <span class="text-white font-black text-[10px] uppercase block mb-1">SKU</span>
                     <span id="res-sku" class="text-4xl font-black text-[#ffcc00]">0</span>
                 </div>
                 <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
-                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">SKH</span>
+                    <span class="text-white font-black text-[10px] uppercase block mb-1">SKH</span>
                     <span id="res-skh" class="text-4xl font-black text-[#ffcc00]">0</span>
                 </div>
                 <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
-                    <span class="text-gray-500 font-black text-[10px] uppercase block mb-1">KLA</span>
+                    <span class="text-white font-black text-[10px] uppercase block mb-1">KLA</span>
                     <span id="res-kla" class="text-4xl font-black text-[#ffcc00]">0</span>
                 </div>
             </div>
@@ -149,13 +149,30 @@
 
 <div id="page-customer" class="tab-content hidden">
     <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col h-[750px]">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 flex-none">
-            <h3 class="text-[#ffcc00] font-black uppercase text-xs italic flex items-center">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start mb-8 flex-none gap-4">
+            <h3 class="text-[#ffcc00] font-black uppercase text-xs italic flex items-center mt-4">
                 <span class="w-8 h-1 bg-[#ffcc00] mr-3"></span> Distribusi Unit per Customer
             </h3>
-            <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 mt-4 md:mt-0 text-center">
-                <span class="text-gray-500 text-[9px] uppercase font-bold block">Total Aktif Customer</span>
-                <span id="res-unique-cust" class="text-[#ffcc00] font-black text-2xl tracking-tighter">0</span>
+
+            <div class="flex items-center gap-3">
+                <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 text-center min-w-[160px] h-[58px] flex flex-col justify-center">
+                    <span class="text-white text-[9px] uppercase font-bold block mb-1">Analisa Customer</span>
+                    <select onchange="if(this.value) showCustomerDetail(this.value)" 
+                            class="bg-transparent text-[#ffcc00] text-sm font-black uppercase outline-none cursor-pointer text-center w-full appearance-none">
+                        <option value="" class="bg-[#161616]">-- Pilih Customer --</option>
+                        <option value="Kalimantan Prima Persada" class="bg-[#161616]">KPP</option>
+                        <option value="Unggul Dinamika Utama" class="bg-[#161616]">UDU</option>
+                        <option value="Berlian Duta Energi" class="bg-[#161616]">BDE</option>
+                        <option value="Mega Global Energi" class="bg-[#161616]">MGE</option>
+                        <option value="GHJ Triagung Mandiri" class="bg-[#161616]">GHJ</option>
+                    </select>
+                </div>
+
+                <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 text-center min-w-[120px] h-[58px] flex flex-col justify-center">
+                    <span class="text-white text-[9px] uppercase font-bold block">Total Aktif Customer</span>
+                    <span id="res-unique-cust" class="text-[#ffcc00] font-black text-2xl tracking-tighter">0</span>
+                </div>
             </div>
         </div>
 
@@ -272,17 +289,21 @@
     }
 
     // 1. Fungsi untuk Memunculkan Sub-Halaman
+let currentModalData = []; // Untuk menyimpan data asli agar tabel bisa difilter
+
 function showCustomerDetail(name) {
-    const filtered = globalData
+    // 1. Ambil & Sort Data 
+    currentModalData = globalData
         .filter(d => String(d.customer || "").trim().toUpperCase() === name.toUpperCase())
         .sort((a, b) => {
             const typeA = String(a.Typpe || "").toUpperCase();
             const typeB = String(b.Typpe || "").toUpperCase();
-            return typeA.localeCompare(typeB); // Mengurutkan A ke Z (HD akan kumpul dengan HD)
+            return typeA.localeCompare(typeB);
         });    
-    // 1. Hitung Ringkasan Typpe & Data Warranty per Tipe
+
+    // 2. Hitung Ringkasan Typpe 
     const typeSummary = {};
-    filtered.forEach(d => {
+    currentModalData.forEach(d => {
         const t = String(d.Typpe || "N/A").toUpperCase();
         if (!typeSummary[t]) {
             typeSummary[t] = { count: 0, war: 0, out: 0 };
@@ -295,12 +316,11 @@ function showCustomerDetail(name) {
         }
     });
 
-    // 2. Buat HTML untuk Grid Grafik & Ringkasan
+    // 3. Buat HTML untuk Grid Grafik 
     let summaryHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">`;
-    
     for (const [type, data] of Object.entries(typeSummary)) {
         summaryHtml += `
-            <div class="bg-[#1a1a1a] p-4 rounded-2xl border border-gray-800 flex flex-col items-center">
+            <div class="bg-[#0f0f0f] p-5 rounded-2xl border-white shadow-2xl flex flex-col items-center">
                 <p class="text-[#ffcc00] text-xs font-black uppercase mb-3">${type} (${data.count} Unit)</p>
                 <div style="height: 120px; width: 100%;">
                     <canvas id="chartModal-${type.replace(/\s+/g, '')}"></canvas>
@@ -313,10 +333,72 @@ function showCustomerDetail(name) {
     }
     summaryHtml += `</div>`;
 
-    // 3. Masukkan ke Modal
+    // --- SISIPAN FILTER UNTUK TABEL SAJA ---
+    const filterHtml = `
+        <div class="flex items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+            <label class="text-[9px] font-black text-white uppercase italic">Filter Typpe:</label>
+            <select id="typeTableFilter" onchange="filterTableOnly()" 
+                class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-1 outline-none focus:border-[#ffcc00]">
+                <option value="ALL">SEMUA TIPE UNIT</option>
+                ${Object.keys(typeSummary).map(t => `<option value="${t}">${t}</option>`).join('')}
+            </select>
+        </div>
+    `;
+
+    // 4. Masukkan ke Modal (Grafik + Filter + Wrapper Tabel)
     document.getElementById('modalCustName').innerText = name;
-    document.getElementById('modalContent').innerHTML = summaryHtml + `
-        <div class="bg-[#0f0f0f] rounded-xl border border-gray-800 overflow-hidden mt-6">
+    document.getElementById('modalContent').innerHTML = summaryHtml + filterHtml + `<div id="tableWrapper"></div>`;
+
+    // 5. Render Grafik Pie 
+    setTimeout(() => {
+        for (const [type, data] of Object.entries(typeSummary)) {
+            const canvasId = `chartModal-${type.replace(/\s+/g, '')}`;
+            const ctx = document.getElementById(canvasId);
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['War', 'Out'],
+                        datasets: [{
+                            data: [data.war, data.out],
+                            backgroundColor: ['#22c55e', '#ef4444'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                color: '#fff',
+                                font: { size: 9, weight: 'bold' },
+                                formatter: (v) => {
+                                    let total = data.war + data.out;
+                                    return total > 0 ? ((v * 100) / total).toFixed(0) + "%" : "";
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        filterTableOnly(); // Tampilkan tabel pertama kali
+    }, 100);
+
+    document.getElementById('customerModal').classList.remove('hidden');
+}
+
+// FUNGSI KHUSUS UPDATE TABEL (Tanpa Ganggu Grafik Di Atasnya)
+function filterTableOnly() {
+    const val = document.getElementById('typeTableFilter').value;
+    const filtered = val === "ALL" 
+        ? currentModalData 
+        : currentModalData.filter(d => String(d.Typpe || "").toUpperCase() === val);
+
+    // Render Tabel 
+    document.getElementById('tableWrapper').innerHTML = `
+        <div class="bg-[#0f0f0f] rounded-xl border border-gray-800 overflow-hidden">
             <table class="w-full text-[11px] text-left">
                 <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black">
                     <tr><th class="p-4">Model Number</th><th class="p-4">Typpe</th><th class="p-4 text-right">Status</th></tr>
@@ -334,44 +416,6 @@ function showCustomerDetail(name) {
                 </tbody>
             </table>
         </div>`;
-
-    // 4. Render Grafik Pie untuk Setiap Tipe
-    setTimeout(() => {
-        for (const [type, data] of Object.entries(typeSummary)) {
-            const canvasId = `chartModal-${type.replace(/\s+/g, '')}`;
-            const ctx = document.getElementById(canvasId);
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['War', 'Out'],
-                        datasets: [{
-                            data: [data.war, data.out],
-                            backgroundColor: ['#22c55e', '#ef4444'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            datalabels: {
-                                color: '#fff',
-                                font: { size: 9, weight: 'bold' },
-                                formatter: (v, c) => {
-                                    let total = data.war + data.out;
-                                    return total > 0 ? ((v * 100) / total).toFixed(0) + "%" : "";
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }, 100);
-
-    document.getElementById('customerModal').classList.remove('hidden');
 }
 
 function exportToExcel() {
@@ -460,7 +504,7 @@ function closeModal() {
                     data: counts,
                     backgroundColor: '#ffcc00',
                     borderRadius: 5,
-                    borderWidth: 0
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -576,7 +620,7 @@ function renderAllCharts() {
             datasets: [{ 
                 data: wData, 
                 backgroundColor: ['#22c55e', '#ef4444', '#444'], 
-                borderWidth: 0 
+                borderWidth: 2 
             }] 
         },
         options: commonPie
@@ -735,7 +779,7 @@ if(charts.cust) charts.cust.destroy();
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
             <div>
                 <h2 id="modalCustName" class="text-blue-900 text-2xl font-black uppercase"></h2>
-                <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-1">Unit Type & Warranty Analysis</p>
+                <p class="text-white text-[10px] font-bold uppercase tracking-widest mt-1">Unit Type & Warranty Analysis</p>
             </div>
             <button onclick="closeModal()" class="text-gray-400 hover:text-blue-900 text-3xl font-light">&times;</button>
         </div>
