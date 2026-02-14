@@ -47,8 +47,29 @@
             <div class="flex space-x-1 py-2 md:py-0">
                 <button onclick="switchTab('main')" id="btn-main" 
                         class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all bg-[#ffcc00] text-black shadow-lg">
-                    Dashboard
+                    Beranda
                 </button>
+
+<div class="relative">
+  <button onclick="toggleUnitDropdown()"
+    class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white flex items-center gap-1">
+    UNIT
+    <span class="text-xs">▼</span>
+  </button>
+  <!-- Dropdown -->
+  <div id="unitDropdown"
+    class="absolute left-0 mt-2 w-40 bg-[#161616] border border-gray-700 rounded-xl shadow-xl hidden z-50">
+    <button onclick="switchTab('unit-ut'); closeUnitDropdown();" 
+      class="w-full text-left px-4 py-2 text-[10px] font-bold uppercase text-gray-300 hover:bg-[#ffcc00] hover:text-black rounded-t-xl">
+      Unit UT
+    </button>
+    <button onclick="switchTab('unit-nonut'); closeUnitDropdown();" 
+      class="w-full text-left px-4 py-2 text-[10px] font-bold uppercase text-gray-300 hover:bg-[#ffcc00] hover:text-black rounded-b-xl">
+      Unit Non-UT
+    </button>
+  </div>
+</div>
+
                 <button onclick="switchTab('charts')" id="btn-charts" 
                         class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white">
                     Analytics
@@ -60,7 +81,7 @@
                 <button onclick="switchTab('trend')" id="btn-trend"
                         class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white">
                     Trend
-            </button>
+                </button>
             </div>
 
             <div class="flex items-center space-x-3 mt-2 md:mt-0 pb-2 md:pb-0">
@@ -172,6 +193,28 @@
   </div>
 </div>
 
+<div id="page-unit-ut" class="tab-content hidden">
+  <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+    <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic">
+      Unit UT Sangkulirang
+    </h3>
+    <div class="text-gray-400 text-sm">
+      Unit UT.
+    </div>
+  </div>
+</div>
+
+<div id="page-unit-nonut" class="tab-content hidden">
+  <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+    <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic">
+      Unit Non-UT Sangkulirang
+    </h3>
+    <div class="text-gray-400 text-sm">
+      Data Unit Non-UT.
+    </div>
+  </div>
+</div>
+
 <div id="page-customer" class="tab-content hidden">
     <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col h-[750px]">
         
@@ -200,6 +243,19 @@
                 </div>
             </div>
         </div>
+
+            <div id="page-nonut" class="tab-content hidden">
+        <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+            <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic flex items-center">
+        <span class="w-8 h-1 bg-[#ffcc00] mr-3"></span>
+        Unit Non-UT Sangkulirang
+    </h3>
+
+        <div class="text-gray-400 text-sm">
+        Data belum tersedia.
+    </div>
+  </div>
+</div>
 
         <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar" style="position: relative;">
             <div id="container-customer-chart">
@@ -475,20 +531,69 @@ function closeModal() {
     document.getElementById('customerModal').classList.add('hidden');
 }
 
-    function switchTab(target) {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    document.getElementById('page-' + target).classList.remove('hidden');
-    
-    // Reset semua tombol ke abu-abu
-        ['main', 'charts', 'customer', 'trend'].forEach(id => {
-        const btn = document.getElementById('btn-' + id);
-        if(btn) btn.className = 'px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-500';
-    });
+function switchTab(target) {
 
-    // Aktifkan tombol yang dipilih
-    const activeBtn = document.getElementById('btn-' + target);
-    if(activeBtn) activeBtn.className = 'px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all bg-[#ffcc00] text-black shadow-lg';
+  // sembunyikan semua halaman
+  document.querySelectorAll('.tab-content')
+    .forEach(c => c.classList.add('hidden'));
+
+  document.getElementById('page-' + target)
+    .classList.remove('hidden');
+
+  // reset semua tombol
+  const tabs = ['main', 'charts', 'customer', 'trend', 'unit ut', 'unit non-ut'];
+
+  tabs.forEach(id => {
+    const btn = document.getElementById('btn-' + id);
+    if (!btn) return;
+
+    btn.classList.remove(
+      'bg-[#ffcc00]',
+      'text-black',
+      'shadow-lg'
+    );
+
+    btn.classList.add(
+      'text-gray-400'
+    );
+  });
+
+  // aktifkan tombol yang dipilih
+  const activeBtn = document.getElementById('btn-' + target);
+  if (activeBtn) {
+    activeBtn.classList.remove('text-gray-400');
+    activeBtn.classList.add(
+      'bg-[#ffcc00]',
+      'text-black',
+      'shadow-lg'
+    );
+  }
+
+  // render trend kalau dibuka
+  if (target === 'trend') {
+    setTimeout(renderTrendYoY, 100);
+  }
 }
+
+function toggleUnitDropdown() {
+  const dd = document.getElementById('unitDropdown');
+  dd.classList.toggle('hidden');
+}
+
+function closeUnitDropdown() {
+  document.getElementById('unitDropdown').classList.add('hidden');
+}
+
+// klik di luar dropdown otomatis nutup
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('unitDropdown');
+  const button = e.target.closest('button');
+
+  if (!e.target.closest('#unitDropdown') && 
+      !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
+    dropdown.classList.add('hidden');
+  }
+});
 
     function calculateSummary() {
         // 1. Update Total & Warranty
