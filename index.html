@@ -6,8 +6,8 @@
     <title>UT Sangkulirang - Fleet Analytics Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <body class="bg-[#f8f9fa] text-slate-800 font-sans">
@@ -85,16 +85,14 @@
             </div>
 
             <div class="flex items-center space-x-3 mt-2 md:mt-0 pb-2 md:pb-0">
-                <input type="file" id="uploadFile" accept=".xlsx, .xls" class="hidden"/>                
-                <button onclick="document.getElementById('uploadFile').click()" 
-                        class="bg-[#ffcc00] hover:bg-yellow-500 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase shadow-lg transition-all active:scale-95">
-                    Update Excel
-                </button>
-                
-                <button onclick="exportToExcel()"
-                        class="border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
-                     Export Excel
-                </button>
+                <a href="https://forms.gle/Ha5oe4xMubWhFnTT9" target="_blank"
+                class="bg-[#ffcc00] hover:bg-yellow-500 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase shadow-lg transition-all active:scale-95 inline-flex items-center">
+                Ajukan Update
+                </a>
+            <button onclick="exportToExcelFromSupabase()"
+                class="border border-[#ffcc00] text-[#ffcc00] hover:bg-[#ffcc00] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
+                Export Excel
+            </button>
 
     <div class="flex items-center gap-2 ml-4">
         <span class="relative flex h-2 w-2">
@@ -115,21 +113,32 @@
 
         <div id="page-main" class="tab-content">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                
                 <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-[#ffcc00] shadow-xl text-center md:text-left">
                     <span class="text-white font-black uppercase text-[10px]">Populasi Sangkulirang</span>
                     <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[#ffcc00]">0</span>
                 </div>
-                <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-green-500 shadow-xl text-center md:text-left">
-                    <span class="text-green-600 font-black uppercase text-[10px]">Warranty</span>
-                    <span id="res-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-green-500">0</span>
-                </div>
-                <div class="bg-[#161616] p-8 rounded-3xl border-l-8 border-red-600 shadow-xl text-center md:text-left">
-                    <span class="text-red-600 font-black uppercase text-[10px]">Out Warranty</span>
-                    <span id="res-out-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-red-600">0</span>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div onclick="openDetailModal('Warranty')" class="relative bg-[#161616] p-8 rounded-3xl border-l-8 border-green-500 shadow-xl cursor-pointer hover:bg-[#1f1f1f] transition-all group overflow-hidden">
+                    <span class="text-green-600 font-black uppercase text-[10px] block">Warranty</span>
+                    <span id="res-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-green-500">0</span>
+                    <div class="absolute bottom-6 right-6 w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center group-hover:bg-green-500 transition-all shadow-lg pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div onclick="openDetailModal('Out Warranty')" class="relative bg-[#161616] p-8 rounded-3xl border-l-8 border-red-600 shadow-xl cursor-pointer hover:bg-[#1f1f1f] transition-all group overflow-hidden">
+                    <span class="text-red-600 font-black uppercase text-[10px] block">Out Warranty</span>
+                    <span id="res-out-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-red-600">0</span>
+                    <div class="absolute bottom-6 right-6 w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center group-hover:bg-red-600 transition-all shadow-lg pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </div>
+            </div> <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-gray-800 text-center">
                     <span class="text-white font-black text-[10px] uppercase block mb-1">SKL</span>
                     <span id="res-skl" class="text-4xl font-black text-[#ffcc00]">0</span>
@@ -198,10 +207,21 @@
     <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic">
       Unit UT Sangkulirang
     </h3>
-    <div class="text-gray-400 text-sm">
-      Unit UT.
+    <div class="text-gray-400 text-sm mb-4">
+        Data Unit UT dari Supabase.
+        </div>
+        <div id="unit-ut-summary" class="text-white text-sm font-bold mb-3"></div>
+        <!-- FILTER CUSTOMER - UNIT UT -->
+        <div class="flex items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+        <label class="text-[9px] font-black text-white uppercase italic">Analisa Customer</label>
+
+        <select id="filter-ut-customer" onchange="applyUnitFilters()"
+            class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-[#ffcc00] min-w-[220px]">
+            <option value="ALL">-- PILIH CUSTOMER --</option>
+        </select>
+        </div>
+        <div id="unit-ut-table"></div>
     </div>
-  </div>
 </div>
 
 <div id="page-unit-nonut" class="tab-content hidden">
@@ -209,9 +229,21 @@
     <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic">
       Unit Non-UT Sangkulirang
     </h3>
-    <div class="text-gray-400 text-sm">
-      Unit Non-UT.
-    </div>
+    <div class="text-gray-400 text-sm mb-4">
+        Data Unit Non-UT dari Supabase.
+        </div>
+        <div id="unit-nonut-summary" class="text-white text-sm font-bold mb-3"></div>
+        <!-- FILTER CUSTOMER - UNIT NON-UT -->
+        <div class="flex items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+        <label class="text-[9px] font-black text-white uppercase italic">Analisa Customer</label>
+
+        <select id="filter-nonut-customer" onchange="applyUnitFilters()"
+            class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-[#ffcc00] min-w-[220px]">
+            <option value="ALL">-- PILIH CUSTOMER --</option>
+        </select>
+        </button>
+        </div>
+        <div id="unit-nonut-table"></div>
   </div>
 </div>
 
@@ -299,77 +331,45 @@
             calculateSummary();
             renderAllCharts();
             renderTrendYoY();
+            renderUnitPages();
         } else {
             console.error("Gagal ambil data:", error);
         }
     }
 
-    // 2. FUNGSI PROSES UPLOAD EXCEL KE SUPABASE
-    async function processData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+async function exportToExcelFromSupabase() {
+  const { data, error } = await _supabase
+    .from(NAMA_TABEL)
+    .select("*")
+    .range(0, 5000); // sesuaikan
 
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            try {
-                const dataArr = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(dataArr, {type: 'array'});
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                
-                // Cari header "NO"
-                const headerIdx = rawRows.findIndex(row => row.some(cell => String(cell).trim().toUpperCase() === "NO"));
-                if (headerIdx === -1) throw new Error("Kolom 'NO' tidak ditemukan di Excel!");
+  if (error) {
+    alert("Gagal ambil data dari Supabase: " + error.message);
+    return;
+  }
+  if (!data || data.length === 0) {
+    alert("Data Supabase kosong.");
+    return;
+  }
 
-                const headers = rawRows[headerIdx].map(h => String(h).trim().toLowerCase());
-                const dataRows = rawRows.slice(headerIdx + 1);
-
-                const getVal = (row, possibleNames) => {
-                    const idx = headers.findIndex(h => possibleNames.includes(h));
-                    return (idx !== -1 && row[idx] !== undefined) ? String(row[idx]).trim() : "";
-                };
-
-                const toUpload = dataRows.map(row => {
-                    const noIdx = headers.indexOf("no");
-                    const noVal = String(row[noIdx] || "").trim();
-                    if (!noVal || isNaN(noVal)) return null;
-
-                    return {
-                        "prod_hier":       getVal(row, ['prod_hier', 'prod.hier.', 'prod hier']),
-                        "model_number":    getVal(row, ['model_number', 'model number', 'model']),
-                        "plnt":            getVal(row, ['plnt']),
-                        "Typpe":           getVal(row, ['typpe', 'objecttype', 'object type']),
-                        "customer":        getVal(row, ['customer', 'name 1']),
-                        "area":            getVal(row, ['area']),
-                        "wrk_cntr":        getVal(row, ['wrk_cntr', 'wrk.cntr', 'work center']),
-                        "warranty_status": getVal(row, ['warranty_status', 'warranty status']),
-                        "indust":          getVal(row, ['indust', 'indust.']),
-                        "year":            parseInt(getVal(row, ['year', 'tahun']), 10) || null
-                    };
-                }).filter(item => item !== null);
-
-                if (toUpload.length === 0) throw new Error("Tidak ada data valid yang bisa diimport.");
-
-                if(!confirm(`Ditemukan ${toUpload.length} data. Ganti database lama dengan data baru ini?`)) return;
-
-                // Proses Sinkronisasi Supabase
-                console.log("Menghapus data lama...");
-                const { error: delErr } = await _supabase.from(NAMA_TABEL).delete().neq('customer', 'xxx'); 
-                if(delErr) throw delErr;
-
-                console.log("Memasukkan data baru...");
-                const { error: insErr } = await _supabase.from(NAMA_TABEL).insert(toUpload);
-                if(insErr) throw insErr;
-                
-                alert("DATABASE BERHASIL DIUPDATE!");
-                location.reload(); // Refresh untuk melihat hasil
-            } catch (err) { 
-                console.error(err);
-                alert("GAGAL UPDATE: " + err.message); 
-            }
-        };
-        reader.readAsArrayBuffer(file);
+  const OMIT_KEYS = new Set(["id"]);
+  const rows = data.map((row) => {
+    const out = {};
+    for (const k in row) {
+      if (!OMIT_KEYS.has(k)) out[k] = row[k];
     }
+    return out;
+  });
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "SupabaseDump");
+
+  const d = new Date();
+  const fname = `Supabase_Export_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
+
+  XLSX.writeFile(wb, fname);
+}
 
     // 1. Fungsi untuk Memunculkan Sub-Halaman
 let currentModalData = []; // Untuk menyimpan data asli agar tabel bisa difilter
@@ -472,6 +472,63 @@ function showCustomerDetail(name) {
     document.getElementById('customerModal').classList.remove('hidden');
 }
 
+// simpan hasil pecahan UT & NonUT biar gampang di-filter
+let utRowsCache = [];
+let nonUtRowsCache = [];
+
+function fillCustomerDropdown(selectId, rows) {
+  const el = document.getElementById(selectId);
+  if (!el) return;
+
+  // ambil list customer unik
+  const customers = [...new Set(rows.map(r => String(r.customer || "").trim()).filter(Boolean))]
+    .sort((a,b) => a.localeCompare(b));
+
+  // isi option
+  el.innerHTML = `<option value="ALL">-- PILIH CUSTOMER --</option>` +
+    customers.map(c => `<option value="${c.replaceAll('"', '&quot;')}">${c}</option>`).join("");
+}
+
+function applyUnitFilters() {
+  // UT
+  const utSelect = document.getElementById("filter-ut-customer");
+  const utVal = utSelect ? utSelect.value : "ALL";
+
+  const utFiltered = (utVal === "ALL")
+    ? utRowsCache
+    : utRowsCache.filter(d => String(d.customer || "").trim() === utVal);
+
+  const utSummary = document.getElementById("unit-ut-summary");
+  const utTable = document.getElementById("unit-ut-table");
+  if (utSummary) utSummary.innerText = `Total Unit UT: ${utFiltered.length}`;
+  if (utTable) utTable.innerHTML = makeUnitTable(utFiltered);
+
+  // Non-UT
+  const nonSelect = document.getElementById("filter-nonut-customer");
+  const nonVal = nonSelect ? nonSelect.value : "ALL";
+
+  const nonFiltered = (nonVal === "ALL")
+    ? nonUtRowsCache
+    : nonUtRowsCache.filter(d => String(d.customer || "").trim() === nonVal);
+
+  const nonSummary = document.getElementById("unit-nonut-summary");
+  const nonTable = document.getElementById("unit-nonut-table");
+  if (nonSummary) nonSummary.innerText = `Total Unit Non-UT: ${nonFiltered.length}`;
+  if (nonTable) nonTable.innerHTML = makeUnitTable(nonFiltered);
+}
+
+function resetUnitFilter(which) {
+  if (which === "ut") {
+    const utSelect = document.getElementById("filter-ut-customer");
+    if (utSelect) utSelect.value = "ALL";
+  }
+  if (which === "nonut") {
+    const nonSelect = document.getElementById("filter-nonut-customer");
+    if (nonSelect) nonSelect.value = "ALL";
+  }
+  applyUnitFilters();
+}
+
 // FUNGSI KHUSUS UPDATE TABEL (Tanpa Ganggu Grafik Di Atasnya)
 function filterTableOnly() {
     const val = document.getElementById('typeTableFilter').value;
@@ -502,29 +559,32 @@ function filterTableOnly() {
 }
 
 function exportToExcel() {
-    if (!Array.isArray(globalData) || globalData.length === 0) {
-        alert("Data masih kosong / belum selesai load dari database.");
-        return;
+  if (!Array.isArray(globalData) || globalData.length === 0) {
+    alert("Data masih kosong / belum selesai load dari database.");
+    return;
+  }
+
+  // 1) buang kolom id (dan kalau mau buang created_at juga, tinggal tambah di sini)
+  const OMIT_KEYS = new Set(["id"]); // tambah "created_at", "updated_at" kalau ada
+  const rows = globalData.map((row) => {
+    const out = {};
+    for (const k in row) {
+      if (!OMIT_KEYS.has(k)) out[k] = row[k];
     }
+    return out;
+  });
 
-    const rows = globalData.map(d => ({
-        "Prod Hier": d.prod_hier || "",
-        "Model Number": d.model_number || "",
-        "PLNT": d.plnt || "",
-        "Typpe": d.Typpe || "",
-        "Customer": d.customer || "",
-        "Area": d.area || "",
-        "Work Center": d.wrk_cntr || "",
-        "Warranty Status": d.warranty_status || "",
-        "Industry": d.indust || ""
-    }));
+  // 2) export persis header dari object keys
+  const ws = XLSX.utils.json_to_sheet(rows, { skipHeader: false });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "SupabaseDump");
 
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Report");
+  const d = new Date();
+  const fname = `Supabase_Export_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
 
-    XLSX.writeFile(wb, `UT_Sangkulirang_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
+  XLSX.writeFile(wb, fname);
 }
+
 
 // 2. Fungsi untuk Menutup Sub-Halaman
 function closeModal() {
@@ -670,6 +730,158 @@ document.addEventListener('click', function(e) {
             }
         });
     }
+    
+function norm(v) {
+  return String(v ?? "").trim().toUpperCase();
+}
+
+let currentWarrantyRows = []; // nyimpen data yg lagi dibuka di modal (WAR / OUT)
+
+function getUniqueTyppe(rows) {
+  const set = new Set(
+    rows.map(r => String(r.Typpe || r.typpe || "").trim().toUpperCase()).filter(Boolean)
+  );
+  return Array.from(set).sort();
+}
+
+function renderWarrantyTable(rows, typpeFilter) {
+  const content = document.getElementById('subModalContent'); // pastikan id ini sudah kamu ganti ya
+  if (!content) return;
+
+  const filtered =
+    typpeFilter === "ALL"
+      ? rows
+      : rows.filter(r => String(r.Typpe || r.typpe || "").trim().toUpperCase() === typpeFilter);
+
+  if (filtered.length === 0) {
+    content.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-20 text-gray-500">
+        <p class="italic">Data tidak ditemukan untuk filter Typpe tersebut.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // sort SMR desc (opsional)
+  filtered.sort((a, b) => (getSMR(b) ?? -1) - (getSMR(a) ?? -1));
+
+  content.innerHTML = `
+    <div class="mb-4 flex justify-between items-center">
+      <div class="text-sm text-gray-400">Total: <b class="text-white">${filtered.length}</b> unit</div>
+      <div class="text-[10px] text-gray-500 uppercase tracking-widest italic">Sangkulirang Database</div>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl border border-gray-800 bg-black/20">
+      <table class="w-full text-left border-collapse whitespace-nowrap">
+        <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black border-b border-gray-800">
+          <tr>
+            <th class="p-4 text-[10px]">No</th>
+            <th class="p-4 text-[10px]">Typpe</th>
+            <th class="p-4 text-[10px]">Serial Number</th>
+            <th class="p-4 text-[10px] text-right">SMR[H]</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          ${filtered.map((d, i) => `
+            <tr class="hover:bg-white/5 transition-colors text-xs">
+              <td class="p-4 text-gray-500">${i + 1}</td>
+              <td class="p-4 text-white font-bold">${d.Typpe || d.typpe || "-"}</td>
+              <td class="p-4 text-blue-400 font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
+              <td class="p-4 text-right text-white font-black">${getSMR(d) ?? "-"}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function getSerial(d) {
+  return (
+    d.serial_number ??
+    d["serial_number"] ??
+    d["Serial Number"] ??
+    d.serial ??
+    d.sn ??
+    d.SerialNumber ??
+    "-"
+  );
+}
+
+function getSMR(d) {
+  const raw =
+    d.smr_h ??
+    d["smr_h"] ??
+    d["SMR[H]"] ??
+    d["SMR (H)"] ??
+    d["smr[h]"] ??
+    d.smr ??
+    "";
+
+  // bikin numeric beneran (kalau kosong -> null)
+  const n = Number(String(raw).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) ? n : null;
+}
+
+// patokan UT vs Non-UT: pakai kolom dari Supabase 
+function isUT(d) {
+  return norm(d["unit UT"]) === "UT";
+}
+function isNonUT(d) {
+  // fleksibel: NON-UT / NONUT / NON UT
+  const v = norm(d["unit non-UT"]);
+  return v.includes("NON");
+}
+
+function makeUnitTable(rows) {
+  return `
+    <div class="bg-[#0f0f0f] rounded-xl border border-gray-800 overflow-hidden shadow-2xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black border-b border-gray-800">
+            <tr>
+              <th class="p-4">Prod Hier</th>
+              <th class="p-4">Type</th>
+              <th class="p-4">Model Number</th>
+              <th class="p-4">Serial Number</th>
+              <th class="p-4">Work Center</th>
+              <th class="p-4">Customer</th>
+              <th class="p-4">Area</th> 
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-900">
+            ${rows.map(d => `
+              <tr class="hover:bg-white/5 transition-colors">
+                <td class="p-4 font-bold text-[#ffcc00]">${d.prod_hier || "-"}</td>
+                <td class="p-4 text-gray-300">${d.Typpe || d.typpe || "-"}</td>
+                <td class="p-4 text-white font-bold">${d.model_number || "-"}</td>
+                <td class="p-4 text-blue-400 font-mono font-bold uppercase tracking-wider">
+                ${d.serial_number || d["Serial Number"] || d.sn || d.serialNumber || "-"}
+                </td>
+                <td class="p-4 text-gray-300 font-bold">${d.wrk_cntr || "-"}</td>
+                <td class="p-4 text-gray-300 font-bold">${d.customer || "-"}</td>
+                <td class="p-4 text-gray-300 font-bold">${d.area || "-"}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderUnitPages() {
+  // simpan cache biar bisa dipakai filter
+  utRowsCache = globalData.filter(isUT);
+  nonUtRowsCache = globalData.filter(isNonUT);
+
+  // isi dropdown customer (kalau elemen dropdown ada)
+  fillCustomerDropdown("filter-ut-customer", utRowsCache);
+  fillCustomerDropdown("filter-nonut-customer", nonUtRowsCache);
+
+  // render default (tanpa filter = ALL)
+  applyUnitFilters();
+}
 
 function renderAllCharts() {
     // --- KONFIGURASI UMUM PIE CHART ---
@@ -851,61 +1063,139 @@ if(charts.cust) charts.cust.destroy();
     });
 } // Penutup fungsi renderAllCharts
 
-    document.getElementById('uploadFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-            try {
-                const dataArr = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(dataArr, {type: 'array'});
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-                
-                const headerIdx = rawRows.findIndex(row => row.some(cell => String(cell).trim().toUpperCase() === "NO"));
-                if (headerIdx === -1) throw new Error("Kolom 'NO' tidak ditemukan!");
+function getUniqueTyppe(rows) {
+  const set = new Set(
+    rows.map(r => String(r.Typpe || r.typpe || "").trim().toUpperCase()).filter(Boolean)
+  );
+  return Array.from(set).sort();
+}
 
-                const headers = rawRows[headerIdx].map(h => String(h).trim().toLowerCase());
-                const dataRows = rawRows.slice(headerIdx + 1);
+function renderWarrantyTable(rows, typpeFilter) {
+  const content = document.getElementById('subModalContent');
+  if (!content) return;
 
-                const getVal = (row, possibleNames) => {
-                    const idx = headers.findIndex(h => possibleNames.includes(h));
-                    return (idx !== -1 && row[idx] !== undefined) ? String(row[idx]).trim() : "";
-                };
+  const filtered =
+    typpeFilter === "ALL"
+      ? rows
+      : rows.filter(r => String(r.Typpe || r.typpe || "").trim().toUpperCase() === typpeFilter);
 
-                const toUpload = dataRows.map(row => {
-                    const noIdx = headers.indexOf("no");
-                    const noVal = String(row[noIdx] || "").trim();
-                    if (!noVal || isNaN(noVal)) return null;
+  // Sort: SMR terbesar dulu (opsional)
+  filtered.sort((a, b) => (getSMR(b) ?? -1) - (getSMR(a) ?? -1));
 
-                    return {
-                        "prod_hier":       getVal(row, ['prod_hier', 'prod.hier.']),
-                        "model_number":    getVal(row, ['model_number', 'model number']),
-                        "plnt":            getVal(row, ['plnt']),
-                        "Typpe":           getVal(row, ['typpe', 'objecttype', 'object type']),
-                        "customer":        getVal(row, ['customer', 'name 1']),
-                        "area":            getVal(row, ['area']),
-                        "wrk_cntr":        getVal(row, ['wrk_cntr', 'wrk.cntr']),
-                        "warranty_status": getVal(row, ['warranty_status', 'warranty status']),
-                        "indust":          getVal(row, ['indust', 'indust.']),
-                        "year":            parseInt(getVal(row, ['year', 'tahun']), 10) || null
-                    };
-                }).filter(item => item !== null);
+  if (filtered.length === 0) {
+    content.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-20 text-gray-500">
+        <p class="italic">Data tidak ditemukan untuk filter Typpe tersebut.</p>
+      </div>
+    `;
+    return;
+  }
 
-                if (toUpload.length === 0) throw new Error("Data tidak terbaca.");
-                if(!confirm("Ditemukan " + toUpload.length + " data. Update Database?")) return;
+  content.innerHTML = `
+    <div class="mb-4 flex justify-between items-center">
+      <div class="text-sm text-gray-400">Total: <b class="text-white">${filtered.length}</b> unit</div>
+      <div class="text-[10px] text-gray-500 uppercase tracking-widest italic">Sangkulirang Database</div>
+    </div>
 
-                const { error: delErr } = await _supabase.from(NAMA_TABEL).delete().neq('id', 0);
-                if(delErr) throw delErr;
+    <div class="overflow-x-auto rounded-xl border border-gray-800 bg-black/20">
+      <table class="w-full text-left border-collapse whitespace-nowrap">
+        <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black border-b border-gray-800">
+          <tr>
+            <th class="p-4 text-[10px]">No</th>
+            <th class="p-4 text-[10px]">Typpe</th>
+            <th class="p-4 text-[10px]">Serial Number</th>
+            <th class="p-4 text-[10px] text-right">SMR[H]</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          ${filtered.map((d, i) => `
+            <tr class="hover:bg-white/5 transition-colors text-xs">
+              <td class="p-4 text-gray-500">${i + 1}</td>
+              <td class="p-4 text-white font-bold">${d.Typpe || d.typpe || "-"}</td>
+              <td class="p-4 text-blue-400 font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
+              <td class="p-4 text-right text-white font-black">${(getSMR(d) ?? "-")}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
 
-                const { error: insErr } = await _supabase.from(NAMA_TABEL).insert(toUpload);
-                if(insErr) throw insErr;
-                
-                alert("Sukses Memperbarui Data!");
-                location.reload();
-            } catch (err) { alert("Gagal: " + err.message); }
-        };
-        reader.readAsArrayBuffer(file);
-    });
+function openDetailModal(type) {
+  const modal = document.getElementById('subHalamanModal');
+  const title = document.getElementById('modalTitle');
+
+  // wrapper filter (WAJIB ada di HTML)
+  const filterWrap = document.getElementById('subModalFilter');
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  // Filter data berdasarkan kartu yang diklik
+  if (type === 'Warranty') {
+    currentWarrantyRows = globalData.filter(d =>
+      String(d.warranty_status || "").trim().toUpperCase() === "WARRANTY"
+    );
+    title.innerText = "DETAIL UNIT IN WARRANTY";
+    title.className = "text-2xl font-black uppercase tracking-tight text-green-500";
+  } else if (type === 'Out Warranty') {
+    currentWarrantyRows = globalData.filter(d =>
+      String(d.warranty_status || "").trim().toUpperCase().includes("OUT")
+    );
+    title.innerText = "DETAIL UNIT OUT WARRANTY";
+    title.className = "text-2xl font-black uppercase tracking-tight text-red-500";
+  } else {
+    currentWarrantyRows = [];
+    title.innerText = "DETAIL UNIT";
+    title.className = "text-2xl font-black uppercase tracking-tight text-white";
+  }
+
+  // Kalau kosong
+  if (!currentWarrantyRows || currentWarrantyRows.length === 0) {
+    if (filterWrap) filterWrap.innerHTML = "";
+    const content = document.getElementById('subModalContent');
+    if (content) {
+      content.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-20 text-gray-500">
+          <p class="italic">Data tidak ditemukan.</p>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // bikin dropdown typpe
+  const typpeList = getUniqueTyppe(currentWarrantyRows);
+
+  if (filterWrap) {
+    filterWrap.innerHTML = `
+      <div class="flex items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+        <label class="text-[9px] font-black text-white uppercase italic">Filter Typpe:</label>
+        <select id="typpeFilterSelect"
+          class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-1 outline-none focus:border-[#ffcc00]">
+          <option value="ALL">SEMUA TYPPE</option>
+          ${typpeList.map(t => `<option value="${t}">${t}</option>`).join("")}
+        </select>
+      </div>
+    `;
+
+    // event change -> render ulang tabel
+    const sel = document.getElementById("typpeFilterSelect");
+    if (sel) {
+      sel.onchange = () => renderWarrantyTable(currentWarrantyRows, sel.value);
+    }
+  }
+
+  // render pertama kali
+  renderWarrantyTable(currentWarrantyRows, "ALL");
+}
+
+function closeSubHalaman() {
+    const modal = document.getElementById('subHalamanModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Aktifkan lagi scroll layar belakang
+}
 
 function renderTrendYoY() {
   const canvas = document.getElementById('chartTrendYoY');
@@ -1032,6 +1322,39 @@ setStaticUpdate();
             </div>
         <div class="p-4 border-t border-gray-100 text-right bg-gray-50 rounded-b-2xl">
             <button onclick="closeModal()" class="bg-blue-900 text-white px-8 py-2 rounded-lg text-[10px] font-black uppercase shadow-md hover:bg-blue-800">Tutup</button>
+        </div>
+    </div>
+</div>
+<div id="subHalamanModal" class="fixed inset-0 z-[100] hidden overflow-y-auto bg-black/90 backdrop-blur-sm">
+    <div class="min-h-screen p-4 md:p-8">
+        <div class="max-w-7xl mx-auto bg-[#161616] rounded-3xl border border-gray-800 shadow-2xl overflow-hidden">
+            
+            <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-[#1a1a1a]">
+                <div>
+                    <h2 id="modalTitle" class="text-2xl font-black text-white uppercase tracking-tight">Detail Unit</h2>
+                </div>
+                <button onclick="closeSubHalaman()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6">
+
+            <div id="subModalFilter" class="mb-4"></div>
+
+            <div id="subModalContent" class="text-white">
+                <div class="animate-pulse flex space-x-4">
+                <div class="flex-1 space-y-6 py-1">
+                    <div class="h-2 bg-gray-700 rounded"></div>
+                    ...
+                </div>
+                </div>
+            </div>
+            </div>
+            </div>
+
         </div>
     </div>
 </div>
