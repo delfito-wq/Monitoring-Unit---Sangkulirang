@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>    
 <body class="bg-[#f8f9fa] text-slate-800 font-sans">
     
 <header class="bg-white w-full shadow-md">
@@ -81,6 +82,10 @@
                 <button onclick="switchTab('trend')" id="btn-trend"
                         class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white">
                     Trend
+                </button>
+                <button onclick="switchTab('planning')" id="btn-planning"
+                class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-400 hover:text-white">
+                Planning
                 </button>
             </div>
 
@@ -202,6 +207,123 @@
   </div>
 </div>
 
+<div id="page-planning" class="tab-content hidden">
+  <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+    <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic">
+      Planning Midlife & GOH
+    </h3>
+
+    <!-- FILTER -->
+    <div class="flex flex-col md:flex-row gap-3 mb-6 bg-[#1a1a1a] p-4 rounded-2xl border border-gray-800">
+      <div class="flex items-center gap-2">
+        <label class="text-[9px] font-black text-white uppercase italic">Year</label>
+        <select id="planYear" onchange="renderPlanningFromSupabase()"
+          class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2">
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-[9px] font-black text-white uppercase italic">Customer</label>
+
+        <!-- search input -->
+        <input id="planCustomerSearch" type="text" placeholder="Cari customer..."
+          oninput="filterPlanCustomerOptions()"
+          class="bg-[#0f0f0f] text-white text-[10px] font-bold border border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-[#ffcc00] min-w-[260px]" />
+
+        <!-- dropdown tetap dipakai untuk pilih value yang valid -->
+        <select id="planCustomer" onchange="renderPlanningFromSupabase()"
+          class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2 min-w-[260px]">
+          <option value="ALL">ALL</option>
+        </select>
+
+        <div id="planCustomerHint" class="text-[9px] text-gray-400 font-bold"></div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-[9px] font-black text-white uppercase italic">Standart HM</label>
+        <select id="planEvent" onchange="renderPlanningFromSupabase()"
+          class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2">
+          <option value="ALL">ALL</option>
+          <option value="MIDLIFE">MIDLIFE</option>
+          <option value="GOH">GOH</option>
+        </select>
+      </div>
+
+    <div class="flex items-center gap-2">
+    <label class="text-[9px] font-black text-white uppercase italic">Buffer HM</label>
+
+    <input id="planBuffer" type="number" value="500" min="0" step="500" inputmode="numeric"
+      onchange="snapPlanBuffer(); renderPlanningFromSupabase();"
+      class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2 w-[120px]" />
+    </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-[#0f0f0f] p-5 rounded-2xl border border-gray-800">
+        <div class="text-[10px] text-gray-400 font-black uppercase">Total Cost</div>
+        <div id="planTotalCost" class="text-3xl font-black text-[#ffcc00] mt-2">IDR 0</div>
+      </div>
+      <div class="bg-[#0f0f0f] p-5 rounded-2xl border border-gray-800">
+        <div class="text-[10px] text-gray-400 font-black uppercase">Budget</div>
+        <div id="planBudget" class="text-3xl font-black text-blue-400 mt-2">IDR 0</div>
+      </div>
+      <div class="bg-[#0f0f0f] p-5 rounded-2xl border border-gray-800">
+        <div class="text-[10px] text-gray-400 font-black uppercase">Feasible</div>
+        <div id="planFeasible" class="text-3xl font-black text-green-500 mt-2">-</div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- KIRI: 1/3 -->
+      <div class="bg-[#0f0f0f] p-6 rounded-2xl border border-gray-800 lg:col-span-1">
+        <div class="text-[10px] text-gray-400 font-black uppercase mb-3">Budget vs Cost</div>
+        <div class="h-[320px]"><canvas id="chartPlanBudget"></canvas></div>
+      </div>
+
+      <!-- KANAN: 2/3 -->
+      <div class="bg-[#0f0f0f] p-6 rounded-2xl border border-gray-800 lg:col-span-2">
+        <div class="text-[10px] text-gray-400 font-black uppercase mb-3">Market Share (Populasi)</div>
+        <div class="h-[320px]"><canvas id="chartPlanMarketShare"></canvas></div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <!-- TABLE + FILTER -->
+<div class="mt-6">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[#1a1a1a] p-4 rounded-2xl border border-gray-800">
+    <div class="text-white font-black uppercase text-[10px]">
+      Opportunity Unit
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      <!-- Filter Typpe -->
+      <div class="flex items-center gap-2">
+        <label class="text-[9px] font-black text-white uppercase italic">Typpe</label>
+        <select id="planTyppeFilter" onchange="onPlanningTyppeChange()"
+          class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2 min-w-[180px]">
+          <option value="ALL">ALL</option>
+        </select>
+      </div>
+
+      <!-- Filter Model (disabled sebelum typpe dipilih) -->
+      <div class="flex items-center gap-2">
+        <label class="text-[9px] font-black text-white uppercase italic">Model</label>
+        <select id="planModelFilter" onchange="renderPlanningFromSupabase()" disabled
+          class="bg-[#0f0f0f] disabled:opacity-50 disabled:cursor-not-allowed text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-2 min-w-[180px]">
+          <option value="ALL">Pilih Typpe dulu</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="planningTable"></div>
+</div>
+  </div>
+</div>
+</div>
+
 <div id="page-unit-ut" class="tab-content hidden">
   <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
     <h3 class="text-[#ffcc00] font-black uppercase text-xs mb-6 italic">
@@ -248,33 +370,55 @@
 </div>
 
 <div id="page-customer" class="tab-content hidden">
-    <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col h-[750px]">
-        
-        <div class="flex flex-col md:flex-row justify-between items-start mb-8 flex-none gap-4">
-            <h3 class="text-[#ffcc00] font-black uppercase text-xs italic flex items-center mt-4">
-                <span class="w-8 h-1 bg-[#ffcc00] mr-3"></span> Distribusi Unit per Customer
-            </h3>
+  <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-xl flex flex-col h-[750px]">
 
-            <div class="flex items-center gap-3">
-                <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 text-center min-w-[160px] h-[58px] flex flex-col justify-center">
-                    <span class="text-white text-[9px] uppercase font-bold block mb-1">Analisa Customer</span>
-                    <select onchange="if(this.value) showCustomerDetail(this.value)" 
-                            class="bg-transparent text-[#ffcc00] text-sm font-black uppercase outline-none cursor-pointer text-center w-full appearance-none">
-                        <option value="" class="bg-[#161616]">-- Pilih Customer --</option>
-                        <option value="Kalimantan Prima Persada" class="bg-[#161616]">KPP</option>
-                        <option value="Unggul Dinamika Utama" class="bg-[#161616]">UDU</option>
-                        <option value="Berlian Duta Energi" class="bg-[#161616]">BDE</option>
-                        <option value="Mega Global Energi" class="bg-[#161616]">MGE</option>
-                        <option value="GHJ Triagung Mandiri" class="bg-[#161616]">GHJ</option>
-                    </select>
-                </div>
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row justify-between items-start mb-8 flex-none gap-4">
+      <div class="mt-4">
+        <h3 class="text-[#ffcc00] font-black uppercase text-xs italic flex items-center">
+          <span class="w-8 h-1 bg-[#ffcc00] mr-3"></span> Distribusi Unit per Customer
+        </h3>
+      </div>
 
-                <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 text-center min-w-[120px] h-[58px] flex flex-col justify-center">
-                    <span class="text-white text-[9px] uppercase font-bold block">Total Aktif Customer</span>
-                    <span id="res-unique-cust" class="text-[#ffcc00] font-black text-2xl tracking-tighter">0</span>
-                </div>
-            </div>
+      <div class="flex flex-col items-end gap-2">
+        <div class="flex items-center gap-3">
+          <!-- Analisa Customer -->
+          <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 text-center min-w-[160px] h-[58px] flex flex-col justify-center">
+            <span class="text-white text-[9px] uppercase font-bold block mb-1">Analisa Customer</span>
+            <select onchange="if(this.value) showCustomerDetail(this.value)" 
+                    class="bg-transparent text-[#ffcc00] text-sm font-black uppercase outline-none cursor-pointer text-center w-full appearance-none">
+              <option value="" class="bg-[#161616]">-- Pilih Customer --</option>
+              <option value="Kalimantan Prima Persada" class="bg-[#161616]">KPP</option>
+              <option value="Unggul Dinamika Utama" class="bg-[#161616]">UDU</option>
+              <option value="Berlian Duta Energi" class="bg-[#161616]">BDE</option>
+              <option value="Mega Global Energi" class="bg-[#161616]">MGE</option>
+              <option value="GHJ Triagung Mandiri" class="bg-[#161616]">GHJ</option>
+            </select>
+          </div>
+
+          <!-- Total Aktif Customer -->
+          <div class="bg-[#0f0f0f] px-4 py-2 rounded-xl border border-gray-800 text-center min-w-[120px] h-[58px] flex flex-col justify-center">
+            <span class="text-white text-[9px] uppercase font-bold block">Total Aktif Customer</span>
+            <span id="res-unique-cust" class="text-[#ffcc00] font-black text-2xl tracking-tighter">0</span>
+          </div>
         </div>
+
+        <!-- Hint -->
+        <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest italic text-right">
+          Klik bar untuk melihat detail tipe unit & status warranty
+        </p>
+      </div>
+    </div>
+
+    <!-- CHART AREA (SCROLL) -->
+    <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar" style="position: relative;">
+      <div id="container-customer-chart">
+        <canvas id="chartCustomerBar"></canvas>
+      </div>
+    </div>
+
+  </div>
+</div>
 
             <div id="page-nonut" class="tab-content hidden">
         <div class="bg-[#161616] p-8 rounded-3xl border border-gray-800 shadow-2xl">
@@ -312,6 +456,17 @@
     
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const NAMA_TABEL = 'Persebaran Unit_Sangkulirang';
+    // === TABEL PLANNING (SUPABASE) ===
+    const TBL_STANDARDS = "maint_standards";
+    const TBL_STD_PARTS = "maint_standard_parts"; // kalau nama tabel kamu beda, ganti di sini
+    const TBL_PRICES    = "sparepart_prices";
+    const TBL_BUDGET    = "customer_budgets";      // kalau tabel kamu namanya customer_budgets / customer_budget_x, ganti di sini
+
+    // cache planning
+    let STD_BY_KEY = new Map();          // std_key -> std object
+    let PARTS_BY_KEY = new Map();        // std_key -> parts[]
+    let PRICE_BY_PART = new Map();       // part_no -> price
+    let BUDGET_BY_CYE = new Map();       // "customer|year|event" -> budget
 
     let globalData = [];
     let charts = {};
@@ -320,21 +475,48 @@
 
     // 1. FUNGSI AMBIL DATA DARI SUPABASE
     async function loadDataFromCloud() {
-        const { data, error } = await _supabase
-            .from(NAMA_TABEL)
-            .select('*')
-            .range(0, 2000); 
+      // ambil semua data sekalian biar 1x load
+      const [
+        unitsRes,
+        stdRes,
+        partsRes,
+        pricesRes,
+        budgetRes
+      ] = await Promise.all([
+        _supabase.from(NAMA_TABEL).select("*").range(0, 5000),
+        _supabase.from(TBL_STANDARDS).select("*").range(0, 2000),
+        _supabase.from(TBL_STD_PARTS).select("*").range(0, 5000),
+        _supabase.from(TBL_PRICES).select("*").range(0, 5000),
+        _supabase.from(TBL_BUDGET).select("*").range(0, 5000),
+      ]);
 
-        if (!error && data) {
-            globalData = data;
-            console.log("Data loaded:", globalData.length);
-            calculateSummary();
-            renderAllCharts();
-            renderTrendYoY();
-            renderUnitPages();
-        } else {
-            console.error("Gagal ambil data:", error);
-        }
+      if (unitsRes.error) {
+        console.error("Gagal ambil unit:", unitsRes.error);
+        return;
+      }
+
+      globalData = unitsRes.data || [];
+      console.log("Units loaded:", globalData.length);
+
+      // planning tables boleh kosong (dummy), tapi jangan bikin crash
+      if (stdRes.error) console.warn("Standards error:", stdRes.error.message);
+      if (partsRes.error) console.warn("Std parts error:", partsRes.error.message);
+      if (pricesRes.error) console.warn("Prices error:", pricesRes.error.message);
+      if (budgetRes.error) console.warn("Budget error:", budgetRes.error.message);
+
+      buildPlanningCache(stdRes.data || [], partsRes.data || [], pricesRes.data || [], budgetRes.data || []);
+      console.log("Budget rows:", budgetRes.data?.length, "Budget map size:", BUDGET_BY_CYE.size);
+      console.log("STD_BY_KEY sample", Array.from(STD_BY_KEY.keys()).slice(0,5));
+      console.log("PARTS_BY_KEY keys", PARTS_BY_KEY.size);
+      console.log("PRICE_BY_PART size", PRICE_BY_PART.size);
+      console.log("BUDGET_BY_CYE size", BUDGET_BY_CYE.size);
+
+      // render page
+      calculateSummary();
+      renderAllCharts();
+      renderTrendYoY();
+      renderUnitPages();
+      initPlanningFromSupabase(); // ✅ ganti dari initPlanningDummy()
     }
 
 async function exportToExcelFromSupabase() {
@@ -416,16 +598,28 @@ function showCustomerDetail(name) {
     }
     summaryHtml += `</div>`;
 
-    // --- SISIPAN FILTER UNTUK TABEL SAJA ---
+    // --- SISIPAN FILTER UNTUK TABEL SAJA (TYPPE + STATUS) ---
     const filterHtml = `
-        <div class="flex items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
-            <label class="text-[9px] font-black text-white uppercase italic">Filter Typpe:</label>
-            <select id="typeTableFilter" onchange="filterTableOnly()" 
-                class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-1 outline-none focus:border-[#ffcc00]">
-                <option value="ALL">SEMUA TIPE UNIT</option>
-                ${Object.keys(typeSummary).map(t => `<option value="${t}">${t}</option>`).join('')}
-            </select>
+      <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+        <div class="flex items-center gap-3">
+          <label class="text-[9px] font-black text-white uppercase italic">Filter Typpe:</label>
+          <select id="typeTableFilter" onchange="filterTableOnly()" 
+            class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-1 outline-none focus:border-[#ffcc00]">
+            <option value="ALL">SEMUA TIPE UNIT</option>
+            ${Object.keys(typeSummary).map(t => `<option value="${t}">${t}</option>`).join('')}
+          </select>
         </div>
+
+        <div class="flex items-center gap-3">
+          <label class="text-[9px] font-black text-white uppercase italic">Filter Status:</label>
+          <select id="statusTableFilter" onchange="filterTableOnly()"
+            class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-1 outline-none focus:border-[#ffcc00]">
+            <option value="ALL">SEMUA STATUS</option>
+            <option value="WARRANTY">WARRANTY</option>
+            <option value="OUT WARRANTY">OUT WARRANTY</option>
+          </select>
+        </div>
+      </div>
     `;
 
     // 4. Masukkan ke Modal (Grafik + Filter + Wrapper Tabel)
@@ -489,6 +683,18 @@ function fillCustomerDropdown(selectId, rows) {
     customers.map(c => `<option value="${c.replaceAll('"', '&quot;')}">${c}</option>`).join("");
 }
 
+function snapPlanBuffer() {
+  const el = document.getElementById("planBuffer");
+  if (!el) return;
+
+  const step = 500;
+  let v = Number(el.value || 0);
+  if (!Number.isFinite(v)) v = 0;
+
+  v = Math.max(0, Math.round(v / step) * step); // snap kelipatan 500
+  el.value = String(v);
+}
+
 function applyUnitFilters() {
   // UT
   const utSelect = document.getElementById("filter-ut-customer");
@@ -531,31 +737,49 @@ function resetUnitFilter(which) {
 
 // FUNGSI KHUSUS UPDATE TABEL (Tanpa Ganggu Grafik Di Atasnya)
 function filterTableOnly() {
-    const val = document.getElementById('typeTableFilter').value;
-    const filtered = val === "ALL" 
-        ? currentModalData 
-        : currentModalData.filter(d => String(d.Typpe || "").toUpperCase() === val);
+  const typpeVal = document.getElementById('typeTableFilter')?.value || "ALL";
+  const statusVal = document.getElementById('statusTableFilter')?.value || "ALL";
 
-    // Render Tabel 
-    document.getElementById('tableWrapper').innerHTML = `
-        <div class="bg-[#0f0f0f] rounded-xl border border-gray-800 overflow-hidden">
-            <table class="w-full text-[11px] text-left">
-                <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black">
-                    <tr><th class="p-4">Model Number</th><th class="p-4">Typpe</th><th class="p-4 text-right">Status</th></tr>
-                </thead>
-                <tbody>
-                    ${filtered.map(d => `
-                        <tr class="border-b border-gray-900 hover:bg-white/5">
-                            <td class="p-4 font-bold text-[#ffcc00]">${d.model_number || '-'}</td>
-                            <td class="p-4 font-bold text-white">${d.Typpe || '-'}</td>
-                            <td class="p-4 text-right font-black ${String(d.warranty_status).includes('OUT') ? 'text-red-500' : 'text-green-500'}">
-                                ${d.warranty_status || '-'}
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>`;
+  let filtered = currentModalData.slice();
+
+  // filter typpe
+  if (typpeVal !== "ALL") {
+    filtered = filtered.filter(d => String(d.Typpe || "").toUpperCase() === typpeVal);
+  }
+
+  // filter status
+  if (statusVal !== "ALL") {
+    filtered = filtered.filter(d => normStatus(d.warranty_status) === statusVal);
+  }
+
+  document.getElementById('tableWrapper').innerHTML = `
+    <div class="bg-[#0f0f0f] rounded-xl border border-gray-800 overflow-hidden">
+      <table class="w-full text-[11px] text-left">
+        <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black">
+          <tr>
+            <th class="p-4">Model Number</th>
+            <th class="p-4">Typpe</th>
+            <th class="p-4 text-right">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(d => {
+            const st = normStatus(d.warranty_status);
+            const stClass = (st === "OUT WARRANTY") ? "text-red-500" : (st === "WARRANTY" ? "text-green-500" : "text-gray-400");
+            return `
+              <tr class="border-b border-gray-900 hover:bg-white/5">
+                <td class="p-4 font-bold text-[#ffcc00]">${d.model_number || '-'}</td>
+                <td class="p-4 font-bold text-white">${d.Typpe || '-'}</td>
+                <td class="p-4 text-right font-black ${stClass}">
+                  ${st}
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 function exportToExcel() {
@@ -601,7 +825,7 @@ function switchTab(target) {
     .classList.remove('hidden');
 
   // reset semua tombol
-  const tabs = ['main', 'charts', 'customer', 'trend', 'unit ut', 'unit non-ut'];
+  const tabs = ['main', 'charts', 'customer', 'trend', 'unit ut', 'unit non-ut', 'planning'];
 
   tabs.forEach(id => {
     const btn = document.getElementById('btn-' + id);
@@ -633,6 +857,10 @@ function switchTab(target) {
   if (target === 'trend') {
     setTimeout(renderTrendYoY, 100);
   }
+
+  if (target === 'planning') {
+  setTimeout(renderPlanningFromSupabase, 100);
+}
 }
 
 function toggleUnitDropdown() {
@@ -735,6 +963,14 @@ function norm(v) {
   return String(v ?? "").trim().toUpperCase();
 }
 
+function normStatus(v) {
+  const s = String(v || "").trim().toUpperCase();
+  if (!s) return "UNKNOWN";
+  if (s.includes("OUT")) return "OUT WARRANTY";
+  if (s.includes("WAR")) return "WARRANTY";
+  return s; // fallback kalau ada status lain
+}
+
 let currentWarrantyRows = []; // nyimpen data yg lagi dibuka di modal (WAR / OUT)
 
 function getUniqueTyppe(rows) {
@@ -744,22 +980,21 @@ function getUniqueTyppe(rows) {
   return Array.from(set).sort();
 }
 
-function renderWarrantyTable(rows, typpeFilter) {
-  const content = document.getElementById('subModalContent'); // pastikan id ini sudah kamu ganti ya
-  if (!content) return;
+function renderWarrantyTable(rows, typpeFilter, searchText) {
+  const q = String(searchText || "").trim().toUpperCase();
 
-  const filtered =
+  let filtered =
     typpeFilter === "ALL"
-      ? rows
+      ? rows.slice()
       : rows.filter(r => String(r.Typpe || r.typpe || "").trim().toUpperCase() === typpeFilter);
 
-  if (filtered.length === 0) {
-    content.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-20 text-gray-500">
-        <p class="italic">Data tidak ditemukan untuk filter Typpe tersebut.</p>
-      </div>
-    `;
-    return;
+  if (q) {
+    filtered = filtered.filter(r => {
+      const typ = String(r.Typpe || r.typpe || "").toUpperCase();
+      const cust = String(r.customer || "").toUpperCase();
+      const sn = String(getSerial(r) || "").toUpperCase();
+      return typ.includes(q) || cust.includes(q) || sn.includes(q);
+    });
   }
 
   // sort SMR desc (opsional)
@@ -775,19 +1010,19 @@ function renderWarrantyTable(rows, typpeFilter) {
       <table class="w-full text-left border-collapse whitespace-nowrap">
         <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black border-b border-gray-800">
           <tr>
-            <th class="p-4 text-[10px]">No</th>
-            <th class="p-4 text-[10px]">Typpe</th>
-            <th class="p-4 text-[10px]">Serial Number</th>
-            <th class="p-4 text-[10px] text-right">SMR[H]</th>
+          <th class="p-4 text-[10px]">Typpe</th>
+          <th class="p-4 text-[10px]">Customer</th>
+          <th class="p-4 text-[10px]">Serial Number</th>
+          <th class="p-4 text-[10px] text-right">SMR[H]</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
           ${filtered.map((d, i) => `
             <tr class="hover:bg-white/5 transition-colors text-xs">
-              <td class="p-4 text-gray-500">${i + 1}</td>
-              <td class="p-4 text-white font-bold">${d.Typpe || d.typpe || "-"}</td>
-              <td class="p-4 text-blue-400 font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
-              <td class="p-4 text-right text-white font-black">${getSMR(d) ?? "-"}</td>
+            <td class="p-4 text-white font-bold">${d.Typpe || d.typpe || "-"}</td>
+            <td class="p-4 text-gray-200 font-bold">${d.customer || "-"}</td>
+            <td class="p-4 text-blue-400 font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
+            <td class="p-4 text-right text-white font-black">${getSMR(d) ?? "-"}</td>
             </tr>
           `).join("")}
         </tbody>
@@ -1038,28 +1273,42 @@ if(charts.cust) charts.cust.destroy();
                 barThickness: 20
             }]
         },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            // --- TAMBAHAN SENSOR KLIK DI SINI ---
-            onClick: (e, items) => {
-                if (items.length > 0) {
-                    const index = items[0].index;
-                    const customerName = charts.cust.data.labels[index];
-                    showCustomerDetail(customerName); // Memanggil fungsi sub-halaman
-                }
-            },
-            // ------------------------------------
-            plugins: {
-                legend: { display: false },
-                datalabels: { anchor: 'end', align: 'right', color: '#fff', font: { weight: 'bold', size: 10 } }
-            },
-            scales: {
-                y: { grid: { display: false }, ticks: { color: '#ffffff', font: { size: 9, weight: 'bold' } } },
-                x: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#555' }, position: 'top' }
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+
+        onHover: (event, elements) => {
+          const canvas = event.native?.target;
+          if (!canvas) return;
+          canvas.style.cursor = elements.length ? "pointer" : "default";
+        },
+
+        onClick: (e, items) => {
+          if (items.length > 0) {
+            const index = items[0].index;
+            const customerName = charts.cust.data.labels[index];
+            showCustomerDetail(customerName);
+          }
+        },
+
+        plugins: {
+          legend: { display: false },
+          datalabels: { anchor: 'end', align: 'right', color: '#fff', font: { weight: 'bold', size: 10 } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const val = ctx.parsed.x ?? ctx.parsed.y ?? 0;
+                return `Total: ${val} unit • Klik untuk detail`;
+              }
             }
+          }
+        },
+        scales: {
+          y: { grid: { display: false }, ticks: { color: '#ffffff', font: { size: 9, weight: 'bold' } } },
+          x: { beginAtZero: true, grid: { color: '#222' }, ticks: { color: '#555' }, position: 'top' }
         }
+      }
     });
 } // Penutup fungsi renderAllCharts
 
@@ -1068,58 +1317,6 @@ function getUniqueTyppe(rows) {
     rows.map(r => String(r.Typpe || r.typpe || "").trim().toUpperCase()).filter(Boolean)
   );
   return Array.from(set).sort();
-}
-
-function renderWarrantyTable(rows, typpeFilter) {
-  const content = document.getElementById('subModalContent');
-  if (!content) return;
-
-  const filtered =
-    typpeFilter === "ALL"
-      ? rows
-      : rows.filter(r => String(r.Typpe || r.typpe || "").trim().toUpperCase() === typpeFilter);
-
-  // Sort: SMR terbesar dulu (opsional)
-  filtered.sort((a, b) => (getSMR(b) ?? -1) - (getSMR(a) ?? -1));
-
-  if (filtered.length === 0) {
-    content.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-20 text-gray-500">
-        <p class="italic">Data tidak ditemukan untuk filter Typpe tersebut.</p>
-      </div>
-    `;
-    return;
-  }
-
-  content.innerHTML = `
-    <div class="mb-4 flex justify-between items-center">
-      <div class="text-sm text-gray-400">Total: <b class="text-white">${filtered.length}</b> unit</div>
-      <div class="text-[10px] text-gray-500 uppercase tracking-widest italic">Sangkulirang Database</div>
-    </div>
-
-    <div class="overflow-x-auto rounded-xl border border-gray-800 bg-black/20">
-      <table class="w-full text-left border-collapse whitespace-nowrap">
-        <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black border-b border-gray-800">
-          <tr>
-            <th class="p-4 text-[10px]">No</th>
-            <th class="p-4 text-[10px]">Typpe</th>
-            <th class="p-4 text-[10px]">Serial Number</th>
-            <th class="p-4 text-[10px] text-right">SMR[H]</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-800">
-          ${filtered.map((d, i) => `
-            <tr class="hover:bg-white/5 transition-colors text-xs">
-              <td class="p-4 text-gray-500">${i + 1}</td>
-              <td class="p-4 text-white font-bold">${d.Typpe || d.typpe || "-"}</td>
-              <td class="p-4 text-blue-400 font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
-              <td class="p-4 text-right text-white font-black">${(getSMR(d) ?? "-")}</td>
-            </tr>
-          `).join("")}
-        </tbody>
-      </table>
-    </div>
-  `;
 }
 
 function openDetailModal(type) {
@@ -1169,8 +1366,9 @@ function openDetailModal(type) {
   const typpeList = getUniqueTyppe(currentWarrantyRows);
 
   if (filterWrap) {
-    filterWrap.innerHTML = `
-      <div class="flex items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+  filterWrap.innerHTML = `
+    <div class="flex flex-col md:flex-row md:items-center gap-3 mb-4 bg-[#1a1a1a] p-3 rounded-xl border border-gray-800">
+      <div class="flex items-center gap-3">
         <label class="text-[9px] font-black text-white uppercase italic">Filter Typpe:</label>
         <select id="typpeFilterSelect"
           class="bg-[#0f0f0f] text-[#ffcc00] text-[10px] font-black uppercase border border-gray-700 rounded-lg px-3 py-1 outline-none focus:border-[#ffcc00]">
@@ -1178,17 +1376,34 @@ function openDetailModal(type) {
           ${typpeList.map(t => `<option value="${t}">${t}</option>`).join("")}
         </select>
       </div>
-    `;
+
+      <div class="flex items-center gap-3 flex-1">
+        <label class="text-[9px] font-black text-white uppercase italic whitespace-nowrap">Search:</label>
+        <input id="warrantySearchInput" type="text" placeholder="Ketik customer / serial / typpe..."
+          class="w-full bg-[#0f0f0f] text-white text-[11px] font-bold border border-gray-700 rounded-lg px-3 py-2 outline-none focus:border-[#ffcc00]" />
+      </div>
+    </div>
+  `;
 
     // event change -> render ulang tabel
     const sel = document.getElementById("typpeFilterSelect");
     if (sel) {
-      sel.onchange = () => renderWarrantyTable(currentWarrantyRows, sel.value);
+      const sel = document.getElementById("typpeFilterSelect");
+      const inp = document.getElementById("warrantySearchInput");
+
+      const rerender = () => {
+        const typpeVal = sel ? sel.value : "ALL";
+        const q = inp ? inp.value : "";
+        renderWarrantyTable(currentWarrantyRows, typpeVal, q);
+      };
+
+      if (sel) sel.onchange = rerender;
+      if (inp) inp.oninput = rerender;
     }
   }
 
   // render pertama kali
-  renderWarrantyTable(currentWarrantyRows, "ALL");
+  renderWarrantyTable(currentWarrantyRows, "ALL", "");
 }
 
 function closeSubHalaman() {
@@ -1272,7 +1487,535 @@ function renderTrendYoY() {
       }
     }
   });
-}    
+}
+
+/***********************
+ * PLANNING (SUPABASE)
+ * Sources:
+ * - maint_standards        (std_key, event, typpe, model_number, hm_trigger, labor_cost, misc_cost)
+ * - maint_standard_parts   (std_key, part_no, desc, qty)
+ * - sparepart_prices       (part_no, price)
+ * - customer_budget        (customer, year, event, budget)  ATAU (customer, year, midlife, goh)
+ ***********************/
+
+// helper kecil
+function normU(v) { return String(v ?? "").trim().toUpperCase(); }
+function asNum(v) {
+  const n = Number(String(v ?? "").replace(/[^0-9.\-]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+function pick(row, keys) {
+  for (const k of keys) {
+    if (row && Object.prototype.hasOwnProperty.call(row, k) && row[k] != null) return row[k];
+    // coba case-insensitive
+    if (row) {
+      const kk = Object.keys(row).find(x => x.toLowerCase() === String(k).toLowerCase());
+      if (kk && row[kk] != null) return row[kk];
+    }
+  }
+  return null;
+}
+
+function formatIDR_(n) {
+  const v = Number(n || 0);
+  return "IDR " + v.toLocaleString("id-ID");
+}
+
+// bikin cache dari tabel supabase
+function buildPlanningCache(standardsRows, partsRows, pricesRows, budgetRows) {
+  STD_BY_KEY.clear();
+  PARTS_BY_KEY.clear();
+  PRICE_BY_PART.clear();
+  BUDGET_BY_CYE.clear();
+
+  // standards
+  standardsRows.forEach(r => {
+    const std_key = String(pick(r, ["std_key"]) || "").trim();
+    if (!std_key) return;
+
+    const std = {
+      std_key,
+      event: normU(pick(r, ["event"])),
+      typpe: normU(pick(r, ["typpe", "Typpe"])) || "DEFAULT",
+      model_number: String(pick(r, ["model_number", "model"]) || "ALL").trim() || "ALL",
+      hm_trigger: asNum(pick(r, ["hm_trigger", "hm", "hm_", "hm_std"])),
+      labor_cost: asNum(pick(r, ["labor_cost", "labour_cost", "labor", "labour"])),
+      misc_cost: asNum(pick(r, ["misc_cost", "misc", "other_cost"])),
+    };
+
+    STD_BY_KEY.set(std_key, std);
+  });
+
+  // standard parts
+  partsRows.forEach(r => {
+    const std_key = String(pick(r, ["std_key"]) || "").trim();
+    if (!std_key) return;
+
+    const part_no = normU(pick(r, ["part_no", "part", "pn"]));
+    const desc = String(pick(r, ["desc", "description", "part_desc"]) || "").trim();
+    const qty = asNum(pick(r, ["qty", "quantity"]));
+
+    if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
+    PARTS_BY_KEY.get(std_key).push({ part_no, desc, qty });
+  });
+
+  // prices
+  pricesRows.forEach(r => {
+    const part_no = normU(pick(r, ["part_no", "part", "pn"]));
+    const price = asNum(pick(r, ["price", "harga"]));
+    if (!part_no) return;
+    PRICE_BY_PART.set(part_no, price);
+  });
+
+  // budgets (flexibel)
+  budgetRows.forEach(r => {
+    const customer = String(pick(r, ["customer"]) || "").trim().toUpperCase();
+    const year = Number(pick(r, ["year", "tahun"]));
+    if (!customer || !year) return;
+
+    // format A: customer, year, event, budget
+    const ev = normU(pick(r, ["event"]));
+    const bud = pick(r, ["budget", "amount", "nilai"]);
+    if (ev && bud != null) {
+      BUDGET_BY_CYE.set(`${customer}|${year}|${ev}`, asNum(bud));
+      return;
+    }
+
+    // format B: customer, year, midlife, goh
+    // format B: customer, year, budget_midlife, budget_goh, budget_total
+    const mid = pick(r, ["budget_midlife", "midlife", "midlife_budget"]);
+    const goh = pick(r, ["budget_goh", "goh", "goh_budget"]);
+    const tot = pick(r, ["budget_total", "total", "budget"]);
+
+    if (mid != null) BUDGET_BY_CYE.set(`${customer}|${year}|MIDLIFE`, asNum(mid));
+    if (goh != null) BUDGET_BY_CYE.set(`${customer}|${year}|GOH`, asNum(goh));
+    if (tot != null) BUDGET_BY_CYE.set(`${customer}|${year}|ALL`, asNum(tot));
+  });
+
+  console.log("[PLANNING] standards:", STD_BY_KEY.size,
+              "| std_parts keys:", PARTS_BY_KEY.size,
+              "| prices:", PRICE_BY_PART.size,
+              "| budgets:", BUDGET_BY_CYE.size);
+}
+
+function getStdKey_(event, typpe, model) {
+  const e = normU(event);
+  const t = normU(typpe) || "DEFAULT";
+  const m = String(model || "ALL").trim() || "ALL";
+
+  const candidates = [
+    `${e}|${t}|${m}`,
+    `${e}|${t}|ALL`,
+    `${e}|DEFAULT|${m}`,
+    `${e}|DEFAULT|ALL`,
+  ];
+
+  for (const k of candidates) {
+    if (STD_BY_KEY.has(k)) return k;
+  }
+  return null;
+}
+
+function calcCostFromStdKey_(std_key) {
+  const std = STD_BY_KEY.get(std_key);
+  if (!std) return { total: 0, missing: [] };
+
+  const parts = PARTS_BY_KEY.get(std_key) || [];
+  let partCost = 0;
+  const missing = [];
+
+  parts.forEach(p => {
+    const pn = normU(p.part_no);
+    const qty = Number(p.qty || 0);
+    if (!pn || !qty) return;
+
+    const price = PRICE_BY_PART.get(pn);
+    if (price == null) missing.push(pn);
+
+    partCost += (Number(price || 0) * qty);
+  });
+
+  const total = partCost + Number(std.labor_cost || 0) + Number(std.misc_cost || 0);
+  return { total, missing };
+}
+
+// NOTE: kalau belum ada “HM per year” di DB, kita pakai default 5000 (logic aja, bukan dummy data tabel)
+function getHmPerYear_(typpe) {
+  return 5000;
+}
+
+function predictDueYear_(currentHM, triggerHM, hmPerYear) {
+  const nowY = new Date().getFullYear();
+  const cur = Number(currentHM);
+  const trg = Number(triggerHM);
+  const rate = Number(hmPerYear);
+
+  if (!Number.isFinite(cur) || !Number.isFinite(trg) || !rate) return null;
+
+  const remaining = trg - cur;
+  if (remaining <= 0) return nowY;
+  return nowY + Math.ceil(remaining / rate);
+}
+
+function getBudget_(customer, year, eventSel) {
+  const c = String(customer || "").trim().toUpperCase();
+  const y = Number(year);
+  const ev = normU(eventSel);
+
+  if (!c || !y) return 0;
+
+  if (ev === "ALL") {
+    return (BUDGET_BY_CYE.get(`${c}|${y}|MIDLIFE`) || 0) + (BUDGET_BY_CYE.get(`${c}|${y}|GOH`) || 0);
+  }
+  return BUDGET_BY_CYE.get(`${c}|${y}|${ev}`) || 0;
+}
+
+function initPlanningFromSupabase() {
+  // isi dropdown year
+  const yEl = document.getElementById("planYear");
+  const now = new Date().getFullYear();
+  if (yEl) {
+    yEl.innerHTML = "";
+    for (let y = now - 1; y <= now + 3; y++) yEl.innerHTML += `<option value="${y}">${y}</option>`;
+    yEl.value = String(now);
+  }
+
+  // isi dropdown customer
+  const cEl = document.getElementById("planCustomer");
+  if (cEl) {
+    PLAN_CUSTOMERS_ALL = [...new Set(globalData.map(d => String(d.customer || "").trim()).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b));
+
+    // reset search box
+    const search = document.getElementById("planCustomerSearch");
+    if (search) search.value = "";
+
+    // render options awal
+    setPlanCustomerOptions(PLAN_CUSTOMERS_ALL);
+  }
+
+  renderPlanningFromSupabase();
+}
+
+// ===== SEARCHABLE CUSTOMER FILTER (PLANNING) =====
+let PLAN_CUSTOMERS_ALL = []; // simpan semua customer asli
+
+function setPlanCustomerOptions(list) {
+  const sel = document.getElementById("planCustomer");
+  const hint = document.getElementById("planCustomerHint");
+  if (!sel) return;
+
+  const current = sel.value || "ALL";
+
+  sel.innerHTML =
+    `<option value="ALL">ALL</option>` +
+    list.map(c => `<option value="${String(c).replaceAll('"','&quot;')}">${c}</option>`).join("");
+
+  // coba pertahankan pilihan lama kalau masih ada
+  if ([...sel.options].some(o => o.value === current)) sel.value = current;
+  else sel.value = "ALL";
+
+  if (hint) hint.innerText = `Menampilkan ${list.length} customer`;
+}
+
+function filterPlanCustomerOptions() {
+  const q = String(document.getElementById("planCustomerSearch")?.value || "")
+    .trim()
+    .toUpperCase();
+
+  const filtered = !q
+    ? PLAN_CUSTOMERS_ALL
+    : PLAN_CUSTOMERS_ALL.filter(c => String(c).toUpperCase().includes(q));
+
+  setPlanCustomerOptions(filtered);
+}
+
+function setSelectOptions_(el, options, placeholderAll = "ALL") {
+  if (!el) return;
+  const current = el.value;
+  el.innerHTML =
+    `<option value="ALL">${placeholderAll}</option>` +
+    options.map(v => `<option value="${String(v).replaceAll('"', '&quot;')}">${v}</option>`).join("");
+
+  if ([...el.options].some(o => o.value === current)) el.value = current;
+  else el.value = "ALL";
+}
+
+function onPlanningTyppeChange() {
+  const typEl = document.getElementById("planTyppeFilter");
+  const mdlEl = document.getElementById("planModelFilter");
+  const typVal = typEl ? typEl.value : "ALL";
+
+  if (mdlEl) {
+    mdlEl.value = "ALL";
+    if (typVal === "ALL") {
+      mdlEl.disabled = true;
+      mdlEl.innerHTML = `<option value="ALL">Pilih Typpe dulu</option>`;
+    } else {
+      mdlEl.disabled = false;
+    }
+  }
+
+  renderPlanningFromSupabase();
+}
+
+// pakai tombol +/- 500
+function bumpPlanBuffer(delta) {
+  const el = document.getElementById("planBuffer");
+  if (!el) return;
+
+  const step = 500;
+  let v = Number(el.value || 0);
+  if (!Number.isFinite(v)) v = 0;
+
+  v = Math.max(0, v + delta);
+  v = Math.round(v / step) * step;
+
+  el.value = String(v);
+  renderPlanningFromSupabase();
+}
+
+function renderPlanningFromSupabase() {
+  const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
+  const customer = document.getElementById("planCustomer")?.value || "ALL";
+  const eventSel = document.getElementById("planEvent")?.value || "ALL";
+  const buffer = Number(document.getElementById("planBuffer")?.value || 0);
+
+  let rows = globalData.slice();
+  if (customer !== "ALL") rows = rows.filter(r => String(r.customer || "").trim() === customer);
+
+  const events = (eventSel === "ALL") ? ["MIDLIFE", "GOH"] : [normU(eventSel)];
+
+  const items = [];
+  rows.forEach(r => {
+    const typpe = normU(r.Typpe || r.typpe || "DEFAULT") || "DEFAULT";
+    const model = String(r.model_number || r.model || "ALL").trim() || "ALL";
+
+    const currentHM = getSMR(r);
+    if (currentHM == null) return;
+
+    events.forEach(ev => {
+      const std_key = getStdKey_(ev, typpe, model);
+      if (!std_key) return;
+
+      const std = STD_BY_KEY.get(std_key);
+      const hmPerYear = getHmPerYear_(typpe);
+      const dueYear = predictDueYear_(currentHM, std.hm_trigger, hmPerYear);
+      if (dueYear !== year) return;
+
+      const remaining = Number(std.hm_trigger) - Number(currentHM);
+      if (buffer > 0 && remaining > buffer) return;
+
+      const cost = calcCostFromStdKey_(std_key);
+
+      items.push({
+        event: ev,
+        customer: String(r.customer || "-"),
+        typpe,
+        model,
+        serial: getSerial(r),
+        work_center: String(r.wrk_cntr || "-"),
+        current_hm: currentHM,
+        hm_trigger: std.hm_trigger,
+        remaining_hm: remaining,
+        cost_total: cost.total,
+        missing_parts: cost.missing,
+        std_key
+      });
+    });
+  });
+
+  // ===== FILTER Typpe & Model (buat tabel) =====
+  const typEl = document.getElementById("planTyppeFilter");
+  const mdlEl = document.getElementById("planModelFilter");
+
+  const allTyppe = [...new Set(items.map(i => i.typpe).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  setSelectOptions_(typEl, allTyppe, "ALL");
+
+  const selectedTyppe = typEl ? typEl.value : "ALL";
+
+  if (mdlEl) {
+    if (selectedTyppe === "ALL") {
+      mdlEl.disabled = true;
+      mdlEl.innerHTML = `<option value="ALL">Pilih Typpe dulu</option>`;
+    } else {
+      mdlEl.disabled = false;
+      const models = [...new Set(items
+        .filter(i => i.typpe === selectedTyppe)
+        .map(i => String(i.model || "-").trim())
+        .filter(Boolean)
+      )].sort((a,b)=>a.localeCompare(b));
+
+      setSelectOptions_(mdlEl, models, "ALL");
+    }
+  }
+
+  const selectedModel = (mdlEl && !mdlEl.disabled) ? mdlEl.value : "ALL";
+
+  let viewItems = items.slice();
+  if (selectedTyppe !== "ALL") viewItems = viewItems.filter(i => i.typpe === selectedTyppe);
+  if (selectedTyppe !== "ALL" && selectedModel !== "ALL") viewItems = viewItems.filter(i => String(i.model) === String(selectedModel));
+
+  // ===== SUMMARY =====
+  const totalCost = viewItems.reduce((a,b)=>a + Number(b.cost_total || 0), 0);
+  const budget = (customer === "ALL") ? 0 : getBudget_(customer, year, eventSel);
+  const feasible = (customer === "ALL") ? null : (totalCost <= budget);
+
+  const elCost = document.getElementById("planTotalCost");
+  const elBudg = document.getElementById("planBudget");
+  const elFeas = document.getElementById("planFeasible");
+
+  if (elCost) elCost.innerText = formatIDR_(totalCost);
+  if (elBudg) elBudg.innerText = (customer === "ALL") ? "Pilih customer dulu" : formatIDR_(budget);
+  if (elFeas) elFeas.innerText = (customer === "ALL") ? "-" : (feasible ? "BISA" : "TIDAK");
+
+  // ===== TABLE =====
+  const tbl = document.getElementById("planningTable");
+  if (tbl) {
+    tbl.innerHTML = `
+      <div class="bg-[#0f0f0f] rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="p-4 border-b border-gray-800 flex justify-between">
+          <div class="text-white font-black uppercase text-[10px]">Opportunity Unit (${viewItems.length})</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-[11px] text-left whitespace-nowrap">
+            <thead class="bg-[#1a1a1a] text-[#ffcc00] uppercase font-black border-b border-gray-800">
+              <tr>
+                <th class="p-4">Event</th>
+                <th class="p-4">Customer</th>
+                <th class="p-4">Typpe</th>
+                <th class="p-4">Model</th>
+                <th class="p-4">Serial</th>
+                <th class="p-4 text-right">HM</th>
+                <th class="p-4 text-right">Trigger</th>
+                <th class="p-4 text-right">Cost</th>
+                <th class="p-4 text-right">Missing Price</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-900">
+              ${viewItems.map(it => `
+                <tr class="hover:bg-white/5 transition-colors">
+                  <td class="p-4 font-black ${it.event==="GOH" ? "text-red-400":"text-blue-400"}">${it.event}</td>
+                  <td class="p-4 text-gray-200 font-bold">${it.customer}</td>
+                  <td class="p-4 text-gray-200">${it.typpe}</td>
+                  <td class="p-4 text-gray-200">${it.model}</td>
+                  <td class="p-4 text-blue-400 font-mono font-bold">${it.serial}</td>
+                  <td class="p-4 text-right text-white font-bold">${it.current_hm}</td>
+                  <td class="p-4 text-right text-white font-bold">${it.hm_trigger}</td>
+                  <td class="p-4 text-right text-[#ffcc00] font-black">${formatIDR_(it.cost_total)}</td>
+                  <td class="p-4 text-right ${it.missing_parts.length ? "text-red-400":"text-green-400"} font-bold">
+                    ${it.missing_parts.length ? it.missing_parts.length : "OK"}
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  // charts tetap (budget vs cost, market share)
+  renderPlanningCharts_(totalCost, budget, customer);
+}
+
+function renderPlanningCharts_(totalCost, budget, customer) {
+  // 1) Budget vs Cost bar
+  const c1 = document.getElementById("chartPlanBudget");
+  if (c1) {
+    if (charts.planBudget) charts.planBudget.destroy();
+
+    const labels = (customer === "ALL") ? ["Total Cost"] : ["Cost", "Budget"];
+    const data = (customer === "ALL") ? [totalCost] : [totalCost, budget];
+
+    charts.planBudget = new Chart(c1, {
+      type: "bar",
+      data: { labels, datasets: [{ data }] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: "end",
+            align: "top",
+            color: "#fff",
+            font: { weight: "bold" }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#fff" } },
+          y: { ticks: { color: "#fff" }, grid: { color: "#222" } }
+        }
+      }
+    });
+  }
+
+  // 2) Market share bar (Top N + Others)
+  const c2 = document.getElementById("chartPlanMarketShare");
+  if (c2) {
+    const map = {};
+    globalData.forEach(d => {
+      const c = String(d.customer || "").trim();
+      if (!c) return;
+      map[c] = (map[c] || 0) + 1;
+    });
+
+    // sort descending
+    const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
+
+    const TOP_N = 10; // ubah jadi 15 kalau mau
+    const top = sorted.slice(0, TOP_N);
+    const rest = sorted.slice(TOP_N);
+
+    const others = rest.reduce((sum, [,v]) => sum + v, 0);
+
+    const labels = top.map(([k]) => k);
+    const data = top.map(([,v]) => v);
+
+    if (others > 0) {
+      labels.push("OTHERS");
+      data.push(others);
+    }
+
+    // tinggi chart biar gak mepet
+    const parent = c2.parentElement;
+    if (parent) parent.style.height = "360px";
+
+    if (charts.planShare) charts.planShare.destroy();
+    charts.planShare = new Chart(c2, {
+      type: "bar",
+      data: { 
+        labels, 
+        datasets: [{ data, borderRadius: 6, barThickness: 18 }] 
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: "end",
+            align: "right",
+            color: "#fff",
+            font: { weight: "bold", size: 10 },
+            formatter: (v) => v
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `Populasi: ${ctx.parsed.x} unit`
+            }
+          }
+        },
+        scales: {
+          y: { ticks: { color: "#fff", font: { size: 10, weight: "bold" } }, grid: { display: false } },
+          x: { ticks: { color: "#fff" }, grid: { color: "#222" }, beginAtZero: true }
+        }
+      }
+    });
+  }
+}
 
 function setStaticUpdate() {
     const now = new Date();
