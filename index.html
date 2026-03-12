@@ -553,6 +553,11 @@
 
     let globalData = [];
     let charts = {};
+    const CUSTOMER_TAB_WHITELIST = new Set(["KALIMANTAN PRIMA PERSADA", "GHJ TRIAGUNG MANDIRI", "MEGA GLOBAL ENERGI", "BERLIAN DUTA ENERGI", "UNGGUL DINAMIKA UTAMA"]);
+
+    function getCustomerTabData() {
+      return globalData.filter(d => CUSTOMER_TAB_WHITELIST.has(norm(d.customer)));
+    }
 
     // modal data
     let currentModalData = [];
@@ -1012,16 +1017,19 @@
     function fillCustomerTopDropdown(){
       const sel = document.getElementById("customerSelectTop");
       if (!sel) return;
-      const customers = [...new Set(globalData.map(d => String(d.customer||"").trim()).filter(Boolean))]
-        .sort((a,b)=>a.localeCompare(b));
+
+      const customers = [...new Set(
+        getCustomerTabData().map(d => norm(d.customer)).filter(Boolean)
+      )].sort((a,b)=>a.localeCompare(b));
+
       sel.innerHTML = `<option value="">-- Pilih Customer --</option>` +
         customers.map(c=>`<option value="${c.replaceAll('"','&quot;')}">${c}</option>`).join("");
     }
 
     // ===== CUSTOMER MODAL DETAIL =====
     function showCustomerDetail(name) {
-      currentModalData = globalData
-        .filter(d => String(d.customer||"").trim().toUpperCase() === String(name||"").trim().toUpperCase())
+      currentModalData = getCustomerTabData()
+        .filter(d => norm(d.customer) === norm(name))
         .sort((a,b)=> String(a.Typpe||"").localeCompare(String(b.Typpe||"")));
 
       const typeSummary = {};
