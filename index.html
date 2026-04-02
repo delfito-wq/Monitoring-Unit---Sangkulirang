@@ -273,7 +273,7 @@
     <div id="page-planning" class="tab-content hidden">
       <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
         <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">
-          Planning Midlife & GOH
+          Planning Opportunity
         </h3>
 
         <!-- FILTER -->
@@ -302,32 +302,14 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Standart HM</label>
-            <select id="planEvent" onchange="renderPlanningFromSupabase()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2">
-              <option value="ALL">ALL</option>
-              <option value="MIDLIFE">MIDLIFE</option>
-              <option value="GOH">GOH</option>
-            </select>
-          </div>
-
-          <!-- BUFFER HM (tombol step 500, simple) -->
-          <div class="flex items-center gap-2">
-            <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Buffer HM</label>
-
-            <button type="button" onclick="bumpPlanBuffer(-500)"
-              class="px-3 py-2 rounded-lg bg-white border border-[var(--border)] text-[var(--text)] font-black text-[12px] hover:border-[var(--accent)] active:scale-95">
-              −
-            </button>
-
-            <input id="planBuffer" type="number" value="500" min="0" step="500" inputmode="numeric"
-              onchange="snapPlanBuffer(); renderPlanningFromSupabase();"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 w-[110px] text-center" />
-
-            <button type="button" onclick="bumpPlanBuffer(500)"
-              class="px-3 py-2 rounded-lg bg-white border border-[var(--border)] text-[var(--text)] font-black text-[12px] hover:border-[var(--accent)] active:scale-95">
-              +
-            </button>
+          <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Job Type</label>
+          <select id="planEvent" onchange="renderPlanningFromSupabase()"
+            class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2">
+            <option value="ALL">ALL</option>
+            <option value="MIDLIFE">MIDLIFE</option>
+            <option value="GOH">GOH</option>
+            <option value="PCR">PCR</option>
+          </select>
           </div>
         </div>
 
@@ -652,19 +634,34 @@
         "-"
       );
     }
-    function getSMR(d){
-      const raw =
-        d.smr_h ??
-        d["smr_h"] ??
-        d["SMR[H]"] ??
-        d["SMR (H)"] ??
-        d["smr[h]"] ??
-        d.smr ??
-        "";
+function getSMR(d){
+  const raw =
+    d.smr_h ??
+    d["smr_h"] ??
+    d["SMR[H]"] ??
+    d["SMR (H)"] ??
+    d["smr[h]"] ??
+    d.smr ??
+    "";
 
-      const n = Number(String(raw).replace(/[^0-9.]/g, ""));
-      return Number.isFinite(n) ? n : null;
-    }
+  const n = Number(String(raw).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) ? n : null;
+}
+
+  function getPlanningHMActual(d){
+    const raw =
+      d.hm_actual ??
+      d["hm_actual"] ??
+      d["HM Actual"] ??
+      d["HM ACTUAL"] ??
+      d["hm actual"] ??
+      d["HM_AKTUAL"] ??
+      d["HM Aktual"] ??
+      "";
+
+    const n = Number(String(raw).replace(/[^0-9.]/g, ""));
+    return Number.isFinite(n) ? n : null;
+  }
 
     // UT vs NonUT (robust)
     function isUT(d){
@@ -1445,129 +1442,168 @@
       return "IDR " + v.toLocaleString("id-ID");
     }
 
-    function buildPlanningCache(standardsRows, partsRows, pricesRows, budgetRows){
-      STD_BY_KEY.clear();
-      PARTS_BY_KEY.clear();
-      PRICE_BY_PART.clear();
-      BUDGET_BY_CYE.clear();
+function buildPlanningCache(standardsRows, partsRows, pricesRows, budgetRows){
+  STD_BY_KEY.clear();
+  PARTS_BY_KEY.clear();
+  PRICE_BY_PART.clear();
+  BUDGET_BY_CYE.clear();
 
-      standardsRows.forEach(r=>{
-        const std_key = String(pick(r, ["std_key"])||"").trim();
-        if (!std_key) return;
+  standardsRows.forEach(r => {
+    const std_key = String(pick(r, ["std_key"]) || "").trim();
+    if (!std_key) return;
 
-        const std = {
-          std_key,
-          event: normU(pick(r, ["event"])),
-          typpe: normU(pick(r, ["typpe","Typpe"])) || "DEFAULT",
-          model_number: String(pick(r, ["model_number","model"])||"ALL").trim() || "ALL",
-          hm_trigger: asNum(pick(r, ["hm_trigger","hm","hm_","hm_std"])),
-          labor_cost: asNum(pick(r, ["labor_cost","labour_cost","labor","labour"])),
-          misc_cost: asNum(pick(r, ["misc_cost","misc","other_cost"])),
-        };
-        STD_BY_KEY.set(std_key, std);
+const std = {
+  std_key,
+  package_total_price: asNum(pick(r, [
+    "package_total_price",
+    "package_price",
+    "total_package_price",
+    "Package Total Price",
+    "Package Price",
+    "Package Total"
+  ])),
+};
+
+    STD_BY_KEY.set(std_key, std);
+  });
+
+  partsRows.forEach(r => {
+    const std_key = String(pick(r, ["std_key"]) || "").trim();
+    if (!std_key) return;
+
+    const part_no = normU(pick(r, ["part_no", "part", "pn"]));
+    const qty = asNum(pick(r, ["qty", "quantity"]));
+
+    if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
+    PARTS_BY_KEY.get(std_key).push({ part_no, qty });
       });
 
-      partsRows.forEach(r=>{
-        const std_key = String(pick(r, ["std_key"])||"").trim();
-        if (!std_key) return;
-        const part_no = normU(pick(r, ["part_no","part","pn"]));
-        const desc = String(pick(r, ["desc","description","part_desc"])||"").trim();
-        const qty = asNum(pick(r, ["qty","quantity"]));
-        if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
-        PARTS_BY_KEY.get(std_key).push({ part_no, desc, qty });
-      });
+  pricesRows.forEach(r => {
+    const part_no = normU(pick(r, ["part_no", "part", "pn"]));
+    const price = asNum(pick(r, ["price", "harga"]));
+    if (!part_no) return;
 
-      pricesRows.forEach(r=>{
-        const part_no = normU(pick(r, ["part_no","part","pn"]));
-        const price = asNum(pick(r, ["price","harga"]));
-        if (!part_no) return;
-        PRICE_BY_PART.set(part_no, price);
-      });
+    PRICE_BY_PART.set(part_no, price);
+  });
 
-      budgetRows.forEach(r=>{
-        const customer = String(pick(r, ["customer"])||"").trim().toUpperCase();
-        const year = Number(pick(r, ["year","tahun"]));
-        if (!customer || !year) return;
+  budgetRows.forEach(r => {
+    const customer = String(pick(r, ["customer"]) || "").trim().toUpperCase();
+    const year = Number(pick(r, ["year", "tahun"]));
+    if (!customer || !year) return;
 
-        const ev = normU(pick(r, ["event"]));
-        const bud = pick(r, ["budget","amount","nilai"]);
-        if (ev && bud!=null){
-          BUDGET_BY_CYE.set(`${customer}|${year}|${ev}`, asNum(bud));
-          return;
-        }
+    const ev = normU(pick(r, ["event"]));
+    const bud = pick(r, ["budget", "amount", "nilai"]);
 
-        const mid = pick(r, ["budget_midlife","midlife","midlife_budget"]);
-        const goh = pick(r, ["budget_goh","goh","goh_budget"]);
-        const tot = pick(r, ["budget_total","total","budget"]);
-        if (mid!=null) BUDGET_BY_CYE.set(`${customer}|${year}|MIDLIFE`, asNum(mid));
-        if (goh!=null) BUDGET_BY_CYE.set(`${customer}|${year}|GOH`, asNum(goh));
-        if (tot!=null) BUDGET_BY_CYE.set(`${customer}|${year}|ALL`, asNum(tot));
-      });
+    if (ev && bud != null) {
+      BUDGET_BY_CYE.set(`${customer}|${year}|${ev}`, asNum(bud));
+      return;
     }
 
-    function getStdKey_(event, typpe, model){
-      const e = normU(event);
-      const t = normU(typpe) || "DEFAULT";
-      const m = String(model||"ALL").trim() || "ALL";
+    const mid = pick(r, [
+      "budget_midlife",
+      "midlife",
+      "midlife_budget",
+      "Budget Midlife (IDR)"
+    ]);
 
-      const candidates = [
-        `${e}|${t}|${m}`,
-        `${e}|${t}|ALL`,
-        `${e}|DEFAULT|${m}`,
-        `${e}|DEFAULT|ALL`,
-      ];
+    const pcr = pick(r, [
+      "budget_pcr",
+      "pcr",
+      "pcr_budget",
+      "Budget PCR (IDR)"
+    ]);
 
-      for (const k of candidates){
-        if (STD_BY_KEY.has(k)) return k;
-      }
-      return null;
-    }
+    const goh = pick(r, [
+      "budget_goh",
+      "goh",
+      "goh_budget",
+      "Budget GOH (IDR)"
+    ]);
 
-    function calcCostFromStdKey_(std_key){
-      const std = STD_BY_KEY.get(std_key);
-      if (!std) return { total:0, missing:[] };
+    const tot = pick(r, [
+      "budget_total",
+      "total",
+      "budget",
+      "budget total",
+      "Budget Total",
+      "Budget Total (IDR)"
+    ]);
 
-      const parts = PARTS_BY_KEY.get(std_key) || [];
-      let partCost = 0;
-      const missing = [];
+    if (mid != null) BUDGET_BY_CYE.set(`${customer}|${year}|MIDLIFE`, asNum(mid));
+    if (pcr != null) BUDGET_BY_CYE.set(`${customer}|${year}|PCR`, asNum(pcr));
+    if (goh != null) BUDGET_BY_CYE.set(`${customer}|${year}|GOH`, asNum(goh));
+    if (tot != null) BUDGET_BY_CYE.set(`${customer}|${year}|ALL`, asNum(tot));
+  });
+}
 
-      parts.forEach(p=>{
-        const pn = normU(p.part_no);
-        const qty = Number(p.qty||0);
-        if (!pn || !qty) return;
+function getStdKey_(event, typpe, model){
+  const e = normU(event);
+  const t = normU(typpe) || "DEFAULT";
+  const m = String(model || "ALL").trim() || "ALL";
 
-        const price = PRICE_BY_PART.get(pn);
-        if (price==null) missing.push(pn);
-        partCost += (Number(price||0) * qty);
-      });
+  const candidates = [
+    `${e}|${t}|${m}`,
+    `${e}|${t}|ALL`,
+    `${e}|DEFAULT|${m}`,
+    `${e}|DEFAULT|ALL`
+  ];
 
-      const total = partCost + Number(std.labor_cost||0) + Number(std.misc_cost||0);
-      return { total, missing };
-    }
+  for (const k of candidates) {
+    if (STD_BY_KEY.has(k)) return k;
+  }
+  return null;
+}
 
-    function getHmPerYear_(){ return 5000; }
-    function predictDueYear_(currentHM, triggerHM, hmPerYear){
-      const nowY = new Date().getFullYear();
-      const cur = Number(currentHM);
-      const trg = Number(triggerHM);
-      const rate = Number(hmPerYear);
-      if (!Number.isFinite(cur) || !Number.isFinite(trg) || !rate) return null;
-      const remaining = trg - cur;
-      if (remaining <= 0) return nowY;
-      return nowY + Math.ceil(remaining / rate);
-    }
+function calcCostFromStdKey_(std_key){
+  const std = STD_BY_KEY.get(std_key);
+  if (!std) return { total: 0, missing: [] };
 
-    function getBudget_(customer, year, eventSel){
-      const c = String(customer||"").trim().toUpperCase();
-      const y = Number(year);
-      const ev = normU(eventSel);
-      if (!c || !y) return 0;
+  if (Number(std.package_total_price || 0) > 0) {
+    return {
+      total: Number(std.package_total_price || 0),
+      missing: []
+    };
+  }
 
-      if (ev === "ALL"){
-        return (BUDGET_BY_CYE.get(`${c}|${y}|MIDLIFE`)||0) + (BUDGET_BY_CYE.get(`${c}|${y}|GOH`)||0);
-      }
-      return BUDGET_BY_CYE.get(`${c}|${y}|${ev}`) || 0;
-    }
+  const parts = PARTS_BY_KEY.get(std_key) || [];
+  let partCost = 0;
+  const missing = [];
+
+  parts.forEach(p => {
+    const pn = normU(p.part_no);
+    const qty = Number(p.qty || 0);
+    if (!pn || !qty) return;
+
+    const price = PRICE_BY_PART.get(pn);
+    if (price == null) missing.push(pn);
+    partCost += Number(price || 0) * qty;
+  });
+
+  return {
+    total: partCost,
+    missing
+  };
+}
+
+function getBudget_(customer, year, eventSel){
+  const c = String(customer || "").trim().toUpperCase();
+  const y = Number(year);
+  const ev = normU(eventSel);
+  if (!c || !y) return 0;
+
+  if (ev === "ALL") {
+    const totalBudget = BUDGET_BY_CYE.get(`${c}|${y}|ALL`);
+    if (totalBudget != null) return Number(totalBudget || 0);
+
+    return (
+      (BUDGET_BY_CYE.get(`${c}|${y}|MIDLIFE`) || 0) +
+      (BUDGET_BY_CYE.get(`${c}|${y}|PCR`) || 0) +
+      (BUDGET_BY_CYE.get(`${c}|${y}|GOH`) || 0)
+    );
+  }
+
+  return BUDGET_BY_CYE.get(`${c}|${y}|${ev}`) || 0;
+}
 
     // searchable customer
     let PLAN_CUSTOMERS_ALL = [];
@@ -1633,74 +1669,40 @@
       renderPlanningFromSupabase();
     }
 
-    function snapPlanBuffer(){
-      const el = document.getElementById("planBuffer");
-      if (!el) return;
-      const step = 500;
-      let v = Number(el.value||0);
-      if (!Number.isFinite(v)) v = 0;
-      v = Math.max(0, Math.round(v/step)*step);
-      el.value = String(v);
-    }
-
-    function bumpPlanBuffer(delta){
-      const el = document.getElementById("planBuffer");
-      if (!el) return;
-      const step = 500;
-      let v = Number(el.value||0);
-      if (!Number.isFinite(v)) v=0;
-      v = Math.max(0, v + delta);
-      v = Math.round(v/step)*step;
-      el.value = String(v);
-      renderPlanningFromSupabase();
-    }
-
     function renderPlanningFromSupabase(){
       const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
       const customer = document.getElementById("planCustomer")?.value || "ALL";
       const eventSel = document.getElementById("planEvent")?.value || "ALL";
-      const buffer = Number(document.getElementById("planBuffer")?.value || 0);
 
       let rows = globalData.slice();
       if (customer!=="ALL") rows = rows.filter(r=>String(r.customer||"").trim()===customer);
 
-      const events = (eventSel==="ALL") ? ["MIDLIFE","GOH"] : [normU(eventSel)];
+      const events = (eventSel==="ALL") ? ["MIDLIFE","PCR","GOH"] : [normU(eventSel)];
       const items = [];
 
       rows.forEach(r=>{
         const typpe = normU(r.Typpe||r.typpe||"DEFAULT") || "DEFAULT";
         const model = String(r.model_number||r.model||"ALL").trim() || "ALL";
-        const currentHM = getSMR(r);
-        if (currentHM==null) return;
+        const currentHM = getPlanningHMActual(r);
 
-        events.forEach(ev=>{
-          const std_key = getStdKey_(ev, typpe, model);
-          if (!std_key) return;
+              events.forEach(ev=>{
+        const std_key = getStdKey_(ev, typpe, model);
+        if (!std_key) return;
 
-          const std = STD_BY_KEY.get(std_key);
-          const hmPerYear = getHmPerYear_(typpe);
-          const dueYear = predictDueYear_(currentHM, std.hm_trigger, hmPerYear);
-          if (dueYear !== year) return;
-
-          const remaining = Number(std.hm_trigger) - Number(currentHM);
-          if (buffer>0 && remaining>buffer) return;
-
-          const cost = calcCostFromStdKey_(std_key);
-          items.push({
-            event: ev,
-            customer: String(r.customer||"-"),
-            typpe,
-            model,
-            serial: getSerial(r),
-            work_center: String(r.wrk_cntr||"-"),
-            current_hm: currentHM,
-            hm_trigger: std.hm_trigger,
-            remaining_hm: remaining,
-            cost_total: cost.total,
-            missing_parts: cost.missing,
-            std_key
-          });
+        const cost = calcCostFromStdKey_(std_key);
+        items.push({
+          event: ev,
+          customer: String(r.customer||"-"),
+          typpe,
+          model,
+          serial: getSerial(r),
+          work_center: String(r.wrk_cntr||"-"),
+          current_hm: currentHM,
+          cost_total: cost.total,
+          missing_parts: cost.missing,
+          std_key
         });
+      });
       });
 
       // filters typpe/model
@@ -1763,8 +1765,7 @@
                     <th class="p-4">Typpe</th>
                     <th class="p-4">Model</th>
                     <th class="p-4">Serial</th>
-                    <th class="p-4 text-right">HM</th>
-                    <th class="p-4 text-right">Trigger</th>
+                    <th class="p-4 text-right">HM Actual</th>
                     <th class="p-4 text-right">Cost</th>
                     <th class="p-4 text-right">Missing Price</th>
                   </tr>
@@ -1777,8 +1778,7 @@
                       <td class="p-4 text-[var(--text)]">${it.typpe}</td>
                       <td class="p-4 text-[var(--text)]">${it.model}</td>
                       <td class="p-4 text-[var(--text)] font-mono font-bold">${it.serial}</td>
-                      <td class="p-4 text-right text-[var(--text)] font-bold">${it.current_hm}</td>
-                      <td class="p-4 text-right text-[var(--text)] font-bold">${it.hm_trigger}</td>
+                      <td class="p-4 text-right text-[var(--text)] font-bold">${it.current_hm ?? "-"}</td>
                       <td class="p-4 text-right text-[var(--accent)] font-black">${formatIDR_(it.cost_total)}</td>
                       <td class="p-4 text-right ${it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]"} font-bold">
                         ${it.missing_parts.length ? it.missing_parts.length : "OK"}
