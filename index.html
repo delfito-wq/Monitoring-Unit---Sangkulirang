@@ -316,11 +316,11 @@
         <!-- SUMMARY -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Total Cost</div>
+            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Share</div>
             <div id="planTotalCost" class="text-3xl font-black text-[var(--accent)] mt-2">IDR 0</div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Budget</div>
+            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Size</div>
             <div id="planBudget" class="text-3xl font-black text-[var(--text)] mt-2">IDR 0</div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
@@ -344,35 +344,33 @@
           </div>
         </div>
 
-        <!-- TABLE -->
+        <!-- STANDARD + OPPORTUNITY TABLE -->
         <div class="mt-6">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
-            <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
-
-            <div class="flex flex-col sm:flex-row gap-3">
-              <div class="flex items-center gap-2">
-                <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Typpe</label>
-                <select id="planTyppeFilter" onchange="onPlanningTyppeChange()"
-                  class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
-                  <option value="ALL">ALL</option>
-                </select>
-              </div>
-
-              <div class="flex items-center gap-2">
-                <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
-                <select id="planModelFilter" onchange="renderPlanningFromSupabase()" disabled
-                  class="bg-white disabled:opacity-50 disabled:cursor-not-allowed text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
-                  <option value="ALL">Pilih Typpe dulu</option>
-                </select>
-              </div>
+          <div class="mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
+              <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH Unit</div>
             </div>
+            <div id="planningStandardsTable"></div>
           </div>
 
-          <div id="planningTable"></div>
-        </div>
+          <div>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
+              <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
 
-      </div>
-    </div>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="flex items-center gap-2">
+                  <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
+                  <select id="planModelFilter" onchange="renderPlanningFromSupabase()"
+                    class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
+                    <option value="ALL">ALL</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div id="planningTable"></div>
+          </div>
+        </div>
 
     <!-- PAGE UNIT UT -->
     <div id="page-unit-ut" class="tab-content hidden">
@@ -526,12 +524,15 @@
     const TBL_STD_PARTS = "maint_standard_parts";
     const TBL_PRICES    = "sparepart_prices";
     const TBL_BUDGET    = "customer_budgets";
+    const TBL_PLAN_OPP  = "planning_opportunities";
 
     // cache planning
     let STD_BY_KEY = new Map();     // std_key -> std object
     let PARTS_BY_KEY = new Map();   // std_key -> parts[]
     let PRICE_BY_PART = new Map();  // part_no -> price
+    let PRICE_ROWS = [];
     let BUDGET_BY_CYE = new Map();  // "customer|year|event" -> budget
+    let PLAN_OPP_ROWS = [];
 
     let globalData = [];
     let charts = {};
@@ -690,18 +691,20 @@ function getSMR(d){
 
     async function loadDataFromCloud() {
       try{
-        const [
+          const [
           unitsRes,
           stdRes,
           partsRes,
           pricesRes,
-          budgetRes
+          budgetRes,
+          oppRes
         ] = await Promise.all([
           fetchUnitsWithFallback(),
           _supabase.from(TBL_STANDARDS).select("*").range(0, 2000),
           _supabase.from(TBL_STD_PARTS).select("*").range(0, 5000),
           _supabase.from(TBL_PRICES).select("*").range(0, 5000),
           _supabase.from(TBL_BUDGET).select("*").range(0, 5000),
+          _supabase.from(TBL_PLAN_OPP).select("*").range(0, 5000),
         ]);
 
         if (unitsRes.error) {
@@ -722,6 +725,9 @@ function getSMR(d){
         if (partsRes.error) console.warn("Std parts error:", partsRes.error.message);
         if (pricesRes.error) console.warn("Prices error:", pricesRes.error.message);
         if (budgetRes.error) console.warn("Budget error:", budgetRes.error.message);
+        if (oppRes.error) console.warn("Planning opportunities error:", oppRes.error.message);
+
+        PLAN_OPP_ROWS = oppRes.data || [];
 
         buildPlanningCache(stdRes.data || [], partsRes.data || [], pricesRes.data || [], budgetRes.data || []);
 
@@ -1282,6 +1288,163 @@ function getSMR(d){
       renderWarrantyTable(currentWarrantyRows, "ALL", "");
     }
 
+    function escHtmlAttr_(v){
+  return String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function openServiceProductsModal(stdKey, eventName, modelName, labelName){
+  const modal = document.getElementById('subHalamanModal');
+  const title = document.getElementById('modalTitle');
+  const filterWrap = document.getElementById('subModalFilter');
+  const content = document.getElementById('subModalContent');
+
+  if (!modal || !title || !content) return;
+
+  const parts = PARTS_BY_KEY.get(stdKey) || [];
+
+  const normCompact = (v) => String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const labelCompact = normCompact(labelName);
+  const modelCompact = normCompact(modelName);
+
+  let fallbackPrices = [];
+  if (!parts.length) {
+    fallbackPrices = PRICE_ROWS.filter(p => {
+      const modelOk = normCompact(p.unit_model) === modelCompact;
+      const descCompact = normCompact(p.description);
+      const labelOk =
+        !!labelCompact &&
+        !!descCompact &&
+        (
+          descCompact.includes(labelCompact) ||
+          labelCompact.includes(descCompact)
+        );
+
+      return modelOk && labelOk;
+    });
+
+    const seen = new Set();
+    fallbackPrices = fallbackPrices.filter(p => {
+      const uniqKey = [
+        normCompact(p.unit_model),
+        normCompact(p.description),
+        normCompact(p.part_no)
+      ].join("|");
+
+      if (seen.has(uniqKey)) return false;
+      seen.add(uniqKey);
+      return true;
+    });
+  }
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  title.innerText = `${labelName || "DETAIL PART"} - ${eventName} / ${modelName}`;
+  title.className = "text-2xl font-black uppercase tracking-tight text-[var(--text)]";
+
+  if (filterWrap) filterWrap.innerHTML = "";
+
+  if (!parts.length && !fallbackPrices.length){
+    content.innerHTML = `
+      <div class="py-10 text-center text-[var(--muted)] font-bold">
+        Data part tidak ditemukan.
+      </div>
+    `;
+    return;
+  }
+
+  if (!parts.length && fallbackPrices.length){
+    content.innerHTML = `
+      <div class="mb-4 flex justify-between items-center">
+        <div class="text-sm text-[var(--muted)]">
+          Fallback Pricelist: <b class="text-[var(--text)]">${fallbackPrices.length}</b> row
+        </div>
+        <div class="text-sm text-[var(--muted)]">
+          Match: <b class="text-[var(--text)]">${modelName || "-"}</b> / <b class="text-[var(--text)]">${labelName || "-"}</b>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-[var(--border)] bg-white">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4 text-[10px]">Unit Model</th>
+              <th class="p-4 text-[10px]">Description</th>
+              <th class="p-4 text-[10px]">Part No</th>
+              <th class="p-4 text-[10px] text-right">Unit Price</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${fallbackPrices.map(p => `
+              <tr class="hover:bg-black/5 transition-colors text-xs">
+                <td class="p-4 text-[var(--text)] font-bold">${p.unit_model || "-"}</td>
+                <td class="p-4 text-[var(--text)] font-bold">${p.description || "-"}</td>
+                <td class="p-4 text-[var(--text)] font-mono font-bold">${p.part_no || "-"}</td>
+                <td class="p-4 text-right text-[var(--accent)] font-black">${p.unit_price == null ? "-" : formatIDR_(p.unit_price)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+    return;
+  }
+
+  const pricedParts = parts.map(p => {
+    const unitPrice = PRICE_BY_PART.get(normU(p.part_no));
+    const subtotal = unitPrice == null ? null : Number(p.qty || 0) * Number(unitPrice || 0);
+
+    return {
+      ...p,
+      unit_price: unitPrice,
+      subtotal
+    };
+  });
+
+  const totalKnown = pricedParts.reduce((sum, p) => sum + Number(p.subtotal || 0), 0);
+
+  content.innerHTML = `
+    <div class="mb-4 flex justify-between items-center">
+      <div class="text-sm text-[var(--muted)]">
+        Total: <b class="text-[var(--text)]">${pricedParts.length}</b> part
+      </div>
+      <div class="text-sm text-[var(--muted)]">
+        Known Total: <b class="text-[var(--accent)]">${formatIDR_(totalKnown)}</b>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl border border-[var(--border)] bg-white">
+      <table class="w-full text-left border-collapse whitespace-nowrap">
+        <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+          <tr>
+            <th class="p-4 text-[10px]">Part Desc</th>
+            <th class="p-4 text-[10px]">Part No</th>
+            <th class="p-4 text-[10px] text-right">Qty</th>
+            <th class="p-4 text-[10px] text-right">Unit Price</th>
+            <th class="p-4 text-[10px] text-right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)]">
+          ${pricedParts.map(p => `
+            <tr class="hover:bg-black/5 transition-colors text-xs">
+              <td class="p-4 text-[var(--text)] font-bold">${p.part_desc || "-"}</td>
+              <td class="p-4 text-[var(--text)] font-mono font-bold">${p.part_no || "-"}</td>
+              <td class="p-4 text-right text-[var(--text)] font-black">${Number(p.qty || 0)}</td>
+              <td class="p-4 text-right text-[var(--text)] font-black">${p.unit_price == null ? "-" : formatIDR_(p.unit_price)}</td>
+              <td class="p-4 text-right text-[var(--accent)] font-black">${p.subtotal == null ? "-" : formatIDR_(p.subtotal)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
     function closeSubHalaman(){
       document.getElementById('subHalamanModal').classList.add('hidden');
       document.body.style.overflow = 'auto';
@@ -1437,23 +1600,35 @@ function getSMR(d){
       }
       return null;
     }
-    function formatIDR_(n){
-      const v = Number(n || 0);
-      return "IDR " + v.toLocaleString("id-ID");
-    }
+function formatIDR_(n){
+  const v = Number(n || 0);
+  return "IDR " + v.toLocaleString("id-ID");
+}
+
+function normCustomerKey_(v){
+  return String(v ?? "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
 
 function buildPlanningCache(standardsRows, partsRows, pricesRows, budgetRows){
   STD_BY_KEY.clear();
   PARTS_BY_KEY.clear();
   PRICE_BY_PART.clear();
+  PRICE_ROWS = [];
   BUDGET_BY_CYE.clear();
 
   standardsRows.forEach(r => {
-    const std_key = String(pick(r, ["std_key"]) || "").trim();
+    const std_key = String(pick(r, ["standard_key", "std_key"]) || "").trim();
     if (!std_key) return;
 
 const std = {
   std_key,
+  standard_key: std_key,
+  event: normU(pick(r, ["event"])),
+  model_number: String(pick(r, ["model_number", "Model Number"]) || "").trim() || null,
+  hm_trigger: asNum(pick(r, ["hm_trigger", "HM Trigger"])),
   package_total_price: asNum(pick(r, [
     "package_total_price",
     "package_price",
@@ -1462,29 +1637,53 @@ const std = {
     "Package Price",
     "Package Total"
   ])),
+  active: pick(r, ["active"])
 };
 
     STD_BY_KEY.set(std_key, std);
   });
 
-  partsRows.forEach(r => {
-    const std_key = String(pick(r, ["std_key"]) || "").trim();
-    if (!std_key) return;
+    partsRows.forEach(r => {
+      const std_key = String(pick(r, ["standard_key", "std_key"]) || "").trim();
+      if (!std_key) return;
 
-    const part_no = normU(pick(r, ["part_no", "part", "pn"]));
-    const qty = asNum(pick(r, ["qty", "quantity"]));
+      const part_no = normU(pick(r, ["part_no", "part", "pn"]));
+      const part_desc = String(
+        pick(r, ["part_desc", "description", "Part Desc", "Description"]) || ""
+      ).trim();
+      const qty = asNum(pick(r, ["qty", "quantity"]));
 
-    if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
-    PARTS_BY_KEY.get(std_key).push({ part_no, qty });
+      if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
+      PARTS_BY_KEY.get(std_key).push({
+        part_no,
+        part_desc,
+        qty
       });
+    });
 
-  pricesRows.forEach(r => {
-    const part_no = normU(pick(r, ["part_no", "part", "pn"]));
-    const price = asNum(pick(r, ["price", "harga"]));
-    if (!part_no) return;
+    pricesRows.forEach(r => {
+      const part_no_raw = String(pick(r, ["part_no", "part", "pn", "Part No"]) || "").trim();
+      const newest_pn_raw = String(pick(r, ["newest_pn", "Newest PN"]) || "").trim();
+      const part_no = part_no_raw || newest_pn_raw;
 
-    PRICE_BY_PART.set(part_no, price);
-  });
+      const unit_model = String(pick(r, ["unit_model", "Unit Model"]) || "").trim();
+      const description = String(pick(r, ["description", "Description"]) || "").trim();
+      const unit_price = asNum(pick(r, ["unit_price", "price", "harga", "Unit Price"]));
+
+      if (!part_no && !unit_model && !description) return;
+
+      if (part_no) {
+        PRICE_BY_PART.set(normU(part_no), unit_price);
+      }
+
+      PRICE_ROWS.push({
+        part_no: part_no || "",
+        newest_pn: newest_pn_raw,
+        unit_model,
+        description,
+        unit_price
+      });
+    });
 
   budgetRows.forEach(r => {
     const customer = String(pick(r, ["customer"]) || "").trim().toUpperCase();
@@ -1536,17 +1735,26 @@ const std = {
   });
 }
 
-function getStdKey_(event, typpe, model){
+function getStdKey_(event, model){
   const e = normU(event);
-  const t = normU(typpe) || "DEFAULT";
-  const m = String(model || "ALL").trim() || "ALL";
+  const rawModel = String(model || "ALL").trim().toUpperCase() || "ALL";
 
-  const candidates = [
-    `${e}|${t}|${m}`,
-    `${e}|${t}|ALL`,
-    `${e}|DEFAULT|${m}`,
-    `${e}|DEFAULT|ALL`
-  ];
+  const baseModel = rawModel.replace(/\s+/g, "");
+  const noSuffixR = baseModel.replace(/R$/, "");
+  const withSuffixR = noSuffixR ? noSuffixR + "R" : baseModel;
+
+  const modelCandidates = Array.from(new Set([
+    rawModel,
+    baseModel,
+    noSuffixR,
+    withSuffixR,
+    "ALL"
+  ])).filter(Boolean);
+
+  const candidates = [];
+  modelCandidates.forEach(m => {
+    candidates.push(`${e}|DEFAULT|${m}`);
+  });
 
   for (const k of candidates) {
     if (STD_BY_KEY.has(k)) return k;
@@ -1586,7 +1794,7 @@ function calcCostFromStdKey_(std_key){
 }
 
 function getBudget_(customer, year, eventSel){
-  const c = String(customer || "").trim().toUpperCase();
+  const c = normCustomerKey_(customer);
   const y = Number(year);
   const ev = normU(eventSel);
   if (!c || !y) return 0;
@@ -1652,148 +1860,257 @@ function getBudget_(customer, year, eventSel){
       else el.value="ALL";
     }
 
-    function onPlanningTyppeChange(){
-      const typEl = document.getElementById("planTyppeFilter");
-      const mdlEl = document.getElementById("planModelFilter");
-      const typVal = typEl ? typEl.value : "ALL";
+function renderPlanningStandardsTable_(selectedModel, eventSel){
+  const wrap = document.getElementById("planningStandardsTable");
+  if (!wrap) return;
 
-      if (mdlEl){
-        mdlEl.value="ALL";
-        if (typVal==="ALL"){
-          mdlEl.disabled=true;
-          mdlEl.innerHTML = `<option value="ALL">Pilih Typpe dulu</option>`;
-        } else {
-          mdlEl.disabled=false;
-        }
-      }
-      renderPlanningFromSupabase();
+  let stdRows = Array.from(STD_BY_KEY.values()).map(s => {
+    const eventValue =
+      String(s.event || s.standard_key || s.std_key || "")
+        .split("|")[0]
+        .trim()
+        .toUpperCase();
+
+    return {
+      ...s,
+      event: eventValue
+    };
+  }).filter(s => ["MIDLIFE", "GOH"].includes(s.event));
+
+  if (eventSel === "MIDLIFE" || eventSel === "GOH") {
+    stdRows = stdRows.filter(s => s.event === String(eventSel).toUpperCase());
+  }
+
+  if (selectedModel !== "ALL") {
+    stdRows = stdRows.filter(s => String(s.model_number || "").trim() === String(selectedModel));
+  }
+
+  stdRows.sort((a, b) => {
+    const modelCmp = String(a.model_number || "").localeCompare(String(b.model_number || ""));
+    if (modelCmp !== 0) return modelCmp;
+    return String(a.event || "").localeCompare(String(b.event || ""));
+  });
+
+  if (!stdRows.length) {
+    wrap.innerHTML = `
+      <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+        <div class="py-10 text-center text-[var(--muted)] font-bold">
+          Standard MIDLIFE / GOH belum tersedia.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+      <div class="p-4 border-b border-[var(--border)] flex justify-between">
+        <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH (${stdRows.length})</div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4">Job Typpe</th>
+              <th class="p-4">Model</th>
+              <th class="p-4 text-center">Parts Package</th>
+              <th class="p-4 text-right">HM Trigger</th>
+              <th class="p-4 text-right">Package Total Price</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${stdRows.map(s => `
+              <tr class="hover:bg-black/5 transition-colors">
+                <td class="p-4 font-black ${s.event === "GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${s.event || "-"}</td>
+                <td class="p-4 text-[var(--text)] font-bold">${s.model_number || "-"}</td>
+                <td class="p-4 text-center">
+                  <button
+                    data-std-key="${escHtmlAttr_(s.standard_key || s.std_key || "")}"
+                    data-event="${escHtmlAttr_(s.event || "")}"
+                    data-model="${escHtmlAttr_(s.model_number || "")}"
+                    data-label="Parts Package"
+                    onclick="openServiceProductsModal(this.dataset.stdKey,this.dataset.event,this.dataset.model,this.dataset.label)"
+                    class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+                  >
+                    Parts Package
+                  </button>
+                </td>
+                <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.hm_trigger || 0) > 0 ? Number(s.hm_trigger).toLocaleString("id-ID") : "-"}</td>
+                <td class="p-4 text-right text-[var(--accent)] font-black">${Number(s.package_total_price || 0) > 0 ? formatIDR_(s.package_total_price) : "-"}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderPlanningFromSupabase(){
+  const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
+  const customer = document.getElementById("planCustomer")?.value || "ALL";
+  const eventSel = document.getElementById("planEvent")?.value || "ALL";
+
+  let rows = PLAN_OPP_ROWS.slice();
+  if (customer !== "ALL") {
+    const selectedCustomerKey = normCustomerKey_(customer);
+    rows = rows.filter(r => normCustomerKey_(r.customer) === selectedCustomerKey);
+  }
+
+  if (eventSel !== "ALL") {
+    rows = rows.filter(r => normU(r.event) === normU(eventSel));
+  }
+
+  const items = [];
+  const seenItemKeys = new Set();
+
+  rows.forEach(r => {
+    const ev = normU(r.event);
+    if (!ev) return;
+
+    const rawModel = String(r.model_number || r.model || "ALL").trim() || "ALL";
+    const currentHM = getPlanningHMActual(r);
+
+    const std_key = getStdKey_(ev, rawModel);
+    if (!std_key) return;
+
+    const std = STD_BY_KEY.get(std_key) || {};
+    const displayModel = String(std.model_number || rawModel || "ALL").trim() || "ALL";
+    const serialValue =
+      String(
+        r.serial_or_code ??
+        r.serial_number ??
+        r["serial_number"] ??
+        r["Serial Number"] ??
+        r.serial ??
+        r.sn ??
+        r.SerialNumber ??
+        "-"
+      ).trim() || "-";
+
+    const dedupKey = [
+      ev,
+      String(r.customer || "-").trim().toUpperCase(),
+      displayModel.toUpperCase(),
+      serialValue.toUpperCase(),
+      String(currentHM ?? "")
+    ].join("|");
+
+    if (seenItemKeys.has(dedupKey)) return;
+    seenItemKeys.add(dedupKey);
+
+    const cost = calcCostFromStdKey_(std_key);
+
+    items.push({
+      event: ev,
+      customer: String(r.customer || "-"),
+      model: displayModel,
+      serial: serialValue,
+      work_center: String(r.wrk_cntr || "-"),
+      current_hm: currentHM,
+      cost_total: cost.total,
+      missing_parts: cost.missing,
+      std_key,
+      service_product_label: String(r.service_product || r.component || "").trim() || "Lihat Detail",
+      service_products: (PARTS_BY_KEY.get(std_key) || []).map(p => ({
+        part_no: p.part_no || "-",
+        part_desc: p.part_desc || "-",
+        qty: Number(p.qty || 0)
+      }))
+    });
+  });
+
+  const mdlEl = document.getElementById("planModelFilter");
+
+  const allModels = [...new Set(
+    items.map(i => String(i.model || "-").trim()).filter(Boolean)
+  )].sort((a,b)=>a.localeCompare(b));
+
+  setSelectOptions_(mdlEl, allModels, "ALL");
+
+  const selectedModel = mdlEl ? mdlEl.value : "ALL";
+
+  renderPlanningStandardsTable_(selectedModel, eventSel);
+
+  let viewItems = items.slice();
+  if (selectedModel !== "ALL") {
+    viewItems = viewItems.filter(i => String(i.model) === String(selectedModel));
+  }
+
+  const totalCost = viewItems.reduce((a,b)=>a+Number(b.cost_total||0),0);
+  const budget = (customer==="ALL") ? 0 : getBudget_(customer, year, eventSel);
+  const feasible = (customer==="ALL") ? null : (totalCost <= budget);
+
+  const elCost = document.getElementById("planTotalCost");
+  const elBudg = document.getElementById("planBudget");
+  const elFeas = document.getElementById("planFeasible");
+
+  if (elCost) elCost.innerText = formatIDR_(totalCost);
+  if (elBudg) elBudg.innerText = (customer==="ALL") ? "Pilih customer dulu" : formatIDR_(budget);
+  if (elFeas){
+    if (customer==="ALL") elFeas.innerText = "-";
+    else {
+      elFeas.innerText = feasible ? "BISA" : "TIDAK";
+      elFeas.style.color = feasible ? "var(--good)" : "var(--bad)";
     }
+  }
 
-    function renderPlanningFromSupabase(){
-      const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
-      const customer = document.getElementById("planCustomer")?.value || "ALL";
-      const eventSel = document.getElementById("planEvent")?.value || "ALL";
+  const tbl = document.getElementById("planningTable");
+  if (tbl){
+    tbl.innerHTML = `
+      <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+        <div class="p-4 border-b border-[var(--border)] flex justify-between">
+          <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit (${viewItems.length})</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-[11px] text-left whitespace-nowrap">
+            <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4">Job Typpe</th>
+              <th class="p-4">Customer</th>
+              <th class="p-4">Model</th>
+              <th class="p-4">Serial</th>
+              <th class="p-4 text-right">HM Actual</th>
+              <th class="p-4 text-center">Service Product</th>
+              <th class="p-4 text-right">Cost</th>
+              <th class="p-4 text-right">Missing Price</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--border)]">
+              ${viewItems.map(it=>`
+                <tr class="hover:bg-black/5 transition-colors">
+                  <td class="p-4 font-black ${it.event==="GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${it.event}</td>
+                  <td class="p-4 text-[var(--text)] font-bold">${it.customer}</td>
+                  <td class="p-4 text-[var(--text)]">${it.model}</td>
+                  <td class="p-4 text-[var(--text)] font-mono font-bold">${it.serial}</td>
+                  <td class="p-4 text-right text-[var(--text)] font-bold">${it.current_hm ?? "-"}</td>
+                  <td class="p-4 text-center">
+                    <button
+                      data-std-key="${escHtmlAttr_(it.std_key)}"
+                      data-event="${escHtmlAttr_(it.event)}"
+                      data-model="${escHtmlAttr_(it.model)}"
+                      data-label="${escHtmlAttr_(it.service_product_label)}"
+                      onclick="openServiceProductsModal(this.dataset.stdKey,this.dataset.event,this.dataset.model,this.dataset.label)"
+                      class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+                    >
+                      ${it.service_product_label}
+                    </button>
+                  </td>
+                  <td class="p-4 text-right text-[var(--accent)] font-black">${formatIDR_(it.cost_total)}</td>
+                  <td class="p-4 text-right ${it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]"} font-bold">
+                    ${it.missing_parts.length ? it.missing_parts.length : "OK"}
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
 
-      let rows = globalData.slice();
-      if (customer!=="ALL") rows = rows.filter(r=>String(r.customer||"").trim()===customer);
-
-      const events = (eventSel==="ALL") ? ["MIDLIFE","PCR","GOH"] : [normU(eventSel)];
-      const items = [];
-
-      rows.forEach(r=>{
-        const typpe = normU(r.Typpe||r.typpe||"DEFAULT") || "DEFAULT";
-        const model = String(r.model_number||r.model||"ALL").trim() || "ALL";
-        const currentHM = getPlanningHMActual(r);
-
-              events.forEach(ev=>{
-        const std_key = getStdKey_(ev, typpe, model);
-        if (!std_key) return;
-
-        const cost = calcCostFromStdKey_(std_key);
-        items.push({
-          event: ev,
-          customer: String(r.customer||"-"),
-          typpe,
-          model,
-          serial: getSerial(r),
-          work_center: String(r.wrk_cntr||"-"),
-          current_hm: currentHM,
-          cost_total: cost.total,
-          missing_parts: cost.missing,
-          std_key
-        });
-      });
-      });
-
-      // filters typpe/model
-      const typEl = document.getElementById("planTyppeFilter");
-      const mdlEl = document.getElementById("planModelFilter");
-
-      const allTyppe = [...new Set(items.map(i=>i.typpe).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-      setSelectOptions_(typEl, allTyppe, "ALL");
-
-      const selectedTyppe = typEl ? typEl.value : "ALL";
-      if (mdlEl){
-        if (selectedTyppe==="ALL"){
-          mdlEl.disabled=true;
-          mdlEl.innerHTML = `<option value="ALL">Pilih Typpe dulu</option>`;
-        } else {
-          mdlEl.disabled=false;
-          const models = [...new Set(items.filter(i=>i.typpe===selectedTyppe).map(i=>String(i.model||"-").trim()).filter(Boolean))]
-            .sort((a,b)=>a.localeCompare(b));
-          setSelectOptions_(mdlEl, models, "ALL");
-        }
-      }
-
-      const selectedModel = (mdlEl && !mdlEl.disabled) ? mdlEl.value : "ALL";
-      let viewItems = items.slice();
-      if (selectedTyppe!=="ALL") viewItems = viewItems.filter(i=>i.typpe===selectedTyppe);
-      if (selectedTyppe!=="ALL" && selectedModel!=="ALL") viewItems = viewItems.filter(i=>String(i.model)===String(selectedModel));
-
-      const totalCost = viewItems.reduce((a,b)=>a+Number(b.cost_total||0),0);
-      const budget = (customer==="ALL") ? 0 : getBudget_(customer, year, eventSel);
-      const feasible = (customer==="ALL") ? null : (totalCost <= budget);
-
-      const elCost = document.getElementById("planTotalCost");
-      const elBudg = document.getElementById("planBudget");
-      const elFeas = document.getElementById("planFeasible");
-
-      if (elCost) elCost.innerText = formatIDR_(totalCost);
-      if (elBudg) elBudg.innerText = (customer==="ALL") ? "Pilih customer dulu" : formatIDR_(budget);
-      if (elFeas){
-        if (customer==="ALL") elFeas.innerText = "-";
-        else {
-          elFeas.innerText = feasible ? "BISA" : "TIDAK";
-          elFeas.style.color = feasible ? "var(--good)" : "var(--bad)";
-        }
-      }
-
-      // table
-      const tbl = document.getElementById("planningTable");
-      if (tbl){
-        tbl.innerHTML = `
-          <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
-            <div class="p-4 border-b border-[var(--border)] flex justify-between">
-              <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit (${viewItems.length})</div>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-[11px] text-left whitespace-nowrap">
-                <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
-                  <tr>
-                    <th class="p-4">Event</th>
-                    <th class="p-4">Customer</th>
-                    <th class="p-4">Typpe</th>
-                    <th class="p-4">Model</th>
-                    <th class="p-4">Serial</th>
-                    <th class="p-4 text-right">HM Actual</th>
-                    <th class="p-4 text-right">Cost</th>
-                    <th class="p-4 text-right">Missing Price</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-[var(--border)]">
-                  ${viewItems.map(it=>`
-                    <tr class="hover:bg-black/5 transition-colors">
-                      <td class="p-4 font-black ${it.event==="GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${it.event}</td>
-                      <td class="p-4 text-[var(--text)] font-bold">${it.customer}</td>
-                      <td class="p-4 text-[var(--text)]">${it.typpe}</td>
-                      <td class="p-4 text-[var(--text)]">${it.model}</td>
-                      <td class="p-4 text-[var(--text)] font-mono font-bold">${it.serial}</td>
-                      <td class="p-4 text-right text-[var(--text)] font-bold">${it.current_hm ?? "-"}</td>
-                      <td class="p-4 text-right text-[var(--accent)] font-black">${formatIDR_(it.cost_total)}</td>
-                      <td class="p-4 text-right ${it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]"} font-bold">
-                        ${it.missing_parts.length ? it.missing_parts.length : "OK"}
-                      </td>
-                    </tr>
-                  `).join("")}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        `;
-      }
-
-      renderPlanningCharts_(totalCost, budget, customer);
-    }
+  renderPlanningCharts_(totalCost, budget, customer);
+}
 
     function renderPlanningCharts_(totalCost, budget, customer){
       // Budget vs Cost
