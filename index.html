@@ -301,16 +301,63 @@
             <div id="planCustomerHint" class="text-[9px] text-[var(--muted)] font-bold"></div>
           </div>
 
-          <div class="flex items-center gap-2">
-          <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Job Type</label>
-          <select id="planEvent" onchange="renderPlanningFromSupabase()"
-            class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2">
-            <option value="ALL">ALL</option>
-            <option value="MIDLIFE">MIDLIFE</option>
-            <option value="GOH">GOH</option>
-            <option value="PCR">PCR</option>
-          </select>
-          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Job Type</label>
+
+            <div class="relative" id="planEventDropdownWrap">
+              <select id="planEvent" onchange="syncPlanEventFromSelect_()" class="hidden">
+                <option value="ALL">ALL</option>
+                <option value="MIDLIFE">MIDLIFE</option>
+                <option value="GOH">GOH</option>
+                <option value="PCR">PCR</option>
+              </select>
+
+              <button type="button" onclick="togglePlanEventDropdown_()"
+                class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[160px] flex items-center justify-between">
+                <span id="planEventTriggerText">ALL</span>
+                <span class="text-xs">▼</span>
+              </button>
+
+              <div id="planEventDropdown"
+                class="hidden absolute left-0 mt-2 w-[260px] bg-white border border-[var(--border)] rounded-xl shadow-lg z-50 overflow-hidden">
+
+                <button type="button" onclick="selectOnlyPlanEvent_('ALL')"
+                  class="w-full text-left px-4 py-3 text-[10px] font-black uppercase text-[var(--text)] hover:bg-[var(--surface-2)] border-b border-[var(--border)]">
+                  ALL
+                </button>
+
+                <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--surface-2)]">
+                  <button type="button" onclick="selectOnlyPlanEvent_('MIDLIFE')"
+                    class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                    MIDLIFE
+                  </button>
+                <button type="button" id="toggleEventMIDLIFE" onclick="togglePlanEvent_('MIDLIFE', event)"
+                  class="ml-3 w-8 h-8 rounded-full text-[14px] font-black border border-[var(--border)] bg-white text-[var(--text)] transition-all flex items-center justify-center">
+                </button>
+                </div>
+
+                <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--surface-2)]">
+                  <button type="button" onclick="selectOnlyPlanEvent_('GOH')"
+                    class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                    GOH
+                  </button>
+                  <button type="button" id="toggleEventGOH" onclick="togglePlanEvent_('GOH', event)"
+                  class="ml-3 w-8 h-8 rounded-full text-[14px] font-black border border-[var(--border)] bg-white text-[var(--text)] transition-all flex items-center justify-center">
+                </button>
+                </div>
+
+                <div class="flex items-center justify-between px-4 py-3 hover:bg-[var(--surface-2)]">
+                  <button type="button" onclick="selectOnlyPlanEvent_('PCR')"
+                    class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                    PCR
+                  </button>
+                  <button type="button" id="toggleEventPCR" onclick="togglePlanEvent_('PCR', event)"
+                  class="ml-3 w-8 h-8 rounded-full text-[14px] font-black border border-[var(--border)] bg-white text-[var(--text)] transition-all flex items-center justify-center">
+                </button>
+                </div>
+              </div>
+            </div>
+            </div>
         </div>
 
         <!-- SUMMARY -->
@@ -577,6 +624,10 @@
     document.addEventListener('click', function(e) {
       if (!e.target.closest('#unitDropdown') && !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
         closeUnitDropdown();
+      }
+
+      if (!e.target.closest('#planEventDropdownWrap')) {
+        closePlanEventDropdown_();
       }
     });
 
@@ -1793,28 +1844,206 @@ function calcCostFromStdKey_(std_key){
   };
 }
 
-function getBudget_(customer, year, eventSel){
-  const c = normCustomerKey_(customer);
-  const y = Number(year);
-  const ev = normU(eventSel);
-  if (!c || !y) return 0;
+function calcFallbackCostFromPriceRows_(modelName, labelName){
+  const normCompact = (v) => String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  const modelCompact = normCompact(modelName);
+  const labelCompact = normCompact(labelName);
 
-  if (ev === "ALL") {
-    const totalBudget = BUDGET_BY_CYE.get(`${c}|${y}|ALL`);
-    if (totalBudget != null) return Number(totalBudget || 0);
-
-    return (
-      (BUDGET_BY_CYE.get(`${c}|${y}|MIDLIFE`) || 0) +
-      (BUDGET_BY_CYE.get(`${c}|${y}|PCR`) || 0) +
-      (BUDGET_BY_CYE.get(`${c}|${y}|GOH`) || 0)
-    );
+  if (!modelCompact || !labelCompact) {
+    return { total: null, rows: [] };
   }
 
-  return BUDGET_BY_CYE.get(`${c}|${y}|${ev}`) || 0;
+  let rows = PRICE_ROWS.filter(p => {
+    const modelOk = normCompact(p.unit_model) === modelCompact;
+    const descCompact = normCompact(p.description);
+    const labelOk =
+      !!descCompact &&
+      (
+        descCompact.includes(labelCompact) ||
+        labelCompact.includes(descCompact)
+      );
+
+    return modelOk && labelOk;
+  });
+
+  const seen = new Set();
+  rows = rows.filter(p => {
+    const uniqKey = [
+      normCompact(p.unit_model),
+      normCompact(p.description),
+      normCompact(p.part_no)
+    ].join("|");
+
+    if (seen.has(uniqKey)) return false;
+    seen.add(uniqKey);
+    return true;
+  });
+
+  if (!rows.length) {
+    return { total: null, rows: [] };
+  }
+
+  const total = rows.reduce((sum, p) => sum + Number(p.unit_price || 0), 0);
+  return {
+    total: total > 0 ? total : null,
+    rows
+  };
+}
+
+function getBudget_(customer, year, selectedEvents){
+  const c = normCustomerKey_(customer);
+  const y = Number(year);
+  if (!c || !y) return 0;
+
+  const events = Array.isArray(selectedEvents)
+    ? selectedEvents.map(normU).filter(Boolean)
+    : [normU(selectedEvents)].filter(Boolean);
+
+  if (!events.length) return 0;
+
+  if (events.length === 3 && events.includes("MIDLIFE") && events.includes("PCR") && events.includes("GOH")) {
+    const totalBudget = BUDGET_BY_CYE.get(`${c}|${y}|ALL`);
+    if (totalBudget != null) return Number(totalBudget || 0);
+  }
+
+  return events.reduce((sum, ev) => {
+    return sum + Number(BUDGET_BY_CYE.get(`${c}|${y}|${ev}`) || 0);
+  }, 0);
 }
 
     // searchable customer
+        // searchable customer
     let PLAN_CUSTOMERS_ALL = [];
+    let PLAN_SELECTED_EVENTS = [];
+
+    function getSelectedPlanEvents_(){
+      if (PLAN_SELECTED_EVENTS.length) return PLAN_SELECTED_EVENTS.slice();
+
+      const sel = document.getElementById("planEvent");
+      const val = normU(sel ? sel.value : "ALL");
+      if (!val || val === "ALL") return [];
+      return [val];
+    }
+
+    function getPlanEventSummary_(){
+      if (!PLAN_SELECTED_EVENTS.length) return "ALL";
+      if (PLAN_SELECTED_EVENTS.length === 1) return PLAN_SELECTED_EVENTS[0];
+      return PLAN_SELECTED_EVENTS.join(" + ");
+    }
+
+    function togglePlanEventDropdown_(){
+      const dd = document.getElementById("planEventDropdown");
+      if (dd) dd.classList.toggle("hidden");
+    }
+
+    function closePlanEventDropdown_(){
+      const dd = document.getElementById("planEventDropdown");
+      if (dd) dd.classList.add("hidden");
+    }
+
+    function updatePlanEventToggleUi_(){
+      const ids = ["PCR", "MIDLIFE", "GOH"];
+
+      ids.forEach(ev => {
+        const btn = document.getElementById("toggleEvent" + ev);
+        if (!btn) return;
+
+        const active = PLAN_SELECTED_EVENTS.includes(ev);
+
+        btn.classList.remove(
+          "bg-white",
+          "text-[var(--text)]",
+          "border-[var(--border)]",
+          "bg-[var(--accent)]",
+          "text-black",
+          "border-black"
+        );
+
+        if (active) {
+          btn.classList.add("bg-[var(--accent)]", "text-black", "border-black");
+          btn.innerHTML = "✓";
+        } else {
+          btn.classList.add("bg-white", "text-[var(--text)]", "border-[var(--border)]");
+          btn.innerHTML = "";
+        }
+      });
+
+      const triggerText = document.getElementById("planEventTriggerText");
+      if (triggerText) triggerText.textContent = getPlanEventSummary_();
+    }
+
+    function syncPlanEventFromSelect_(){
+      const sel = document.getElementById("planEvent");
+      const val = normU(sel ? sel.value : "ALL");
+
+      PLAN_SELECTED_EVENTS = [];
+      if (val && val !== "ALL") {
+        PLAN_SELECTED_EVENTS = [val];
+      }
+
+      updatePlanEventToggleUi_();
+      renderPlanningFromSupabase();
+    }
+
+    function selectOnlyPlanEvent_(eventName){
+      const ev = normU(eventName);
+      const sel = document.getElementById("planEvent");
+
+      if (ev === "ALL") {
+        PLAN_SELECTED_EVENTS = [];
+        if (sel) sel.value = "ALL";
+      } else {
+        PLAN_SELECTED_EVENTS = [ev];
+        if (sel) sel.value = ev;
+      }
+
+      updatePlanEventToggleUi_();
+      closePlanEventDropdown_();
+      renderPlanningFromSupabase();
+    }
+
+    function togglePlanEvent_(eventName, e){
+      if (e) e.stopPropagation();
+
+      const ev = normU(eventName);
+      const idx = PLAN_SELECTED_EVENTS.indexOf(ev);
+
+      if (idx >= 0) PLAN_SELECTED_EVENTS.splice(idx, 1);
+      else PLAN_SELECTED_EVENTS.push(ev);
+
+      const sel = document.getElementById("planEvent");
+      if (sel) sel.value = "ALL";
+
+      updatePlanEventToggleUi_();
+      renderPlanningFromSupabase();
+    }
+
+    function syncPlanEventFromSelect_(){
+      const sel = document.getElementById("planEvent");
+      const val = normU(sel ? sel.value : "ALL");
+
+      PLAN_SELECTED_EVENTS = [];
+      if (val && val !== "ALL") {
+        PLAN_SELECTED_EVENTS = [val];
+      }
+
+      updatePlanEventToggleUi_();
+      renderPlanningFromSupabase();
+    }
+
+    function togglePlanEvent_(eventName){
+      const ev = normU(eventName);
+      const idx = PLAN_SELECTED_EVENTS.indexOf(ev);
+
+      if (idx >= 0) PLAN_SELECTED_EVENTS.splice(idx, 1);
+      else PLAN_SELECTED_EVENTS.push(ev);
+
+      const sel = document.getElementById("planEvent");
+      if (sel) sel.value = "ALL";
+
+      updatePlanEventToggleUi_();
+      renderPlanningFromSupabase();
+    }
 
     function setPlanCustomerOptions(list){
       const sel = document.getElementById("planCustomer");
@@ -1849,6 +2078,11 @@ function getBudget_(customer, year, eventSel){
       if (search) search.value = "";
       setPlanCustomerOptions(PLAN_CUSTOMERS_ALL);
 
+      PLAN_SELECTED_EVENTS = [];
+      const eventSel = document.getElementById("planEvent");
+      if (eventSel) eventSel.value = "ALL";
+      updatePlanEventToggleUi_();
+
       renderPlanningFromSupabase();
     }
 
@@ -1860,7 +2094,7 @@ function getBudget_(customer, year, eventSel){
       else el.value="ALL";
     }
 
-function renderPlanningStandardsTable_(selectedModel, eventSel){
+function renderPlanningStandardsTable_(selectedModel, selectedEvents){
   const wrap = document.getElementById("planningStandardsTable");
   if (!wrap) return;
 
@@ -1877,8 +2111,9 @@ function renderPlanningStandardsTable_(selectedModel, eventSel){
     };
   }).filter(s => ["MIDLIFE", "GOH"].includes(s.event));
 
-  if (eventSel === "MIDLIFE" || eventSel === "GOH") {
-    stdRows = stdRows.filter(s => s.event === String(eventSel).toUpperCase());
+  if (selectedEvents && selectedEvents.length) {
+    const eventSet = new Set(selectedEvents.map(normU));
+    stdRows = stdRows.filter(s => eventSet.has(normU(s.event)));
   }
 
   if (selectedModel !== "ALL") {
@@ -1949,7 +2184,7 @@ function renderPlanningStandardsTable_(selectedModel, eventSel){
 function renderPlanningFromSupabase(){
   const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
   const customer = document.getElementById("planCustomer")?.value || "ALL";
-  const eventSel = document.getElementById("planEvent")?.value || "ALL";
+  const selectedEvents = getSelectedPlanEvents_();
 
   let rows = PLAN_OPP_ROWS.slice();
   if (customer !== "ALL") {
@@ -1957,8 +2192,9 @@ function renderPlanningFromSupabase(){
     rows = rows.filter(r => normCustomerKey_(r.customer) === selectedCustomerKey);
   }
 
-  if (eventSel !== "ALL") {
-    rows = rows.filter(r => normU(r.event) === normU(eventSel));
+  if (selectedEvents.length) {
+    const eventSet = new Set(selectedEvents.map(normU));
+    rows = rows.filter(r => eventSet.has(normU(r.event)));
   }
 
   const items = [];
@@ -1972,9 +2208,7 @@ function renderPlanningFromSupabase(){
     const currentHM = getPlanningHMActual(r);
 
     const std_key = getStdKey_(ev, rawModel);
-    if (!std_key) return;
-
-    const std = STD_BY_KEY.get(std_key) || {};
+    const std = std_key ? (STD_BY_KEY.get(std_key) || {}) : {};
     const displayModel = String(std.model_number || rawModel || "ALL").trim() || "ALL";
     const serialValue =
       String(
@@ -1999,7 +2233,14 @@ function renderPlanningFromSupabase(){
     if (seenItemKeys.has(dedupKey)) return;
     seenItemKeys.add(dedupKey);
 
+    const serviceProductLabel = String(r.service_product || r.component || "").trim() || "Lihat Detail";
     const cost = calcCostFromStdKey_(std_key);
+    const fallbackCost = calcFallbackCostFromPriceRows_(displayModel, serviceProductLabel);
+
+    const finalCost =
+      Number(cost.total || 0) > 0
+        ? Number(cost.total || 0)
+        : fallbackCost.total;
 
     items.push({
       event: ev,
@@ -2008,10 +2249,10 @@ function renderPlanningFromSupabase(){
       serial: serialValue,
       work_center: String(r.wrk_cntr || "-"),
       current_hm: currentHM,
-      cost_total: cost.total,
-      missing_parts: cost.missing,
+      cost_total: finalCost,
+      missing_parts: Number(cost.total || 0) > 0 ? cost.missing : [],
       std_key,
-      service_product_label: String(r.service_product || r.component || "").trim() || "Lihat Detail",
+      service_product_label: serviceProductLabel,
       service_products: (PARTS_BY_KEY.get(std_key) || []).map(p => ({
         part_no: p.part_no || "-",
         part_desc: p.part_desc || "-",
@@ -2030,7 +2271,7 @@ function renderPlanningFromSupabase(){
 
   const selectedModel = mdlEl ? mdlEl.value : "ALL";
 
-  renderPlanningStandardsTable_(selectedModel, eventSel);
+  renderPlanningStandardsTable_(selectedModel, selectedEvents);
 
   let viewItems = items.slice();
   if (selectedModel !== "ALL") {
@@ -2038,18 +2279,21 @@ function renderPlanningFromSupabase(){
   }
 
   const totalCost = viewItems.reduce((a,b)=>a+Number(b.cost_total||0),0);
-  const budget = (customer==="ALL") ? 0 : getBudget_(customer, year, eventSel);
-  const feasible = (customer==="ALL") ? null : (totalCost <= budget);
+  const budget = (customer==="ALL") ? 0 : getBudget_(customer, year, selectedEvents);
+  const hasEventSelection = selectedEvents.length > 0;
+  const feasible = (!hasEventSelection || customer==="ALL") ? null : (totalCost <= budget);
 
   const elCost = document.getElementById("planTotalCost");
   const elBudg = document.getElementById("planBudget");
   const elFeas = document.getElementById("planFeasible");
 
-  if (elCost) elCost.innerText = formatIDR_(totalCost);
-  if (elBudg) elBudg.innerText = (customer==="ALL") ? "Pilih customer dulu" : formatIDR_(budget);
+  if (elCost) elCost.innerText = hasEventSelection ? formatIDR_(totalCost) : "-";
+  if (elBudg) elBudg.innerText = (!hasEventSelection || customer==="ALL") ? "Pilih customer dulu" : formatIDR_(budget);
   if (elFeas){
-    if (customer==="ALL") elFeas.innerText = "-";
-    else {
+    if (!hasEventSelection || customer==="ALL") {
+      elFeas.innerText = "-";
+      elFeas.style.color = "var(--text)";
+    } else {
       elFeas.innerText = feasible ? "BISA" : "TIDAK";
       elFeas.style.color = feasible ? "var(--good)" : "var(--bad)";
     }
@@ -2060,7 +2304,7 @@ function renderPlanningFromSupabase(){
     tbl.innerHTML = `
       <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
         <div class="p-4 border-b border-[var(--border)] flex justify-between">
-          <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit (${viewItems.length})</div>
+          <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-[11px] text-left whitespace-nowrap">
@@ -2096,9 +2340,8 @@ function renderPlanningFromSupabase(){
                       ${it.service_product_label}
                     </button>
                   </td>
-                  <td class="p-4 text-right text-[var(--accent)] font-black">${formatIDR_(it.cost_total)}</td>
-                  <td class="p-4 text-right ${it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]"} font-bold">
-                    ${it.missing_parts.length ? it.missing_parts.length : "OK"}
+                  <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>                  <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
+                    ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
                   </td>
                 </tr>
               `).join("")}
@@ -2109,16 +2352,23 @@ function renderPlanningFromSupabase(){
     `;
   }
 
-  renderPlanningCharts_(totalCost, budget, customer);
+    renderPlanningCharts_(hasEventSelection ? totalCost : 0, budget, customer, hasEventSelection);
 }
 
-    function renderPlanningCharts_(totalCost, budget, customer){
+    function renderPlanningCharts_(totalCost, budget, customer, hasEventSelection){
       // Budget vs Cost
       const c1 = document.getElementById("chartPlanBudget");
       if (c1){
         if (charts.planBudget) charts.planBudget.destroy();
-        const labels = (customer==="ALL") ? ["Total Cost"] : ["Cost","Budget"];
-        const data = (customer==="ALL") ? [totalCost] : [totalCost, budget];
+        const labels =
+          (!hasEventSelection)
+            ? ["Cost"]
+            : ((customer==="ALL") ? ["Total Cost"] : ["Cost","Budget"]);
+
+        const data =
+          (!hasEventSelection)
+            ? [0]
+            : ((customer==="ALL") ? [totalCost] : [totalCost, budget]);
 
         charts.planBudget = new Chart(c1, {
           type:"bar",
