@@ -418,6 +418,8 @@
             <div id="planningTable"></div>
           </div>
         </div>
+      </div>
+    </div>
 
     <!-- PAGE UNIT UT -->
     <div id="page-unit-ut" class="tab-content hidden">
@@ -1970,19 +1972,6 @@ function getBudget_(customer, year, selectedEvents){
 
       const triggerText = document.getElementById("planEventTriggerText");
       if (triggerText) triggerText.textContent = getPlanEventSummary_();
-    }
-
-    function syncPlanEventFromSelect_(){
-      const sel = document.getElementById("planEvent");
-      const val = normU(sel ? sel.value : "ALL");
-
-      PLAN_SELECTED_EVENTS = [];
-      if (val && val !== "ALL") {
-        PLAN_SELECTED_EVENTS = [val];
-      }
-
-      updatePlanEventToggleUi_();
-      renderPlanningFromSupabase();
     }
 
     function selectOnlyPlanEvent_(eventName){
