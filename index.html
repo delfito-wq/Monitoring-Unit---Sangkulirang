@@ -13,6 +13,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
   <style>
+header img{
+  display:block;
+  height:auto;
+}
     :root{
       --bg:#F7F8FA;
       --surface:#FFFFFF;
@@ -66,36 +70,22 @@
   </div>
 
   <!-- HEADER -->
-  <header class="bg-white w-full shadow-sm border-b border-[var(--border)]">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-row justify-between items-center">
-      <div class="flex items-center gap-4">
-        <div class="flex flex-col border-r-2 border-gray-100 pr-4">
-          <img src="logo ut.png" alt="United Tractors" class="h-8 md:h-10 object-contain">
-          <span class="text-[8px] md:text-[9px] font-bold text-[#005596] mt-0.5 tracking-widest uppercase">
-            member of <span class="font-black">ASTRA</span>
-          </span>
-        </div>
+<header class="bg-white w-full shadow-sm border-b border-[var(--border)]">
+  <div class="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between gap-4">
+<div class="flex flex-col justify-center shrink-0">
+  <img src="Logo.png" alt="United Tractors Member of Astra" class="w-[180px] md:w-[280px] h-auto object-contain object-left block">
+  <p class="text-[9px] md:text-[10px] text-[var(--muted)] font-bold mt-1 tracking-[0.12em] uppercase">
+    Sangkulirang Unit Population Analytics
+  </p>
+</div>
 
-        <div class="flex flex-col justify-center">
-          <h1 class="text-xl md:text-2xl text-black font-black italic uppercase tracking-tighter leading-none">
-            United Tractors
-          </h1>
-          <p class="text-[8px] md:text-[10px] text-[var(--muted)] font-bold uppercase tracking-[0.2em] mt-1">
-            Sangkulirang Analytics Unit System
-          </p>
-        </div>
-      </div>
+<div class="shrink-0">
+  <img src="Moving As One.png" alt="Moving as One" class="w-[110px] md:w-[150px] h-auto object-contain block">
+</div>
+  </div>
 
-      <div class="flex items-center">
-        <span class="text-black italic font-black text-lg md:text-2xl mr-2 tracking-tighter uppercase">Moving as</span>
-        <div class="bg-[var(--accent)] rounded-full w-9 h-9 md:w-11 md:h-11 flex items-center justify-center shadow-sm">
-          <span class="text-black font-black text-[10px] md:text-xs uppercase">one</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- NAV -->
-    <nav class="w-full border-t border-black/10" style="background: var(--nav);">
+  <!-- NAV -->
+  <nav class="w-full border-t border-black/10" style="background: var(--nav);">
       <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between py-2">
         <div class="flex space-x-1 py-2 md:py-0 items-center">
           <button onclick="switchTab('main')" id="btn-main"
@@ -137,7 +127,7 @@
           </button>
           <button onclick="switchTab('planning')" id="btn-planning"
             class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-200 hover:text-white">
-            Planning
+            Market Analytics
           </button>
         </div>
 
@@ -233,29 +223,41 @@
     </div>
 
     <!-- PAGE CHARTS -->
-    <div id="page-charts" class="tab-content hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-          <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi Per Wilayah (%)</h3>
-          <div class="w-full h-[250px]"><canvas id="chartWilayah"></canvas></div>
-        </div>
-
-        <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-          <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Work Center Distribution (%)</h3>
-          <div class="w-full h-[250px]"><canvas id="chartWorkCenter"></canvas></div>
-        </div>
-
-        <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-          <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Status Warranty (%)</h3>
-          <div class="w-full h-[250px]"><canvas id="chartWarranty"></canvas></div>
-        </div>
-      </div>
-
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-        <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
-        <div class="w-full h-[400px]"><canvas id="chartJenisBar"></canvas></div>
-      </div>
+<div id="page-charts" class="tab-content hidden">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi Per Wilayah (%)</h3>
+      <div class="w-full h-[250px]"><canvas id="chartWilayah"></canvas></div>
     </div>
+
+    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Work Center Distribution (%)</h3>
+      <div class="w-full h-[250px]"><canvas id="chartWorkCenter"></canvas></div>
+    </div>
+
+    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Status Warranty (%)</h3>
+      <div class="w-full h-[250px]"><canvas id="chartWarranty"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Bouwheer Indexim vs GAM</h3>
+      <div class="w-full h-[250px]"><canvas id="chartBouwheer"></canvas></div>
+    </div>
+
+    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi per Sektor</h3>
+      <div class="w-full h-[250px]"><canvas id="chartSector"></canvas></div>
+    </div>
+  </div>
+
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
+    <div class="w-full h-[400px]"><canvas id="chartJenisBar"></canvas></div>
+  </div>
+</div>
 
     <!-- PAGE TREND -->
     <div id="page-trend" class="tab-content hidden">
@@ -269,48 +271,59 @@
       </div>
     </div>
 
-    <!-- PAGE PLANNING -->
-    <div id="page-planning" class="tab-content hidden">
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-        <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">
-          Planning Opportunity
-        </h3>
+<!-- PAGE PLANNING -->
+<div id="page-planning" class="tab-content hidden">
+
+  <div class="bg-white p-6 rounded-2xl border border-[var(--border)] shadow-sm mb-6">
+    <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Share (Populasi)</div>
+    <div class="h-[360px]"><canvas id="chartPlanMarketShare"></canvas></div>
+  </div>
+
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+    <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">
+      Market Size Servis
+    </h3>
 
         <!-- FILTER -->
         <div class="flex flex-col md:flex-row gap-4 mb-6 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
+        <div class="flex flex-wrap items-center gap-4">
           <div class="flex items-center gap-2">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Year</label>
             <select id="planYear" onchange="renderPlanningFromSupabase()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2">
+              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[100px]">
             </select>
           </div>
 
-          <div class="flex flex-col gap-1">
-            <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Customer</label>
-
-            <!-- search input -->
-            <input id="planCustomerSearch" type="text" placeholder="Cari customer..."
-              oninput="filterPlanCustomerOptions()"
-              class="bg-white text-[var(--text)] text-[10px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
-
-            <select id="planCustomer" onchange="renderPlanningFromSupabase()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[260px]">
-              <option value="ALL">ALL</option>
+          <div class="flex items-center gap-2">
+            <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Month</label>
+            <select id="planMonth" onchange="renderPlanningFromSupabase()"
+              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[140px]">
+                <option value="ALL">ALL</option>
             </select>
-
-            <div id="planCustomerHint" class="text-[9px] text-[var(--muted)] font-bold"></div>
           </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Customer</label>
+
+          <input id="planCustomer" list="planCustomerList" oninput="renderPlanningFromSupabase()"
+            placeholder="ALL / ketik customer..."
+            class="bg-white text-[var(--text)] text-[10px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
+
+          <datalist id="planCustomerList"></datalist>
+        </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Job Type</label>
 
             <div class="relative" id="planEventDropdownWrap">
-              <select id="planEvent" onchange="syncPlanEventFromSelect_()" class="hidden">
-                <option value="ALL">ALL</option>
-                <option value="MIDLIFE">MIDLIFE</option>
-                <option value="GOH">GOH</option>
-                <option value="PCR">PCR</option>
-              </select>
+            <select id="planEvent" onchange="syncPlanEventFromSelect_()" class="hidden">
+              <option value="ALL">ALL</option>
+              <option value="MIDLIFE">MIDLIFE</option>
+              <option value="GOH">GOH</option>
+              <option value="PCR">PCR</option>
+              <option value="CYLINDER">CYLINDER</option>
+            </select>
 
               <button type="button" onclick="togglePlanEventDropdown_()"
                 class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[160px] flex items-center justify-between">
@@ -346,77 +359,84 @@
                 </button>
                 </div>
 
-                <div class="flex items-center justify-between px-4 py-3 hover:bg-[var(--surface-2)]">
-                  <button type="button" onclick="selectOnlyPlanEvent_('PCR')"
-                    class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
-                    PCR
-                  </button>
-                  <button type="button" id="toggleEventPCR" onclick="togglePlanEvent_('PCR', event)"
+              <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--surface-2)]">
+                <button type="button" onclick="selectOnlyPlanEvent_('PCR')"
+                  class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                  PCR
+                </button>
+                <button type="button" id="toggleEventPCR" onclick="togglePlanEvent_('PCR', event)"
                   class="ml-3 w-8 h-8 rounded-full text-[14px] font-black border border-[var(--border)] bg-white text-[var(--text)] transition-all flex items-center justify-center">
                 </button>
-                </div>
+              </div>
+
+              <div class="flex items-center justify-between px-4 py-3 hover:bg-[var(--surface-2)]">
+                <button type="button" onclick="selectOnlyPlanEvent_('CYLINDER')"
+                  class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                  CYLINDER
+                </button>
+                <button type="button" id="toggleEventCYLINDER" onclick="togglePlanEvent_('CYLINDER', event)"
+                  class="ml-3 w-8 h-8 rounded-full text-[14px] font-black border border-[var(--border)] bg-white text-[var(--text)] transition-all flex items-center justify-center">
+                </button>
+              </div>
               </div>
             </div>
             </div>
         </div>
 
         <!-- SUMMARY -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Share</div>
-            <div id="planTotalCost" class="text-3xl font-black text-[var(--accent)] mt-2">IDR 0</div>
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
             <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Size</div>
-            <div id="planBudget" class="text-3xl font-black text-[var(--text)] mt-2">IDR 0</div>
+            <div id="planMarketSize" class="text-3xl font-black text-[var(--accent)] mt-2">IDR 0</div>
           </div>
+
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Feasible</div>
-            <div id="planFeasible" class="text-3xl font-black mt-2">-</div>
+            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Share</div>
+            <div id="planMarketShare" class="text-3xl font-black text-[var(--text)] mt-2">-</div>
           </div>
         </div>
 
-        <!-- CHARTS -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- KIRI: 1/3 -->
-          <div class="bg-white p-6 rounded-2xl border border-[var(--border)] lg:col-span-1">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Budget vs Cost</div>
-            <div class="h-[320px]"><canvas id="chartPlanBudget"></canvas></div>
-          </div>
+<!-- CHARTS -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- KIRI: PIE -->
+  <div class="bg-white p-6 rounded-2xl border border-[var(--border)] lg:col-span-1">
+    <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Share Composition</div>
+    <div class="h-[320px]"><canvas id="chartPlanSharePie"></canvas></div>
+  </div>
 
-          <!-- KANAN: 2/3 -->
-          <div class="bg-white p-6 rounded-2xl border border-[var(--border)] lg:col-span-2">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Share (Populasi)</div>
-            <div class="h-[360px]"><canvas id="chartPlanMarketShare"></canvas></div>
-          </div>
-        </div>
+  <!-- KANAN: BAR -->
+  <div class="bg-white p-6 rounded-2xl border border-[var(--border)] lg:col-span-2">
+    <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Size vs Market Share</div>
+    <div class="h-[320px]"><canvas id="chartPlanBudget"></canvas></div>
+  </div>
+</div>
 
         <!-- STANDARD + OPPORTUNITY TABLE -->
         <div class="mt-6">
           <div class="mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
-              <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH Unit</div>
+              <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH / Cylinder Unit</div>
             </div>
             <div id="planningStandardsTable"></div>
           </div>
 
-          <div>
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
-              <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
+<div>
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
+    <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
 
-              <div class="flex flex-col sm:flex-row gap-3">
-                <div class="flex items-center gap-2">
-                  <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
-                  <select id="planModelFilter" onchange="renderPlanningFromSupabase()"
-                    class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
-                    <option value="ALL">ALL</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="flex items-center gap-2">
+        <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
+        <select id="planModelFilter" onchange="renderPlanningFromSupabase()"
+          class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
+          <option value="ALL">ALL</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-            <div id="planningTable"></div>
-          </div>
+  <div id="planningTable"></div>
+</div>
         </div>
       </div>
     </div>
@@ -898,6 +918,83 @@ function getSMR(d){
     }
 
     // ===== CHARTS PAGE + CUSTOMER CHART =====
+// ===== CHARTS PAGE + CUSTOMER CHART =====
+function getBouwheerGroup_(d){
+  // prioritas ambil dari AREA, karena kamu bilang basisnya area INDEXIM dan GAM
+  const raw = norm(
+    pickKeyInsensitive(d, [
+      "area",
+      "Area",
+      "bouwheer",
+      "Bouwheer",
+      "group_bouwheer",
+      "bouwheer_group",
+      "customer_group",
+      "owner_group"
+    ])
+  );
+
+  if (!raw) return null;
+
+  if (
+    raw.includes("INDEXIM") ||
+    raw === "IDX" ||
+    raw.includes(" IDX ") ||
+    raw.startsWith("IDX")
+  ) return "INDEXIM";
+
+  if (
+    raw.includes("GAM") ||
+    raw === "GAM"
+  ) return "GAM";
+
+  return null;
+}
+
+function getSectorGroup_(d){
+  const raw = norm(
+    pickKeyInsensitive(d, [
+      "sector",
+      "Sector",
+      "sektor",
+      "Sektor",
+      "indust",
+      "Indust",
+      "industry",
+      "Industry",
+      "industri",
+      "Industri",
+      "segment",
+      "Segment"
+    ])
+  );
+
+  if (!raw) return null;
+
+  // AGRO
+  if (
+    raw === "AGR" ||
+    raw.includes("AGRO")
+  ) return "AGRO";
+
+  // MINING
+  if (
+    raw === "MNG" ||
+    raw === "MIN" ||
+    raw.includes("MINING")
+  ) return "MINING";
+
+  // FORESTRY
+  if (
+    raw === "FRS" ||
+    raw === "FRY" ||
+    raw === "FOR" ||
+    raw.includes("FORESTRY")
+  ) return "FORESTRY";
+
+  return null;
+}
+
     function renderAllCharts() {
       const commonPie = {
         responsive:true,
@@ -946,7 +1043,7 @@ function getSMR(d){
             labels: wcLabels,
             datasets:[{
               data: wcData,
-              backgroundColor: ['#111827','#FFCC00','#16A34A','#DC2626'],
+              backgroundColor: ['#14213D','#C9A227','#6F8A6D','#A56A5B'],
               borderWidth: 2
             }]
           },
@@ -966,13 +1063,71 @@ function getSMR(d){
           type:'pie',
           data:{
             labels:['Warranty','Out Warranty'],
-            datasets:[{ data:wData, backgroundColor:['#16A34A','#DC2626'], borderWidth:2 }]
+            datasets:[{ data:wData, backgroundColor:['#4E8B63','#B45A52'], borderWidth:2 }]
           },
           options: commonPie
         });
       }
 
-      // 4 Brand bar horizontal
+// 4 Bouwheer pie
+const bouwheerMap = { INDEXIM: 0, GAM: 0 };
+
+globalData.forEach(d => {
+  const grp = getBouwheerGroup_(d);
+  if (!grp) return;
+  bouwheerMap[grp] = (bouwheerMap[grp] || 0) + 1;
+});
+
+const bouwheerLabels = Object.keys(bouwheerMap).filter(k => bouwheerMap[k] > 0);
+const bouwheerData = bouwheerLabels.map(k => bouwheerMap[k]);
+
+if (charts.bouwheer) charts.bouwheer.destroy();
+const ctxBouwheer = document.getElementById('chartBouwheer');
+if (ctxBouwheer){
+  charts.bouwheer = new Chart(ctxBouwheer, {
+    type:'pie',
+    data:{
+      labels: bouwheerLabels,
+      datasets:[{
+        data: bouwheerData,
+        backgroundColor: ['#14213D','#C9A227'],
+        borderWidth: 2
+      }]
+    },
+    options: commonPie
+  });
+}
+
+// 5 Sector pie
+const sectorMap = { AGRO: 0, MINING: 0, FORESTRY: 0 };
+
+globalData.forEach(d => {
+  const grp = getSectorGroup_(d);
+  if (!grp) return;
+  sectorMap[grp] = (sectorMap[grp] || 0) + 1;
+});
+
+const sectorLabels = Object.keys(sectorMap).filter(k => sectorMap[k] > 0);
+const sectorData = sectorLabels.map(k => sectorMap[k]);
+
+if (charts.sector) charts.sector.destroy();
+const ctxSector = document.getElementById('chartSector');
+if (ctxSector){
+  charts.sector = new Chart(ctxSector, {
+    type:'pie',
+    data:{
+      labels: sectorLabels,
+      datasets:[{
+        data: sectorData,
+        backgroundColor: ['#6F8A6D','#394B63','#8A6B3F'],
+        borderWidth: 2
+      }]
+    },
+    options: commonPie
+  });
+}
+
+      // 6 Brand bar horizontal
       const prodMap = {};
       globalData.forEach(d=>{
         const p = String(d.prod_hier || "N/A").trim().toUpperCase();
@@ -993,7 +1148,7 @@ function getSMR(d){
             maintainAspectRatio:false,
             plugins:{
               legend:{ display:false },
-              datalabels:{ anchor:'end', align:'right', color:'#ffffff', font:{ weight:'bold', size:11 } }
+              datalabels:{ anchor:'end', align:'right', color:'#ffffff', font:{ weight:'bold' } }
             },
             scales:{
               y:{ grid:{ display:false }, ticks:{ color:'#111827', font:{ weight:'bold' } } },
@@ -1003,7 +1158,7 @@ function getSMR(d){
         });
       }
 
-      // 5 Customer bar + click
+      // 7 Customer bar + click
       const custMap = {};
       globalData.forEach(d=>{
         const c = String(d.customer||"").trim().toUpperCase();
@@ -1665,6 +1820,101 @@ function normCustomerKey_(v){
     .toUpperCase();
 }
 
+const PLAN_MONTHS = [
+  { value: 1, label: "JANUARY" },
+  { value: 2, label: "FEBRUARY" },
+  { value: 3, label: "MARCH" },
+  { value: 4, label: "APRIL" },
+  { value: 5, label: "MAY" },
+  { value: 6, label: "JUNE" },
+  { value: 7, label: "JULY" },
+  { value: 8, label: "AUGUST" },
+  { value: 9, label: "SEPTEMBER" },
+  { value: 10, label: "OCTOBER" },
+  { value: 11, label: "NOVEMBER" },
+  { value: 12, label: "DECEMBER" }
+];
+
+function getPlanningYear_(row){
+  const rawYear = pick(row, [
+    "year",
+    "tahun",
+    "plan_year",
+    "due_year",
+    "opportunity_year",
+    "service_year"
+  ]);
+
+  const yearNum = Number(rawYear);
+  if (Number.isFinite(yearNum) && yearNum > 2000) return yearNum;
+
+  const rawDate = pick(row, [
+    "date",
+    "plan_date",
+    "due_date",
+    "schedule_date",
+    "service_date",
+    "opportunity_date"
+  ]);
+
+  if (rawDate) {
+    const dt = new Date(rawDate);
+    if (!Number.isNaN(dt.getTime())) return dt.getFullYear();
+  }
+
+  return null;
+}
+
+function getPlanningMonth_(row){
+  const rawMonth = pick(row, [
+    "month",
+    "bulan",
+    "plan_month",
+    "due_month",
+    "opportunity_month",
+    "service_month"
+  ]);
+
+  if (rawMonth != null && rawMonth !== "") {
+    const monthMap = {
+      JAN: 1, JANUARY: 1, JANUARI: 1,
+      FEB: 2, FEBRUARY: 2, FEBRUARI: 2,
+      MAR: 3, MARCH: 3, MARET: 3,
+      APR: 4, APRIL: 4,
+      MAY: 5, MEI: 5,
+      JUN: 6, JUNE: 6, JUNI: 6,
+      JUL: 7, JULY: 7, JULI: 7,
+      AUG: 8, AUGUST: 8, AGUSTUS: 8,
+      SEP: 9, SEPTEMBER: 9,
+      OCT: 10, OCTOBER: 10, OKTOBER: 10,
+      NOV: 11, NOVEMBER: 11,
+      DEC: 12, DECEMBER: 12, DESEMBER: 12
+    };
+
+    const monthText = String(rawMonth).trim().toUpperCase();
+    if (monthMap[monthText]) return monthMap[monthText];
+
+    const monthNum = Number(String(rawMonth).replace(/[^0-9]/g, ""));
+    if (Number.isFinite(monthNum) && monthNum >= 1 && monthNum <= 12) return monthNum;
+  }
+
+  const rawDate = pick(row, [
+    "date",
+    "plan_date",
+    "due_date",
+    "schedule_date",
+    "service_date",
+    "opportunity_date"
+  ]);
+
+  if (rawDate) {
+    const dt = new Date(rawDate);
+    if (!Number.isNaN(dt.getTime())) return dt.getMonth() + 1;
+  }
+
+  return null;
+}
+
 function buildPlanningCache(standardsRows, partsRows, pricesRows, budgetRows){
   STD_BY_KEY.clear();
   PARTS_BY_KEY.clear();
@@ -1944,7 +2194,7 @@ function getBudget_(customer, year, selectedEvents){
     }
 
     function updatePlanEventToggleUi_(){
-      const ids = ["PCR", "MIDLIFE", "GOH"];
+      const ids = ["PCR", "MIDLIFE", "GOH", "CYLINDER"];
 
       ids.forEach(ev => {
         const btn = document.getElementById("toggleEvent" + ev);
@@ -2020,60 +2270,55 @@ function getBudget_(customer, year, selectedEvents){
       renderPlanningFromSupabase();
     }
 
-    function togglePlanEvent_(eventName){
-      const ev = normU(eventName);
-      const idx = PLAN_SELECTED_EVENTS.indexOf(ev);
+function setPlanCustomerOptions(list){
+  const dl = document.getElementById("planCustomerList");
+  if (!dl) return;
 
-      if (idx >= 0) PLAN_SELECTED_EVENTS.splice(idx, 1);
-      else PLAN_SELECTED_EVENTS.push(ev);
+  dl.innerHTML = list.map(c => `<option value="${String(c).replaceAll('"','&quot;')}"></option>`).join("");
+}
 
-      const sel = document.getElementById("planEvent");
-      if (sel) sel.value = "ALL";
+function getPlanCustomerKeyword_(){
+  return String(document.getElementById("planCustomer")?.value || "").trim();
+}
 
-      updatePlanEventToggleUi_();
-      renderPlanningFromSupabase();
+function getExactPlanCustomer_(){
+  const keyword = normCustomerKey_(getPlanCustomerKeyword_());
+  if (!keyword) return null;
+  return PLAN_CUSTOMERS_ALL.find(c => normCustomerKey_(c) === keyword) || null;
+}
+
+function initPlanningFromSupabase(){
+  const yEl = document.getElementById("planYear");
+  const mEl = document.getElementById("planMonth");
+  const now = new Date();
+  const nowYear = now.getFullYear();
+
+  if (yEl){
+    yEl.innerHTML = "";
+    for (let y = nowYear - 1; y <= nowYear + 3; y++) {
+      yEl.innerHTML += `<option value="${y}">${y}</option>`;
     }
+    yEl.value = String(nowYear);
+  }
 
-    function setPlanCustomerOptions(list){
-      const sel = document.getElementById("planCustomer");
-      const hint = document.getElementById("planCustomerHint");
-      if (!sel) return;
+  if (mEl){
+    mEl.innerHTML = `<option value="ALL">ALL</option>` +
+      PLAN_MONTHS.map(m => `<option value="${m.value}">${m.label}</option>`).join("");
+    mEl.value = "ALL";
+  }
 
-      const current = sel.value || "ALL";
-      sel.innerHTML = `<option value="ALL">ALL</option>` + list.map(c=>`<option value="${String(c).replaceAll('"','&quot;')}">${c}</option>`).join("");
-      if ([...sel.options].some(o=>o.value===current)) sel.value=current;
-      else sel.value="ALL";
+  PLAN_CUSTOMERS_ALL = [...new Set(globalData.map(d=>String(d.customer||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const customerInput = document.getElementById("planCustomer");
+  if (customerInput) customerInput.value = "";
+  setPlanCustomerOptions(PLAN_CUSTOMERS_ALL);
 
-      if (hint) hint.innerText = `Menampilkan ${list.length} customer`;
-    }
+  PLAN_SELECTED_EVENTS = [];
+  const eventSel = document.getElementById("planEvent");
+  if (eventSel) eventSel.value = "ALL";
+  updatePlanEventToggleUi_();
 
-    function filterPlanCustomerOptions(){
-      const q = String(document.getElementById("planCustomerSearch")?.value || "").trim().toUpperCase();
-      const filtered = !q ? PLAN_CUSTOMERS_ALL : PLAN_CUSTOMERS_ALL.filter(c=>String(c).toUpperCase().includes(q));
-      setPlanCustomerOptions(filtered);
-    }
-
-    function initPlanningFromSupabase(){
-      const yEl = document.getElementById("planYear");
-      const now = new Date().getFullYear();
-      if (yEl){
-        yEl.innerHTML="";
-        for (let y=now-1; y<=now+3; y++) yEl.innerHTML += `<option value="${y}">${y}</option>`;
-        yEl.value = String(now);
-      }
-
-      PLAN_CUSTOMERS_ALL = [...new Set(globalData.map(d=>String(d.customer||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-      const search = document.getElementById("planCustomerSearch");
-      if (search) search.value = "";
-      setPlanCustomerOptions(PLAN_CUSTOMERS_ALL);
-
-      PLAN_SELECTED_EVENTS = [];
-      const eventSel = document.getElementById("planEvent");
-      if (eventSel) eventSel.value = "ALL";
-      updatePlanEventToggleUi_();
-
-      renderPlanningFromSupabase();
-    }
+  renderPlanningFromSupabase();
+}
 
     function setSelectOptions_(el, options, placeholderAll="ALL"){
       if (!el) return;
@@ -2098,7 +2343,7 @@ function renderPlanningStandardsTable_(selectedModel, selectedEvents){
       ...s,
       event: eventValue
     };
-  }).filter(s => ["MIDLIFE", "GOH"].includes(s.event));
+  }).filter(s => ["MIDLIFE", "GOH", "CYLINDER"].includes(s.event));
 
   if (selectedEvents && selectedEvents.length) {
     const eventSet = new Set(selectedEvents.map(normU));
@@ -2129,7 +2374,7 @@ function renderPlanningStandardsTable_(selectedModel, selectedEvents){
   wrap.innerHTML = `
     <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
       <div class="p-4 border-b border-[var(--border)] flex justify-between">
-        <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife & GOH </div>
+        <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH / Cylinder</div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-[11px] text-left whitespace-nowrap">
@@ -2172,13 +2417,25 @@ function renderPlanningStandardsTable_(selectedModel, selectedEvents){
 
 function renderPlanningFromSupabase(){
   const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
-  const customer = document.getElementById("planCustomer")?.value || "ALL";
+  const monthValue = document.getElementById("planMonth")?.value || "ALL";
+  const selectedMonth = monthValue === "ALL" ? null : Number(monthValue);
+  const customerKeywordRaw = getPlanCustomerKeyword_();
+  const customerKeyword = normCustomerKey_(customerKeywordRaw);
+  const exactCustomer = getExactPlanCustomer_();
   const selectedEvents = getSelectedPlanEvents_();
 
   let rows = PLAN_OPP_ROWS.slice();
-  if (customer !== "ALL") {
-    const selectedCustomerKey = normCustomerKey_(customer);
-    rows = rows.filter(r => normCustomerKey_(r.customer) === selectedCustomerKey);
+
+  rows = rows.filter(r => {
+    const rowYear = getPlanningYear_(r);
+    return rowYear == null ? true : rowYear === year;
+  });
+
+  if (selectedMonth != null) {
+    rows = rows.filter(r => {
+      const rowMonth = getPlanningMonth_(r);
+      return rowMonth == null ? true : rowMonth === selectedMonth;
+    });
   }
 
   if (selectedEvents.length) {
@@ -2262,31 +2519,48 @@ function renderPlanningFromSupabase(){
 
   renderPlanningStandardsTable_(selectedModel, selectedEvents);
 
-  let viewItems = items.slice();
-  if (selectedModel !== "ALL") {
-    viewItems = viewItems.filter(i => String(i.model) === String(selectedModel));
+let scopedItems = items.slice();
+if (selectedModel !== "ALL") {
+  scopedItems = scopedItems.filter(i => String(i.model) === String(selectedModel));
+}
+
+const marketSizeTotal = scopedItems.reduce((a,b)=>a + Number(b.cost_total || 0), 0);
+
+let viewItems = scopedItems.slice();
+if (customerKeyword) {
+  viewItems = viewItems.filter(i => normCustomerKey_(i.customer).includes(customerKeyword));
+}
+
+const exactCustomerItems = !exactCustomer
+  ? []
+  : scopedItems.filter(i => normCustomerKey_(i.customer) === normCustomerKey_(exactCustomer));
+
+const customerTotalCost = exactCustomerItems.reduce((a,b)=>a + Number(b.cost_total || 0), 0);
+const hasEventSelection = selectedEvents.length > 0;
+
+const marketSharePct =
+  (!exactCustomer || marketSizeTotal <= 0)
+    ? null
+    : (customerTotalCost / marketSizeTotal) * 100;
+
+const shareBaseItems = scopedItems;
+
+const elSize = document.getElementById("planMarketSize");
+const elShare = document.getElementById("planMarketShare");
+
+if (elSize) {
+  elSize.innerText = hasEventSelection ? formatIDR_(marketSizeTotal) : "-";
+}
+
+if (elShare) {
+  if (!hasEventSelection || !exactCustomer || marketSizeTotal <= 0) {
+    elShare.innerText = "-";
+    elShare.style.color = "var(--text)";
+  } else {
+    elShare.innerText = `${marketSharePct.toFixed(1)}%`;
+    elShare.style.color = "var(--accent)";
   }
-
-  const totalCost = viewItems.reduce((a,b)=>a+Number(b.cost_total||0),0);
-  const budget = (customer==="ALL") ? 0 : getBudget_(customer, year, selectedEvents);
-  const hasEventSelection = selectedEvents.length > 0;
-  const feasible = (!hasEventSelection || customer==="ALL") ? null : (totalCost <= budget);
-
-  const elCost = document.getElementById("planTotalCost");
-  const elBudg = document.getElementById("planBudget");
-  const elFeas = document.getElementById("planFeasible");
-
-  if (elCost) elCost.innerText = hasEventSelection ? formatIDR_(totalCost) : "-";
-  if (elBudg) elBudg.innerText = (!hasEventSelection || customer==="ALL") ? "Pilih customer dulu" : formatIDR_(budget);
-  if (elFeas){
-    if (!hasEventSelection || customer==="ALL") {
-      elFeas.innerText = "-";
-      elFeas.style.color = "var(--text)";
-    } else {
-      elFeas.innerText = feasible ? "BISA" : "TIDAK";
-      elFeas.style.color = feasible ? "var(--good)" : "var(--bad)";
-    }
-  }
+}
 
   const tbl = document.getElementById("planningTable");
   if (tbl){
@@ -2329,7 +2603,8 @@ function renderPlanningFromSupabase(){
                       ${it.service_product_label}
                     </button>
                   </td>
-                  <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>                  <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
+                  <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>
+                  <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
                     ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
                   </td>
                 </tr>
@@ -2341,83 +2616,262 @@ function renderPlanningFromSupabase(){
     `;
   }
 
-    renderPlanningCharts_(hasEventSelection ? totalCost : 0, budget, customer, hasEventSelection);
+renderPlanningCharts_(
+  marketSizeTotal,
+  customerTotalCost,
+  marketSharePct,
+  exactCustomer,
+  hasEventSelection,
+  shareBaseItems
+);
 }
 
-    function renderPlanningCharts_(totalCost, budget, customer, hasEventSelection){
-      // Budget vs Cost
-      const c1 = document.getElementById("chartPlanBudget");
-      if (c1){
-        if (charts.planBudget) charts.planBudget.destroy();
-        const labels =
-          (!hasEventSelection)
-            ? ["Cost"]
-            : ((customer==="ALL") ? ["Total Cost"] : ["Cost","Budget"]);
+function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePct, exactCustomer, hasEventSelection, shareBaseItems){
+  const safeMarketSize = Number(marketSizeTotal || 0);
+  const safeCustomerTotal = Number(customerTotalCost || 0);
+  const safeMarketSharePct = Number(marketSharePct || 0);
+  const customerSelected = !!exactCustomer;
 
-        const data =
-          (!hasEventSelection)
-            ? [0]
-            : ((customer==="ALL") ? [totalCost] : [totalCost, budget]);
+  const shareMap = new Map();
+  (Array.isArray(shareBaseItems) ? shareBaseItems : []).forEach(it => {
+    const cust = String(it.customer || "-").trim() || "-";
+    const val = Number(it.cost_total || 0);
+    shareMap.set(cust, Number(shareMap.get(cust) || 0) + val);
+  });
 
-        charts.planBudget = new Chart(c1, {
-          type:"bar",
-          data:{ labels, datasets:[{ data, backgroundColor:"#FFCC00", borderRadius:6 }] },
-          options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            plugins:{
-              legend:{ display:false },
-              datalabels:{ anchor:"end", align:"top", color:"#ffffff", font:{ weight:"bold" } }
-            },
-            scales:{
-              x:{ ticks:{ color:"#111827" } },
-              y:{ ticks:{ color:"#6B7280" }, grid:{ color:"#E5E7EB" } }
-            }
-          }
-        });
-      }
+  const ranked = Array.from(shareMap.entries())
+    .filter(([, val]) => Number(val || 0) > 0)
+    .sort((a, b) => b[1] - a[1]);
 
-      // Market share horizontal bar (Top N + Others)
-      const c2 = document.getElementById("chartPlanMarketShare");
-      if (c2){
-        const map = {};
-        globalData.forEach(d=>{
-          const c = String(d.customer||"").trim();
-          if (!c) return;
-          map[c] = (map[c]||0)+1;
-        });
+  // PIE: Market Share Composition
+  const pieCanvas = document.getElementById("chartPlanSharePie");
+  if (pieCanvas){
+    if (charts.planSharePie) charts.planSharePie.destroy();
 
-        const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
-        const TOP_N = 10;
-        const top = sorted.slice(0, TOP_N);
-        const rest = sorted.slice(TOP_N);
-        const others = rest.reduce((sum,[,v])=>sum+v,0);
+    let pieLabels = ["NO DATA"];
+    let pieData = [1];
+    let pieColors = ["#FFCC00"];
 
-        const labels = top.map(([k])=>k);
-        const data = top.map(([,v])=>v);
-        if (others>0){ labels.push("OTHERS"); data.push(others); }
+    if (hasEventSelection && safeMarketSize > 0) {
+      if (customerSelected) {
+        pieLabels = [exactCustomer];
+        pieData = [safeCustomerTotal, Math.max(0, safeMarketSize - safeCustomerTotal)];
+        pieColors = ["#FFCC00", "#111827"];
+      } else if (ranked.length) {
+        const top = ranked.slice(0, 5);
+        const rest = ranked.slice(5);
+        const others = rest.reduce((sum, [, val]) => sum + Number(val || 0), 0);
 
-        if (charts.planShare) charts.planShare.destroy();
-        charts.planShare = new Chart(c2, {
-          type:"bar",
-          data:{ labels, datasets:[{ data, backgroundColor:"#111827", borderRadius:6, barThickness:18 }] },
-          options:{
-            indexAxis:"y",
-            responsive:true,
-            maintainAspectRatio:false,
-            plugins:{
-              legend:{ display:false },
-              datalabels:{ anchor:"end", align:"right", color:"#ffffff", font:{ weight:"bold", size:10 }, formatter:v=>v },
-              tooltip:{ callbacks:{ label:(ctx)=>`Populasi: ${ctx.parsed.x} unit` } }
-            },
-            scales:{
-              y:{ ticks:{ color:"#111827", font:{ size:10, weight:"bold" } }, grid:{ display:false } },
-              x:{ ticks:{ color:"#6B7280" }, grid:{ color:"#E5E7EB" }, beginAtZero:true }
-            }
-          }
-        });
+        pieLabels = top.map(([name]) => name);
+        pieData = top.map(([, val]) => Number(val || 0));
+        pieColors = ["#FFCC00", "#111827", "#6B7280", "#16A34A", "#DC2626"];
+
+        if (others > 0) {
+          pieLabels.push("OTHERS");
+          pieData.push(others);
+          pieColors.push("#9CA3AF");
+        }
       }
     }
+
+    charts.planSharePie = new Chart(pieCanvas, {
+      type:"pie",
+      data:{
+        labels: pieLabels,
+        datasets:[{
+          data: pieData,
+          backgroundColor: pieColors,
+          borderWidth: 2
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            position:"bottom",
+            labels:{ color:"#6B7280", font:{ size:10, weight:"bold" }, padding:15 }
+          },
+          datalabels:{
+            color:"#ffffff",
+            font:{ weight:"bold", size:12 },
+            formatter:(v, ctx)=>{
+              const sum = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+              return sum > 0 ? ((v * 100) / sum).toFixed(1) + "%" : "0%";
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // MIXED: Market Size vs Market Share
+  const mixedCanvas = document.getElementById("chartPlanBudget");
+  if (mixedCanvas){
+    if (charts.planBudget) charts.planBudget.destroy();
+
+    charts.planBudget = new Chart(mixedCanvas, {
+      data:{
+        labels:["PLANNING"],
+        datasets:[
+          {
+            type:"bar",
+            label:"Market Size",
+            data:[hasEventSelection ? safeMarketSize : 0],
+            backgroundColor:"#FFCC00",
+            borderRadius:6,
+            yAxisID:"yAmount"
+          },
+          {
+            type:"line",
+            label:"Market Share %",
+            data:[hasEventSelection && customerSelected ? safeMarketSharePct : 0],
+            borderColor:"#111827",
+            backgroundColor:"#111827",
+            pointBackgroundColor:"#111827",
+            pointBorderColor:"#111827",
+            pointRadius:5,
+            pointHoverRadius:6,
+            borderWidth:3,
+            tension:0,
+            fill:false,
+            yAxisID:"yPercent"
+          }
+        ]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{
+            display:true,
+            labels:{ color:"#6B7280", font:{ size:10, weight:"bold" } }
+          },
+          datalabels:{
+            color:"#111827",
+            font:{ weight:"bold", size:10 },
+            formatter:(value, ctx)=>{
+              const dsLabel = String(ctx.dataset.label || "");
+              if (dsLabel === "Market Size") {
+                return hasEventSelection ? formatIDR_(value) : "-";
+              }
+              return (hasEventSelection && customerSelected) ? `${Number(value || 0).toFixed(1)}%` : "-";
+            },
+            anchor:(ctx)=> String(ctx.dataset.label || "") === "Market Size" ? "end" : "center",
+            align:(ctx)=> String(ctx.dataset.label || "") === "Market Size" ? "top" : "top",
+            offset:(ctx)=> String(ctx.dataset.label || "") === "Market Size" ? 4 : 0
+          },
+          tooltip:{
+            callbacks:{
+              label:(ctx)=>{
+                const dsLabel = String(ctx.dataset.label || "");
+                if (dsLabel === "Market Size") {
+                  return `Market Size: ${formatIDR_(ctx.parsed.y || 0)}`;
+                }
+                return `Market Share: ${Number(ctx.parsed.y || 0).toFixed(1)}%`;
+              }
+            }
+          }
+        },
+        scales:{
+          x:{ ticks:{ color:"#111827" }, grid:{ display:false } },
+          yAmount:{
+            position:"left",
+            beginAtZero:true,
+            ticks:{ color:"#6B7280" },
+            grid:{ color:"#E5E7EB" }
+          },
+          yPercent:{
+            position:"right",
+            beginAtZero:true,
+            max:100,
+            ticks:{
+              color:"#111827",
+              callback:(v)=> `${v}%`
+            },
+            grid:{ drawOnChartArea:false }
+          }
+        }
+      }
+    });
+  }
+
+  // BAR: Market Share (Populasi) - samakan dengan section Customer
+  const shareCanvas = document.getElementById("chartPlanMarketShare");
+  if (shareCanvas){
+    if (charts.planShare) charts.planShare.destroy();
+
+    const custMap = {};
+    globalData.forEach(d => {
+      const c = String(d.customer || "").trim().toUpperCase();
+      if (!c) return;
+      custMap[c] = (custMap[c] || 0) + 1;
+    });
+
+    const sorted = Object.entries(custMap).sort((a,b) => b[1] - a[1]);
+    const TOP_N = 10;
+
+    const top = sorted.slice(0, TOP_N);
+    const rest = sorted.slice(TOP_N);
+    const others = rest.reduce((sum,[,v]) => sum + v, 0);
+
+    const labels = top.map(([name]) => name);
+    const data = top.map(([,value]) => value);
+
+    if (others > 0){
+      labels.push("OTHERS");
+      data.push(others);
+    }
+
+    charts.planShare = new Chart(shareCanvas, {
+      type:"bar",
+      data:{
+        labels,
+        datasets:[{
+          data,
+          backgroundColor:"#111827",
+          borderRadius:6,
+          barThickness:18
+        }]
+      },
+      options:{
+        indexAxis:"y",
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          datalabels:{
+            anchor:"end",
+            align:"right",
+            color:"#ffffff",
+            font:{ weight:"bold", size:10 },
+            formatter:v => v
+          },
+          tooltip:{
+            callbacks:{
+              label:(ctx)=>{
+                const val = ctx.parsed.x ?? 0;
+                return `Total: ${val} unit`;
+              }
+            }
+          }
+        },
+        scales:{
+          y:{
+            grid:{ display:false },
+            ticks:{ color:"#111827", font:{ size:12, weight:"bold" } }
+          },
+          x:{
+            beginAtZero:true,
+            grid:{ color:"#E5E7EB" },
+            ticks:{ color:"#6B7280", font:{ size:11, weight:"bold" } },
+            position:"top"
+          }
+        }
+      }
+    });
+  }
+}
 
     // ===== STATIC UPDATE TIME =====
     function setStaticUpdate(){
