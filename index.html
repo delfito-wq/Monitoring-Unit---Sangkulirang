@@ -306,7 +306,7 @@ header img{
         <div class="flex flex-col gap-1">
           <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Customer</label>
 
-          <input id="planCustomer" list="planCustomerList" oninput="renderPlanningFromSupabase()"
+          <input id="planCustomer" list="planCustomerList" oninput="handlePlanCustomerInput_()"
             placeholder="ALL / ketik customer..."
             class="bg-white text-[var(--text)] text-[10px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
 
@@ -2274,7 +2274,22 @@ function setPlanCustomerOptions(list){
   const dl = document.getElementById("planCustomerList");
   if (!dl) return;
 
-  dl.innerHTML = list.map(c => `<option value="${String(c).replaceAll('"','&quot;')}"></option>`).join("");
+  dl.innerHTML = (list || [])
+    .map(c => `<option value="${String(c).replaceAll('"','&quot;')}"></option>`)
+    .join("");
+}
+
+function handlePlanCustomerInput_(){
+  const keyword = normCustomerKey_(getPlanCustomerKeyword_());
+
+  const filteredCustomers = !keyword
+    ? PLAN_CUSTOMERS_ALL.slice(0, 20)
+    : PLAN_CUSTOMERS_ALL
+        .filter(c => normCustomerKey_(c).includes(keyword))
+        .slice(0, 20);
+
+  setPlanCustomerOptions(filteredCustomers);
+  renderPlanningFromSupabase();
 }
 
 function getPlanCustomerKeyword_(){
@@ -2310,7 +2325,7 @@ function initPlanningFromSupabase(){
   PLAN_CUSTOMERS_ALL = [...new Set(globalData.map(d=>String(d.customer||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
   const customerInput = document.getElementById("planCustomer");
   if (customerInput) customerInput.value = "";
-  setPlanCustomerOptions(PLAN_CUSTOMERS_ALL);
+  setPlanCustomerOptions(PLAN_CUSTOMERS_ALL.slice(0, 20));
 
   PLAN_SELECTED_EVENTS = [];
   const eventSel = document.getElementById("planEvent");
@@ -2648,7 +2663,7 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
   if (pieCanvas){
     if (charts.planSharePie) charts.planSharePie.destroy();
 
-    let pieLabels = ["NO DATA"];
+    let pieLabels = ["All Customer"];
     let pieData = [1];
     let pieColors = ["#FFCC00"];
 
@@ -2712,7 +2727,7 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
 
     charts.planBudget = new Chart(mixedCanvas, {
       data:{
-        labels:["PLANNING"],
+        labels:["Market Share"],
         datasets:[
           {
             type:"bar",
@@ -2720,22 +2735,39 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
             data:[hasEventSelection ? safeMarketSize : 0],
             backgroundColor:"#FFCC00",
             borderRadius:6,
+            barThickness:120,
+            maxBarThickness:140,
+            categoryPercentage:0.45,
+            barPercentage:0.55,
             yAxisID:"yAmount"
           },
           {
             type:"line",
             label:"Market Share %",
             data:[hasEventSelection && customerSelected ? safeMarketSharePct : 0],
-            borderColor:"#111827",
+            borderColor:"rgba(0,0,0,0)",
             backgroundColor:"#111827",
-            pointBackgroundColor:"#111827",
-            pointBorderColor:"#111827",
-            pointRadius:5,
-            pointHoverRadius:6,
-            borderWidth:3,
+            pointBackgroundColor:"rgba(0,0,0,0)",
+            pointBorderColor:"rgba(0,0,0,0)",
+            pointRadius:0,
+            pointHoverRadius:0,
+            borderWidth:0,
             tension:0,
             fill:false,
-            yAxisID:"yPercent"
+            yAxisID:"yPercent",
+            datalabels:{
+              display: hasEventSelection && customerSelected,
+              formatter:(value)=> `${Number(value || 0).toFixed(1)}%`,
+              color:"#FFFFFF",
+              backgroundColor:"#111827",
+              borderRadius:8,
+              padding:{ top:6, right:10, bottom:6, left:10 },
+              font:{ weight:"bold", size:11 },
+              anchor:"center",
+              align:"center",
+              offset:0,
+              clamp:true
+            }
           }
         ]
       },
@@ -2752,14 +2784,13 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
             font:{ weight:"bold", size:10 },
             formatter:(value, ctx)=>{
               const dsLabel = String(ctx.dataset.label || "");
-              if (dsLabel === "Market Size") {
-                return hasEventSelection ? formatIDR_(value) : "-";
-              }
-              return (hasEventSelection && customerSelected) ? `${Number(value || 0).toFixed(1)}%` : "-";
+              if (dsLabel !== "Market Size") return "";
+              return hasEventSelection ? formatIDR_(value) : "";
             },
-            anchor:(ctx)=> String(ctx.dataset.label || "") === "Market Size" ? "end" : "center",
-            align:(ctx)=> String(ctx.dataset.label || "") === "Market Size" ? "top" : "top",
-            offset:(ctx)=> String(ctx.dataset.label || "") === "Market Size" ? 4 : 0
+            anchor:"end",
+            align:"start",
+            offset:8,
+            clamp:true
           },
           tooltip:{
             callbacks:{
@@ -2778,16 +2809,17 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
           yAmount:{
             position:"left",
             beginAtZero:true,
+            grace:"15%",
             ticks:{ color:"#6B7280" },
             grid:{ color:"#E5E7EB" }
           },
           yPercent:{
             position:"right",
             beginAtZero:true,
-            max:100,
+            max:110,
             ticks:{
               color:"#111827",
-              callback:(v)=> `${v}%`
+              callback:(v)=> v <= 100 ? `${v}%` : ""
             },
             grid:{ drawOnChartArea:false }
           }
