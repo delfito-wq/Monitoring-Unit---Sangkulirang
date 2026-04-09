@@ -164,36 +164,48 @@ header img{
 
     <!-- PAGE MAIN -->
     <div id="page-main" class="tab-content">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
-          <span class="text-[var(--text)] font-black uppercase text-[10px]">Populasi Sangkulirang</span>
-          <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
-        </div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
+    <span class="text-[var(--text)] font-black uppercase text-[10px]">Populasi Sangkulirang</span>
+    <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
+  </div>
 
-        <div onclick="openDetailModal('Warranty')"
-          class="relative bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
-          <span class="text-[var(--good)] font-black uppercase text-[10px] block">Warranty</span>
-          <span id="res-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--good)]">0</span>
-          <div class="absolute bottom-6 right-6 w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--good)] transition-all shadow-sm pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text)] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </div>
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
+    <span class="text-[var(--text)] font-black uppercase text-[10px]">Total Unit UT</span>
+    <span id="res-total-unit-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
+  </div>
 
-        <div onclick="openDetailModal('Out Warranty')"
-          class="relative bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
-          <span class="text-[var(--bad)] font-black uppercase text-[10px] block">Out Warranty</span>
-          <span id="res-out-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--bad)]">0</span>
-          <div class="absolute bottom-6 right-6 w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--bad)] transition-all shadow-sm pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text)] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </div>
-      </div>
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
+    <span class="text-[var(--text)] font-black uppercase text-[10px]">Total Unit Non-UT</span>
+    <span id="res-total-unit-nonut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
+  </div>
+</div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div onclick="openDetailModal('Warranty')"
+    class="relative bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
+    <span class="text-[var(--good)] font-black uppercase text-[10px] block">Warranty </span>
+    <span id="res-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--good)]">0</span>
+    <div class="absolute bottom-6 right-6 w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--good)] transition-all shadow-sm pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text)] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+
+  <div onclick="openDetailModal('Out Warranty')"
+    class="relative bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
+    <span class="text-[var(--bad)] font-black uppercase text-[10px] block">Out Warranty </span>
+    <span id="res-out-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--bad)]">0</span>
+    <div class="absolute bottom-6 right-6 w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--bad)] transition-all shadow-sm pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text)] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-white p-5 rounded-2xl border border-[var(--border)] text-center shadow-sm">
           <span class="text-[var(--muted)] font-black text-[10px] uppercase block mb-1">SKL</span>
           <span id="res-skl" class="text-4xl font-black text-[var(--accent)]">0</span>
@@ -216,9 +228,11 @@ header img{
         <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
           <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Grafik Populasi per Model Number
         </h3>
-        <div class="w-full h-[450px]">
+      <div class="overflow-x-auto overflow-y-hidden custom-scrollbar">
+        <div id="container-model-chart" class="h-[450px]" style="min-width: 1400px;">
           <canvas id="chartModelUtama"></canvas>
         </div>
+      </div>
       </div>
     </div>
 
@@ -226,8 +240,8 @@ header img{
 <div id="page-charts" class="tab-content hidden">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
     <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi Per Wilayah (%)</h3>
-      <div class="w-full h-[250px]"><canvas id="chartWilayah"></canvas></div>
+      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Sangkulirang Unit UT vs Non-UT (%)</h3>
+      <div class="w-full h-[250px]"><canvas id="chartUnitComposition"></canvas></div>
     </div>
 
     <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
@@ -241,17 +255,22 @@ header img{
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Bouwheer Indexim vs GAM</h3>
-      <div class="w-full h-[250px]"><canvas id="chartBouwheer"></canvas></div>
-    </div>
-
-    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi per Sektor</h3>
-      <div class="w-full h-[250px]"><canvas id="chartSector"></canvas></div>
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi Per Wilayah (%)</h3>
+    <div class="w-full h-[250px]"><canvas id="chartWilayah"></canvas></div>
   </div>
+
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Bouwheer Indexim vs GAM</h3>
+    <div class="w-full h-[250px]"><canvas id="chartBouwheer"></canvas></div>
+  </div>
+
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi per Sektor</h3>
+    <div class="w-full h-[250px]"><canvas id="chartSector"></canvas></div>
+  </div>
+</div>
 
   <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
     <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
@@ -857,6 +876,14 @@ function getSMR(d){
       const totalEl = document.getElementById('res-total-ut');
       if (totalEl) totalEl.innerText = globalData.length;
 
+      const totalUT = globalData.filter(isUT).length;
+      const totalNonUT = globalData.filter(isNonUT).length;
+
+      const totalUTEl = document.getElementById('res-total-unit-ut');
+      const totalNonUTEl = document.getElementById('res-total-unit-nonut');
+      if (totalUTEl) totalUTEl.innerText = totalUT;
+      if (totalNonUTEl) totalNonUTEl.innerText = totalNonUT;
+
       const war = globalData.filter(d => norm(d.warranty_status) === "WARRANTY").length;
       const out = globalData.filter(d => norm(d.warranty_status).includes("OUT")).length;
 
@@ -890,31 +917,77 @@ function getSMR(d){
 
       const sortedModels = Object.keys(modelMap).sort((a,b)=>modelMap[b]-modelMap[a]);
       const counts = sortedModels.map(m => modelMap[m]);
+      const modelContainer = document.getElementById('container-model-chart');
+      if (modelContainer) {
+        const minWidth = 1400;
+        const widthPerItem = 42;
+        modelContainer.style.width = Math.max(minWidth, sortedModels.length * widthPerItem) + 'px';
+      }
 
       if (charts.mainBar) charts.mainBar.destroy();
       const canvas = document.getElementById('chartModelUtama');
       if (!canvas) return;
 
       charts.mainBar = new Chart(canvas, {
-        type:'bar',
-        data:{ labels: sortedModels, datasets:[{ data: counts, backgroundColor: '#FFCC00', borderRadius: 6 }] },
-        options:{
-          responsive:true,
-          maintainAspectRatio:false,
-          plugins:{
-            legend:{ display:false },
-            datalabels:{
-              anchor:'end', align:'top',
-              color:'#ffffff',
-              font:{ weight:'bold', size:10 }
-            }
+  type:'bar',
+  data:{
+  labels: sortedModels,
+  datasets:[{
+    data: counts,
+    backgroundColor: '#FFCC00',
+    borderColor: '#D4A800',
+    borderWidth: 1,
+    borderRadius: 3,
+    categoryPercentage: 0.9,
+    barPercentage: 0.8,
+    maxBarThickness: 18,
+    minBarLength: 12,
+    hoverBackgroundColor: '#FFCC00'
+  }]
+},
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{
+      mode:'nearest',
+      intersect:true
+    },
+    plugins:{
+      legend:{ display:false },
+      datalabels:{
+        display:false
+      },
+      tooltip:{
+        callbacks:{
+          title:(items)=>{
+            const i = items[0].dataIndex;
+            return sortedModels[i];
           },
-          scales:{
-            y:{ beginAtZero:true, grid:{ color:'#E5E7EB' }, ticks:{ color:'#111827' } },
-            x:{ grid:{ display:false }, ticks:{ color:'#111827', font:{ size:9 }, maxRotation:45, minRotation:45 } }
+          label:(ctx)=>{
+            const val = ctx.parsed.y ?? 0;
+            return `Qty: ${val} unit`;
           }
         }
-      });
+      }
+    },
+    scales:{
+      y:{
+        beginAtZero:true,
+        grid:{ color:'#E5E7EB' },
+        ticks:{ color:'#111827' }
+      },
+      x:{
+        grid:{ display:false },
+        ticks:{
+          color:'#111827',
+          font:{ size:8 },
+          maxRotation:55,
+          minRotation:55
+        }
+      }
+    }
+  }
+});
     }
 
     // ===== CHARTS PAGE + CUSTOMER CHART =====
@@ -1069,7 +1142,30 @@ function getSectorGroup_(d){
         });
       }
 
-// 4 Bouwheer pie
+      // 4 UT vs Non-UT pie
+const unitCompositionData = [
+  globalData.filter(isUT).length,
+  globalData.filter(isNonUT).length
+];
+
+if (charts.unitComposition) charts.unitComposition.destroy();
+const ctxUnitComp = document.getElementById('chartUnitComposition');
+if (ctxUnitComp){
+  charts.unitComposition = new Chart(ctxUnitComp, {
+    type:'pie',
+    data:{
+      labels:['UT','Non-UT'],
+      datasets:[{
+        data: unitCompositionData,
+        backgroundColor: ['#FFCC00', '#111827'],
+        borderWidth: 2
+      }]
+    },
+    options: commonPie
+  });
+}
+
+// 5 Bouwheer pie
 const bouwheerMap = { INDEXIM: 0, GAM: 0 };
 
 globalData.forEach(d => {
@@ -1133,30 +1229,65 @@ if (ctxSector){
         const p = String(d.prod_hier || "N/A").trim().toUpperCase();
         prodMap[p] = (prodMap[p]||0)+1;
       });
-      const brands = Object.keys(prodMap).sort((a,b)=>prodMap[b]-prodMap[a]);
-      const brandVals = brands.map(b=>prodMap[b]);
+      const sortedBrands = Object.entries(prodMap)
+  .sort((a,b) => b[1] - a[1]);
 
-      if (charts.j) charts.j.destroy();
-      const ctxJ = document.getElementById('chartJenisBar');
-      if (ctxJ){
-        charts.j = new Chart(ctxJ, {
-          type:'bar',
-          data:{ labels:brands, datasets:[{ data:brandVals, backgroundColor:'#FFCC00', borderRadius:6 }] },
-          options:{
-            indexAxis:'y',
-            responsive:true,
-            maintainAspectRatio:false,
-            plugins:{
-              legend:{ display:false },
-              datalabels:{ anchor:'end', align:'right', color:'#ffffff', font:{ weight:'bold' } }
-            },
-            scales:{
-              y:{ grid:{ display:false }, ticks:{ color:'#111827', font:{ weight:'bold' } } },
-              x:{ beginAtZero:true, grid:{ color:'#E5E7EB' }, ticks:{ color:'#6B7280' } }
+const TOP_N = 15;
+
+const topBrands = sortedBrands.slice(0, TOP_N);
+const brands = topBrands.map(([name]) => name);
+const brandVals = topBrands.map(([, value]) => value);
+
+if (charts.j) charts.j.destroy();
+const ctxJ = document.getElementById('chartJenisBar');
+if (ctxJ){
+  charts.j = new Chart(ctxJ, {
+    type:'bar',
+    data:{
+      labels: brands,
+      datasets:[{
+        data: brandVals,
+        backgroundColor:'#FFCC00',
+        borderRadius:6,
+        barThickness:18
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:false },
+        datalabels:{
+          anchor:'end',
+          align:'right',
+          color:'#ffffff',
+          font:{ weight:'bold', size:10 },
+          formatter:(value) => value
+        },
+        tooltip:{
+          callbacks:{
+            label:(ctx)=>{
+              const val = ctx.parsed.x ?? ctx.parsed.y ?? 0;
+              return `Total: ${val} unit`;
             }
           }
-        });
+        }
+      },
+      scales:{
+        y:{
+          grid:{ display:false },
+          ticks:{ color:'#111827', font:{ size:12, weight:'bold' } }
+        },
+        x:{
+          beginAtZero:true,
+          grid:{ color:'#E5E7EB' },
+          ticks:{ color:'#6B7280', font:{ size:11, weight:'bold' } }
+        }
       }
+    }
+  });
+}
 
       // 7 Customer bar + click
       const custMap = {};
