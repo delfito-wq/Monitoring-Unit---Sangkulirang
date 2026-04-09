@@ -884,8 +884,10 @@ function getSMR(d){
       if (totalUTEl) totalUTEl.innerText = totalUT;
       if (totalNonUTEl) totalNonUTEl.innerText = totalNonUT;
 
-      const war = globalData.filter(d => norm(d.warranty_status) === "WARRANTY").length;
-      const out = globalData.filter(d => norm(d.warranty_status).includes("OUT")).length;
+      const utOnly = globalData.filter(isUT);
+
+      const war = utOnly.filter(d => norm(d.warranty_status) === "WARRANTY").length;
+      const out = utOnly.filter(d => norm(d.warranty_status).includes("OUT")).length;
 
       const warEl = document.getElementById('res-warranty');
       const outEl = document.getElementById('res-out-warranty');
@@ -1575,12 +1577,12 @@ if (ctxJ){
       document.body.style.overflow = 'hidden';
 
       if (type === 'Warranty'){
-        currentWarrantyRows = globalData.filter(d => normStatus(d.warranty_status) === "WARRANTY");
-        title.innerText = "DETAIL UNIT IN WARRANTY";
+        currentWarrantyRows = globalData.filter(d => isUT(d) && normStatus(d.warranty_status) === "WARRANTY");
+        title.innerText = "DETAIL UNIT UT IN WARRANTY";
         title.className = "text-2xl font-black uppercase tracking-tight text-[var(--good)]";
       } else if (type === 'Out Warranty'){
-        currentWarrantyRows = globalData.filter(d => normStatus(d.warranty_status) === "OUT WARRANTY");
-        title.innerText = "DETAIL UNIT OUT WARRANTY";
+        currentWarrantyRows = globalData.filter(d => isUT(d) && normStatus(d.warranty_status) === "OUT WARRANTY");
+        title.innerText = "DETAIL UNIT UT OUT WARRANTY";
         title.className = "text-2xl font-black uppercase tracking-tight text-[var(--bad)]";
       } else {
         currentWarrantyRows = [];
