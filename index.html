@@ -272,6 +272,22 @@ header img{
   </div>
 </div>
 
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">
+      Top Customer - Unit UT
+    </h3>
+    <div class="w-full h-[360px]"><canvas id="chartTopCustomerUT"></canvas></div>
+  </div>
+
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">
+      Top Customer - Unit Non-UT
+    </h3>
+    <div class="w-full h-[360px]"><canvas id="chartTopCustomerNonUT"></canvas></div>
+  </div>
+</div>
+
   <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
     <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
     <div class="w-full h-[400px]"><canvas id="chartJenisBar"></canvas></div>
@@ -279,16 +295,35 @@ header img{
 </div>
 
     <!-- PAGE TREND -->
-    <div id="page-trend" class="tab-content hidden">
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-        <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
-          <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Populasi Unit Year to Year
-        </h3>
-        <div class="w-full h-[450px]">
-          <canvas id="chartTrendYoY"></canvas>
-        </div>
+<div id="page-trend" class="tab-content hidden">
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm mb-6">
+    <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
+      <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Populasi Unit Year to Year
+    </h3>
+    <div class="w-full h-[450px]">
+      <canvas id="chartTrendYoY"></canvas>
+    </div>
+  </div>
+
+  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+      <h3 class="text-[var(--text)] font-black uppercase text-xs italic flex items-center">
+        <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Opportunity Bulanan per Event
+      </h3>
+
+      <div class="flex items-center gap-2">
+        <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Year</label>
+        <select id="trendEventYear" onchange="renderMonthlyEventTrend()"
+          class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[120px]">
+        </select>
       </div>
     </div>
+
+    <div class="w-full h-[450px]">
+      <canvas id="chartTrendMonthlyEvent"></canvas>
+    </div>
+  </div>
+</div>
 
 <!-- PAGE PLANNING -->
 <div id="page-planning" class="tab-content hidden">
@@ -417,6 +452,16 @@ header img{
           </div>
         </div>
 
+        <div class="bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)] mb-6">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+    <div class="text-[var(--text)] font-black uppercase text-[10px]">Trend Bulanan Job Typpe</div>
+  </div>
+
+  <div class="h-[360px]">
+    <canvas id="chartPlanMonthlyEvent"></canvas>
+  </div>
+</div>
+
 <!-- CHARTS -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
   <!-- KIRI: PIE -->
@@ -445,15 +490,20 @@ header img{
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
     <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
 
-    <div class="flex flex-col sm:flex-row gap-3">
-      <div class="flex items-center gap-2">
-        <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
-        <select id="planModelFilter" onchange="renderPlanningFromSupabase()"
-          class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
-          <option value="ALL">ALL</option>
-        </select>
-      </div>
-    </div>
+<div class="flex flex-col sm:flex-row gap-3 items-center">
+  <button onclick="exportPlanningFilteredView_()"
+    class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">
+    Export Filtered
+  </button>
+
+  <div class="flex items-center gap-2">
+    <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
+    <select id="planModelFilter" onchange="renderPlanningFromSupabase()"
+      class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
+      <option value="ALL">ALL</option>
+    </select>
+  </div>
+</div>
   </div>
 
   <div id="planningTable"></div>
@@ -626,6 +676,10 @@ header img{
 
     let globalData = [];
     let charts = {};
+    let CURRENT_MONTHLY_TREND_DETAIL_ITEMS = [];
+    let CURRENT_MONTHLY_TREND_DETAIL_META = {};
+    let CURRENT_PLANNING_VIEW_ITEMS = [];
+    let CURRENT_PLANNING_EXPORT_META = {};
     const CUSTOMER_TAB_WHITELIST = new Set(["KALIMANTAN PRIMA PERSADA", "GHJ TRIAGUNG MANDIRI", "MEGA GLOBAL ENERGI", "BERLIAN DUTA ENERGI", "UNGGUL DINAMIKA UTAMA"]);
 
     function getCustomerTabData() {
@@ -695,8 +749,18 @@ header img{
         active.classList.add('bg-[var(--accent)]','text-black','shadow-sm');
       }
 
-      if (target === 'trend') setTimeout(renderTrendYoY, 100);
-      if (target === 'planning') setTimeout(renderPlanningFromSupabase, 100);
+      if (target === 'trend') {
+  setTimeout(() => {
+    renderTrendYoY();
+    renderMonthlyEventTrend();
+  }, 100);
+}
+
+if (target === 'planning') {
+  setTimeout(() => {
+    renderPlanningFromSupabase();
+  }, 100);
+}
     }
 
     // ===== HELPERS =====
@@ -757,6 +821,41 @@ function getSMR(d){
     const n = Number(String(raw).replace(/[^0-9.]/g, ""));
     return Number.isFinite(n) ? n : null;
   }
+
+  function getDeliveryYear_(d){
+  const raw =
+    pickKeyInsensitive(d, [
+      "delivery_date",
+      "Delivery Date",
+      "delivery date",
+      "delivery",
+      "Delivery",
+      "tgl_delivery",
+      "tgl delivery",
+      "tahun_delivery",
+      "delivery_year",
+      "year"
+    ]);
+
+  if (raw == null || raw === "") return null;
+
+  // kalau langsung angka tahun
+  const directYear = Number(String(raw).trim());
+  if (Number.isFinite(directYear) && directYear >= 1900 && directYear <= 2100) {
+    return directYear;
+  }
+
+  // kalau string mengandung tahun
+  const text = String(raw).trim();
+  const matchYear = text.match(/\b(19|20)\d{2}\b/);
+  if (matchYear) return Number(matchYear[0]);
+
+  // fallback parse date
+  const dt = new Date(text);
+  if (!Number.isNaN(dt.getTime())) return dt.getFullYear();
+
+  return null;
+}
 
     // UT vs NonUT (robust)
     function isUT(d){
@@ -828,6 +927,7 @@ function getSMR(d){
         // render all
         calculateSummary();
         renderAllCharts();
+        initTrendEventYear_();
         renderTrendYoY();
         renderUnitPages();
         initPlanningFromSupabase();
@@ -872,6 +972,106 @@ function getSMR(d){
       const fname = `Supabase_Export_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
       XLSX.writeFile(wb, fname);
     }
+
+    function exportMonthlyTrendDetail_(){
+  if (!CURRENT_MONTHLY_TREND_DETAIL_ITEMS.length) {
+    showToast("Export Gagal", "Tidak ada data detail trend yang bisa diexport.");
+    setTimeout(hideToast, 1800);
+    return;
+  }
+
+  const meta = CURRENT_MONTHLY_TREND_DETAIL_META || {};
+
+  const rows = CURRENT_MONTHLY_TREND_DETAIL_ITEMS.map((it, idx) => ({
+    No: idx + 1,
+    "Job Type": it.event || "-",
+    Customer: it.customer || "-",
+    Model: it.model || "-",
+    Serial: it.serial || "-",
+    "HM Actual": it.current_hm ?? "-",
+    "Service Product": it.service_product_label || "-",
+    Cost: it.cost_total == null ? "" : Number(it.cost_total || 0),
+    "Missing Price": it.std_key
+      ? (it.missing_parts.length ? it.missing_parts.length : 0)
+      : ""
+  }));
+
+  const wsData = XLSX.utils.json_to_sheet(rows);
+
+  const wsInfoRows = [
+    { Key: "Source", Value: meta.sourceScope || "TREND" },
+    { Key: "Event", Value: meta.event || "-" },
+    { Key: "Month", Value: meta.monthLabel || "-" },
+    { Key: "Year", Value: meta.year || "-" },
+    { Key: "Customer Filter", Value: meta.customer || "ALL" },
+    { Key: "Model Filter", Value: meta.model || "ALL" },
+    { Key: "Total Unit", Value: CURRENT_MONTHLY_TREND_DETAIL_ITEMS.length }
+  ];
+  const wsInfo = XLSX.utils.json_to_sheet(wsInfoRows);
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, wsData, "TrendDetail");
+  XLSX.utils.book_append_sheet(wb, wsInfo, "FilterInfo");
+
+  const safe = (v) =>
+    String(v || "ALL")
+      .replace(/[^A-Z0-9]+/gi, "_")
+      .replace(/^_+|_+$/g, "");
+
+  const fileName = [
+    "Trend_Detail",
+    safe(meta.sourceScope),
+    safe(meta.event),
+    safe(meta.monthLabel),
+    safe(meta.year)
+  ].filter(Boolean).join("_") + ".xlsx";
+
+  XLSX.writeFile(wb, fileName);
+}
+
+    function exportPlanningFilteredView_(){
+  if (!CURRENT_PLANNING_VIEW_ITEMS.length) {
+    showToast("Export Gagal", "Data Opportunity Unit kosong untuk filter aktif.");
+    setTimeout(hideToast, 1800);
+    return;
+  }
+
+  const meta = CURRENT_PLANNING_EXPORT_META || {};
+
+  const rows = CURRENT_PLANNING_VIEW_ITEMS.map((it, idx) => ({
+  No: idx + 1,
+  "Job Type": it.event || "-",
+  Customer: it.customer || "-",
+  Model: it.model || "-",
+  Serial: it.serial || "-",
+  "HM Actual": it.current_hm ?? "-",
+  "Service Product": it.service_product_label || "-",
+  Cost: it.cost_total == null ? "" : Number(it.cost_total || 0),
+  "Missing Price": it.std_key
+    ? (it.missing_parts.length ? it.missing_parts.length : 0)
+    : ""
+}));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "OpportunityFiltered");
+
+  const safe = (v) =>
+    String(v || "ALL")
+      .replace(/[^A-Z0-9]+/gi, "_")
+      .replace(/^_+|_+$/g, "");
+
+  const fileName = [
+    "Opportunity_Filtered",
+    safe(meta.year),
+    safe(meta.month_label),
+    safe(meta.job_type),
+    safe(meta.customer),
+    safe(meta.model)
+  ].filter(Boolean).join("_") + ".xlsx";
+
+  XLSX.writeFile(wb, fileName);
+}
 
     // ===== MAIN SUMMARY + MAIN BAR =====
     function calculateSummary() {
@@ -1072,6 +1272,19 @@ function getSectorGroup_(d){
   return null;
 }
 
+function getTopCustomersByType_(rows, limit = 10){
+  const map = {};
+
+  rows.forEach(d => {
+    const c = String(d.customer || "").trim().toUpperCase();
+    if (!c) return;
+    map[c] = (map[c] || 0) + 1;
+  });
+
+  const sorted = Object.entries(map).sort((a,b) => b[1] - a[1]);
+  return sorted.slice(0, limit);
+}
+
     function renderAllCharts() {
       const commonPie = {
         responsive:true,
@@ -1198,7 +1411,121 @@ if (ctxBouwheer){
   });
 }
 
-// 5 Sector pie
+      // 6 Top Customer UT
+      const topUT = getTopCustomersByType_(globalData.filter(isUT), 10);
+      const utLabels = topUT.map(([name]) => name);
+      const utValues = topUT.map(([, value]) => value);
+
+      if (charts.topCustomerUT) charts.topCustomerUT.destroy();
+      const ctxTopUT = document.getElementById('chartTopCustomerUT');
+      if (ctxTopUT){
+        charts.topCustomerUT = new Chart(ctxTopUT, {
+          type:'bar',
+          data:{
+            labels: utLabels,
+            datasets:[{
+              data: utValues,
+              backgroundColor:'#FFCC00',
+              borderRadius:6,
+              barThickness:18
+            }]
+          },
+          options:{
+            indexAxis:'y',
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{
+              legend:{ display:false },
+              datalabels:{
+                anchor:'end',
+                align:'right',
+                color:'#ffffff',
+                font:{ weight:'bold', size:10 },
+                formatter:(value)=>value
+              },
+              tooltip:{
+                callbacks:{
+                  label:(ctx)=>{
+                    const val = ctx.parsed.x ?? 0;
+                    return `Total UT: ${val} unit`;
+                  }
+                }
+              }
+            },
+            scales:{
+              y:{
+                grid:{ display:false },
+                ticks:{ color:'#111827', font:{ size:10, weight:'bold' } }
+              },
+              x:{
+                beginAtZero:true,
+                grid:{ color:'#E5E7EB' },
+                ticks:{ color:'#6B7280', font:{ size:11, weight:'bold' } },
+                position:'top'
+              }
+            }
+          }
+        });
+      }
+
+      // 7 Top Customer Non-UT
+      const topNonUT = getTopCustomersByType_(globalData.filter(isNonUT), 10);
+      const nonUtLabels = topNonUT.map(([name]) => name);
+      const nonUtValues = topNonUT.map(([, value]) => value);
+
+      if (charts.topCustomerNonUT) charts.topCustomerNonUT.destroy();
+      const ctxTopNonUT = document.getElementById('chartTopCustomerNonUT');
+      if (ctxTopNonUT){
+        charts.topCustomerNonUT = new Chart(ctxTopNonUT, {
+          type:'bar',
+          data:{
+            labels: nonUtLabels,
+            datasets:[{
+              data: nonUtValues,
+              backgroundColor:'#111827',
+              borderRadius:6,
+              barThickness:18
+            }]
+          },
+          options:{
+            indexAxis:'y',
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{
+              legend:{ display:false },
+              datalabels:{
+                anchor:'end',
+                align:'right',
+                color:'#ffffff',
+                font:{ weight:'bold', size:10 },
+                formatter:(value)=>value
+              },
+              tooltip:{
+                callbacks:{
+                  label:(ctx)=>{
+                    const val = ctx.parsed.x ?? 0;
+                    return `Total Non-UT: ${val} unit`;
+                  }
+                }
+              }
+            },
+            scales:{
+              y:{
+                grid:{ display:false },
+                ticks:{ color:'#111827', font:{ size:10, weight:'bold' } }
+              },
+              x:{
+                beginAtZero:true,
+                grid:{ color:'#E5E7EB' },
+                ticks:{ color:'#6B7280', font:{ size:11, weight:'bold' } },
+                position:'top'
+              }
+            }
+          }
+        });
+      }
+
+// 8 Sector pie
 const sectorMap = { AGRO: 0, MINING: 0, FORESTRY: 0 };
 
 globalData.forEach(d => {
@@ -1788,6 +2115,232 @@ function openServiceProductsModal(stdKey, eventName, modelName, labelName){
   `;
 }
 
+function openMonthlyTrendDetailModal_(eventName, monthNum, year, sourceScope = "TREND"){
+  const modal = document.getElementById('subHalamanModal');
+  const title = document.getElementById('modalTitle');
+  const filterWrap = document.getElementById('subModalFilter');
+  const content = document.getElementById('subModalContent');
+
+  if (!modal || !title || !content) return;
+
+  let rows = PLAN_OPP_ROWS.slice();
+
+  rows = rows.filter(r => {
+    const rowYear = getPlanningYear_(r);
+    const rowMonth = getPlanningMonth_(r);
+    const rowEvent = normU(r.event);
+
+    return (
+      rowYear === Number(year) &&
+      rowMonth === Number(monthNum) &&
+      rowEvent === normU(eventName)
+    );
+  });
+
+  // optional: kalau dibuka dari Market Analytics, ikutkan filter aktif
+  if (sourceScope === "PLANNING") {
+    const exactCustomer = getExactPlanCustomer_();
+    const selectedModel = document.getElementById("planModelFilter")?.value || "ALL";
+
+    if (exactCustomer) {
+      rows = rows.filter(r =>
+        normCustomerKey_(r.customer) === normCustomerKey_(exactCustomer)
+      );
+    }
+
+    if (selectedModel !== "ALL") {
+      rows = rows.filter(r => {
+        const ev = normU(r.event);
+        const rawModel = String(r.model_number || r.model || "ALL").trim() || "ALL";
+        const std_key = getStdKey_(ev, rawModel);
+        const std = std_key ? (STD_BY_KEY.get(std_key) || {}) : {};
+        const displayModel = String(std.model_number || rawModel || "ALL").trim() || "ALL";
+        return displayModel === selectedModel;
+      });
+    }
+  }
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  title.innerText = `DETAIL ${normU(eventName)} - ${getMonthLabelShort_(monthNum)} ${year}`;
+  title.className = "text-2xl font-black uppercase tracking-tight text-[var(--text)]";
+
+  if (filterWrap) {
+  filterWrap.innerHTML = `
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="text-[10px] font-black uppercase text-[var(--text)]">Source: ${sourceScope}</div>
+        <div class="text-[10px] font-black uppercase text-[var(--muted)]">Event: ${normU(eventName)}</div>
+        <div class="text-[10px] font-black uppercase text-[var(--muted)]">Month: ${getMonthLabelShort_(monthNum)}</div>
+        <div class="text-[10px] font-black uppercase text-[var(--muted)]">Year: ${year}</div>
+      </div>
+
+      <button onclick="exportMonthlyTrendDetail_()"
+        class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">
+        Export Detail
+      </button>
+    </div>
+  `;
+}
+
+  if (!rows.length){
+    content.innerHTML = `
+      <div class="py-12 text-center text-[var(--muted)] font-bold">
+        Tidak ada opportunity unit untuk ${normU(eventName)} - ${getMonthLabelShort_(monthNum)} ${year}.
+      </div>
+    `;
+    return;
+  }
+
+  const items = [];
+  const seenKeys = new Set();
+
+  rows.forEach(r => {
+    const ev = normU(r.event);
+    const rawModel = String(r.model_number || r.model || "ALL").trim() || "ALL";
+    const currentHM = getPlanningHMActual(r);
+
+    const std_key = getStdKey_(ev, rawModel);
+    const std = std_key ? (STD_BY_KEY.get(std_key) || {}) : {};
+    const displayModel = String(std.model_number || rawModel || "ALL").trim() || "ALL";
+
+    const serialValue =
+      String(
+        r.serial_or_code ??
+        r.serial_number ??
+        r["serial_number"] ??
+        r["Serial Number"] ??
+        r.serial ??
+        r.sn ??
+        r.SerialNumber ??
+        "-"
+      ).trim() || "-";
+
+    const dedupKey = [
+      ev,
+      String(r.customer || "-").trim().toUpperCase(),
+      displayModel.toUpperCase(),
+      serialValue.toUpperCase(),
+      String(currentHM ?? "")
+    ].join("|");
+
+    if (seenKeys.has(dedupKey)) return;
+    seenKeys.add(dedupKey);
+
+    const serviceProductLabel = String(r.service_product || r.component || "").trim() || "Lihat Detail";
+    const cost = calcCostFromStdKey_(std_key);
+    const fallbackCost = calcFallbackCostFromPriceRows_(displayModel, serviceProductLabel);
+
+    const finalCost =
+      Number(cost.total || 0) > 0
+        ? Number(cost.total || 0)
+        : fallbackCost.total;
+
+    items.push({
+      event: ev,
+      customer: String(r.customer || "-"),
+      model: displayModel,
+      serial: serialValue,
+      current_hm: currentHM,
+      cost_total: finalCost,
+      missing_parts: Number(cost.total || 0) > 0 ? cost.missing : [],
+      std_key,
+      service_product_label: serviceProductLabel
+    });
+  });
+
+  CURRENT_MONTHLY_TREND_DETAIL_ITEMS = items.map(it => ({ ...it }));
+CURRENT_MONTHLY_TREND_DETAIL_META = {
+  sourceScope,
+  event: normU(eventName),
+  monthLabel: getMonthLabelShort_(monthNum),
+  year,
+  customer: sourceScope === "PLANNING" ? (getExactPlanCustomer_() || "ALL") : "ALL",
+  model: sourceScope === "PLANNING"
+    ? (document.getElementById("planModelFilter")?.value || "ALL")
+    : "ALL"
+};
+
+  content.innerHTML = `
+    <div class="mb-4 flex justify-between items-center">
+      <div class="text-sm text-[var(--muted)]">Total: <b class="text-[var(--text)]">${items.length}</b> unit</div>
+      <div class="text-[10px] text-[var(--muted)] uppercase tracking-widest italic">Trend Drill Down</div>
+    </div>
+
+    <div class="overflow-x-auto rounded-xl border border-[var(--border)] bg-white">
+      <table class="w-full text-left border-collapse whitespace-nowrap">
+        <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+          <tr>
+            <th class="p-4 text-[10px]">Job Typpe</th>
+            <th class="p-4 text-[10px]">Customer</th>
+            <th class="p-4 text-[10px]">Model</th>
+            <th class="p-4 text-[10px]">Serial</th>
+            <th class="p-4 text-[10px] text-right">HM Actual</th>
+            <th class="p-4 text-[10px] text-center">Service Product</th>
+            <th class="p-4 text-[10px] text-right">Cost</th>
+            <th class="p-4 text-[10px] text-right">Missing Price</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)]">
+          ${items.map(it => `
+            <tr class="hover:bg-black/5 transition-colors text-xs">
+              <td class="p-4 font-black ${it.event==="GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${it.event}</td>
+              <td class="p-4 text-[var(--text)] font-bold">${it.customer}</td>
+              <td class="p-4 text-[var(--text)] font-bold">${it.model}</td>
+              <td class="p-4 text-[var(--text)] font-mono font-bold">${it.serial}</td>
+              <td class="p-4 text-right text-[var(--text)] font-black">${it.current_hm ?? "-"}</td>
+              <td class="p-4 text-center">
+                <button
+                  data-std-key="${escHtmlAttr_(it.std_key)}"
+                  data-event="${escHtmlAttr_(it.event)}"
+                  data-model="${escHtmlAttr_(it.model)}"
+                  data-label="${escHtmlAttr_(it.service_product_label)}"
+                  onclick="openServiceProductsModal(this.dataset.stdKey,this.dataset.event,this.dataset.model,this.dataset.label)"
+                  class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+                >
+                  ${it.service_product_label}
+                </button>
+              </td>
+              <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>
+              <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
+                ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TREND"){
+  if (!chartInstance) return;
+
+  chartInstance.options.onHover = (event, elements) => {
+    const canvas = event.native?.target;
+    if (!canvas) return;
+    canvas.style.cursor = elements.length ? "pointer" : "default";
+  };
+
+  chartInstance.options.onClick = (event, elements) => {
+    if (!elements.length) return;
+
+    const point = elements[0];
+    const datasetIndex = point.datasetIndex;
+    const index = point.index;
+
+    const eventName = chartInstance.data.datasets[datasetIndex]?.label;
+    const monthNum = index + 1;
+
+    if (!eventName || !monthNum) return;
+
+    openMonthlyTrendDetailModal_(eventName, monthNum, selectedYear, sourceScope);
+  };
+
+  chartInstance.update();
+}
+
     function closeSubHalaman(){
       document.getElementById('subHalamanModal').classList.add('hidden');
       document.body.style.overflow = 'auto';
@@ -1869,63 +2422,259 @@ function openServiceProductsModal(stdKey, eventName, modelName, labelName){
 
     // ===== TREND =====
     function renderTrendYoY(){
-      const canvas = document.getElementById('chartTrendYoY');
-      if (!canvas) return;
+  const canvas = document.getElementById('chartTrendYoY');
+  if (!canvas) return;
 
-      const BASE = globalData.length;
-      const addMap = {};
-      globalData.forEach(d=>{
-        const y = parseInt(String(d.year ?? "").trim(),10);
-        if (!y || y < 2008) return;
+  // hanya ambil UT
+  const utOnly = globalData.filter(isUT);
+  const totalUT = utOnly.length;
 
-        const ind = String(d.indust ?? "").trim().toUpperCase();
-        if (!ind || ind==="N/A" || ind==="-" || ind==="NULL") return;
+  // hitung jumlah unit UT per tahun delivery
+  const yearlyMap = {};
+  utOnly.forEach(d => {
+    const y = getDeliveryYear_(d);
+    if (!y || y < 2008) return;
+    yearlyMap[y] = (yearlyMap[y] || 0) + 1;
+  });
 
-        addMap[y] = (addMap[y]||0)+1;
-      });
+  const years = Object.keys(yearlyMap).map(Number).sort((a,b)=>a-b);
 
-      const years = Object.keys(addMap).map(Number).sort((a,b)=>a-b);
-      const labels = ['Grand Total', ...years.map(String)];
-      let running = BASE;
-      const values = [running];
-      years.forEach(y=>{ running += addMap[y]; values.push(running); });
+  // cumulative total
+  let running = 0;
+  const labels = years.map(String);
+  const values = years.map(y => {
+    running += yearlyMap[y] || 0;
+    return running;
+  });
 
-      if (charts.trend) charts.trend.destroy();
-      charts.trend = new Chart(canvas, {
-        type:'line',
-        data:{ labels, datasets:[{
-          data: values,
-          borderColor:'#FFCC00',
-          backgroundColor:'rgba(255,204,0,0.20)',
-          fill:true,
-          borderWidth:3,
-          tension:0.3,
-          pointRadius:4,
-          pointHoverRadius:6,
-          pointBackgroundColor:'#FFCC00',
-          pointBorderColor:'#111827',
-          pointBorderWidth:2
-        }]},
-        options:{
-          responsive:true,
-          maintainAspectRatio:false,
-          plugins:{
-            legend:{ display:false },
-            datalabels:{
-              color:'#ffffff',
-              anchor:'end',
-              align:'top',
-              font:{ weight:'bold', size:10 },
-              formatter:v=>v
+  if (charts.trend) charts.trend.destroy();
+
+  charts.trend = new Chart(canvas, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Cumulative UT by Delivery Year',
+        data: values,
+        borderColor:'#FFCC00',
+        backgroundColor:'rgba(255,204,0,0.20)',
+        fill:true,
+        borderWidth:3,
+        tension:0.3,
+        pointRadius:4,
+        pointHoverRadius:6,
+        pointBackgroundColor:'#FFCC00',
+        pointBorderColor:'#111827',
+        pointBorderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:false },
+        datalabels:{
+          color:'#ffffff',
+          anchor:'end',
+          align:'top',
+          font:{ weight:'bold', size:10 },
+          formatter:v=>v
+        },
+        tooltip:{
+          callbacks:{
+            title:(items)=>{
+              return `Delivery Year: ${items[0].label}`;
+            },
+            label:(ctx)=>{
+              const year = Number(ctx.label);
+              const cumulative = ctx.parsed.y ?? 0;
+              const yearly = yearlyMap[year] || 0;
+              return [
+                `Delivered in ${year}: ${yearly} unit`,
+                `Cumulative UT: ${cumulative} unit`,
+                `Grand Total UT: ${totalUT} unit`
+              ];
             }
-          },
-          scales:{
-            x:{ ticks:{ color:'#111827', font:{ weight:'bold' } }, grid:{ display:false } },
-            y:{ beginAtZero:false, ticks:{ color:'#6B7280' }, grid:{ color:'#E5E7EB' } }
           }
         }
-      });
+      },
+      scales:{
+        x:{
+          ticks:{ color:'#111827', font:{ weight:'bold' } },
+          grid:{ display:false }
+        },
+        y:{
+          beginAtZero:true,
+          ticks:{ color:'#6B7280' },
+          grid:{ color:'#E5E7EB' }
+        }
+      }
     }
+  });
+}
+
+
+
+    function initTrendEventYear_(){
+  const el = document.getElementById("trendEventYear");
+  if (!el) return;
+
+  const years = [...new Set(
+    PLAN_OPP_ROWS
+      .map(r => getPlanningYear_(r))
+      .filter(y => Number.isFinite(y) && y > 2000)
+  )].sort((a,b) => a - b);
+
+  const fallbackYear = new Date().getFullYear();
+  const finalYears = years.length ? years : [fallbackYear];
+
+  el.innerHTML = finalYears
+    .map(y => `<option value="${y}">${y}</option>`)
+    .join("");
+
+  if (finalYears.includes(fallbackYear)) {
+    el.value = String(fallbackYear);
+  } else {
+    el.value = String(finalYears[finalYears.length - 1]);
+  }
+}
+
+function buildMonthlyEventSeries_(rows, selectedYear){
+  const labels = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+
+  const eventSeries = {
+    MIDLIFE: new Array(12).fill(0),
+    GOH: new Array(12).fill(0),
+    PCR: new Array(12).fill(0),
+    CYLINDER: new Array(12).fill(0)
+  };
+
+  (rows || []).forEach(r => {
+    const year = getPlanningYear_(r);
+    const month = getPlanningMonth_(r);
+    const ev = normU(r.event);
+
+    if (year !== selectedYear) return;
+    if (!month || month < 1 || month > 12) return;
+    if (!eventSeries[ev]) return;
+
+    eventSeries[ev][month - 1] += 1;
+  });
+
+  return { labels, eventSeries };
+}
+
+function renderMonthlyEventChart_(canvasId, chartKey, selectedYear, rows){
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  const { labels, eventSeries } = buildMonthlyEventSeries_(rows, selectedYear);
+
+  if (charts[chartKey]) charts[chartKey].destroy();
+
+  charts[chartKey] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'MIDLIFE',
+          data: eventSeries.MIDLIFE,
+          borderColor: '#FFCC00',
+          backgroundColor: 'rgba(255,204,0,0.18)',
+          borderWidth: 3,
+          tension: 0.25,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: false
+        },
+        {
+          label: 'GOH',
+          data: eventSeries.GOH,
+          borderColor: '#DC2626',
+          backgroundColor: 'rgba(220,38,38,0.15)',
+          borderWidth: 3,
+          tension: 0.25,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: false
+        },
+        {
+          label: 'PCR',
+          data: eventSeries.PCR,
+          borderColor: '#111827',
+          backgroundColor: 'rgba(17,24,39,0.15)',
+          borderWidth: 3,
+          tension: 0.25,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: false
+        },
+        {
+          label: 'CYLINDER',
+          data: eventSeries.CYLINDER,
+          borderColor: '#16A34A',
+          backgroundColor: 'rgba(22,163,74,0.15)',
+          borderWidth: 3,
+          tension: 0.25,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#6B7280',
+            font: { size: 10, weight: 'bold' },
+            padding: 15
+          }
+        },
+        datalabels: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const val = ctx.parsed.y ?? 0;
+              return `${ctx.dataset.label}: ${val} unit`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#111827', font: { weight: 'bold' } },
+          grid: { display: false }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#6B7280', precision: 0 },
+          grid: { color: '#E5E7EB' }
+        }
+      }
+    }
+  });
+}
+
+function renderMonthlyEventTrend(){
+  const selectedYear = Number(
+    document.getElementById("trendEventYear")?.value || new Date().getFullYear()
+  );
+
+  renderMonthlyEventChart_(
+    "chartTrendMonthlyEvent",
+    "trendMonthlyEvent",
+    selectedYear,
+    PLAN_OPP_ROWS
+  );
+  attachMonthlyTrendClick_(charts.trendMonthlyEvent, selectedYear, "TREND");
+}
 
     // ===== PLANNING (SUPABASE) =====
     function normU(v){ return String(v ?? "").trim().toUpperCase(); }
@@ -1969,6 +2718,14 @@ const PLAN_MONTHS = [
   { value: 11, label: "NOVEMBER" },
   { value: 12, label: "DECEMBER" }
 ];
+
+function getMonthLabelShort_(monthNum){
+  const map = {
+    1:"JAN", 2:"FEB", 3:"MAR", 4:"APR", 5:"MAY", 6:"JUN",
+    7:"JUL", 8:"AUG", 9:"SEP", 10:"OCT", 11:"NOV", 12:"DEC"
+  };
+  return map[Number(monthNum)] || "-";
+}
 
 function getPlanningYear_(row){
   const rawYear = pick(row, [
@@ -2439,10 +3196,6 @@ function applyPlanCustomerSelection_(){
   renderPlanningFromSupabase();
 }
 
-function applyPlanCustomerSelection_(){
-  renderPlanningFromSupabase();
-}
-
 function getPlanCustomerKeyword_(){
   return String(document.getElementById("planCustomer")?.value || "").trim();
 }
@@ -2683,6 +3436,43 @@ function renderPlanningFromSupabase(){
 
   renderPlanningStandardsTable_(selectedModel, selectedEvents);
 
+  let planningTrendRows = PLAN_OPP_ROWS.slice();
+
+planningTrendRows = planningTrendRows.filter(r => {
+  const rowYear = getPlanningYear_(r);
+  return rowYear == null ? false : rowYear === year;
+});
+
+if (selectedEvents.length) {
+  const eventSet = new Set(selectedEvents.map(normU));
+  planningTrendRows = planningTrendRows.filter(r => eventSet.has(normU(r.event)));
+}
+
+if (exactCustomer) {
+  planningTrendRows = planningTrendRows.filter(r =>
+    normCustomerKey_(r.customer) === normCustomerKey_(exactCustomer)
+  );
+}
+
+if (selectedModel !== "ALL") {
+  planningTrendRows = planningTrendRows.filter(r => {
+    const ev = normU(r.event);
+    const rawModel = String(r.model_number || r.model || "ALL").trim() || "ALL";
+    const std_key = getStdKey_(ev, rawModel);
+    const std = std_key ? (STD_BY_KEY.get(std_key) || {}) : {};
+    const displayModel = String(std.model_number || rawModel || "ALL").trim() || "ALL";
+    return displayModel === selectedModel;
+  });
+}
+
+renderMonthlyEventChart_(
+  "chartPlanMonthlyEvent",
+  "planMonthlyEvent",
+  year,
+  planningTrendRows
+);
+attachMonthlyTrendClick_(charts.planMonthlyEvent, year, "PLANNING");
+
 let scopedItems = items.slice();
 if (selectedModel !== "ALL") {
   scopedItems = scopedItems.filter(i => String(i.model) === String(selectedModel));
@@ -2699,6 +3489,19 @@ const exactCustomerItems = !exactCustomer
 if (exactCustomer) {
   viewItems = exactCustomerItems.slice();
 }
+const monthLabel =
+  monthValue === "ALL"
+    ? "ALL"
+    : (PLAN_MONTHS.find(m => String(m.value) === String(monthValue))?.label || String(monthValue));
+
+CURRENT_PLANNING_VIEW_ITEMS = viewItems.map(it => ({ ...it }));
+CURRENT_PLANNING_EXPORT_META = {
+  year,
+  month_label: monthLabel,
+  job_type: selectedEvents.length ? selectedEvents.join(" + ") : "ALL",
+  customer: exactCustomer || "ALL",
+  model: selectedModel || "ALL"
+};
 
 const customerTotalCost = exactCustomerItems.reduce((a,b)=>a + Number(b.cost_total || 0), 0);
 const hasEventSelection = selectedEvents.length > 0;
