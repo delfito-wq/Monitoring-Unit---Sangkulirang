@@ -325,9 +325,11 @@ header img{
         <div class="flex flex-col gap-1">
           <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Customer</label>
 
-          <input id="planCustomer" list="planCustomerList" oninput="handlePlanCustomerInput_()"
-            placeholder="ALL / ketik customer..."
-            class="bg-white text-[var(--text)] text-[10px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
+          <input id="planCustomer" list="planCustomerList"
+  onchange="applyPlanCustomerSelection_()"
+  onfocus="handlePlanCustomerFocus_()"
+  placeholder="ALL / ketik customer..."
+  class="bg-white text-[var(--text)] text-[10px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
 
           <datalist id="planCustomerList"></datalist>
         </div>
@@ -2412,16 +2414,32 @@ function setPlanCustomerOptions(list){
     .join("");
 }
 
-function handlePlanCustomerInput_(){
-  const keyword = normCustomerKey_(getPlanCustomerKeyword_());
+function handlePlanCustomerFocus_(){
+  setPlanCustomerOptions(PLAN_CUSTOMERS_ALL);
+}
 
-  const filteredCustomers = !keyword
-    ? PLAN_CUSTOMERS_ALL.slice(0, 20)
-    : PLAN_CUSTOMERS_ALL
-        .filter(c => normCustomerKey_(c).includes(keyword))
-        .slice(0, 20);
+function applyPlanCustomerSelection_(){
+  const input = document.getElementById("planCustomer");
+  if (!input) return;
 
-  setPlanCustomerOptions(filteredCustomers);
+  const raw = String(input.value || "").trim();
+
+  if (!raw) {
+    input.value = "";
+    renderPlanningFromSupabase();
+    return;
+  }
+
+  const exact = PLAN_CUSTOMERS_ALL.find(c => normCustomerKey_(c) === normCustomerKey_(raw));
+
+  if (exact) {
+    input.value = exact;
+  }
+
+  renderPlanningFromSupabase();
+}
+
+function applyPlanCustomerSelection_(){
   renderPlanningFromSupabase();
 }
 
@@ -2567,8 +2585,6 @@ function renderPlanningFromSupabase(){
   const year = Number(document.getElementById("planYear")?.value || new Date().getFullYear());
   const monthValue = document.getElementById("planMonth")?.value || "ALL";
   const selectedMonth = monthValue === "ALL" ? null : Number(monthValue);
-  const customerKeywordRaw = getPlanCustomerKeyword_();
-  const customerKeyword = normCustomerKey_(customerKeywordRaw);
   const exactCustomer = getExactPlanCustomer_();
   const selectedEvents = getSelectedPlanEvents_();
 
@@ -2675,13 +2691,14 @@ if (selectedModel !== "ALL") {
 const marketSizeTotal = scopedItems.reduce((a,b)=>a + Number(b.cost_total || 0), 0);
 
 let viewItems = scopedItems.slice();
-if (customerKeyword) {
-  viewItems = viewItems.filter(i => normCustomerKey_(i.customer).includes(customerKeyword));
-}
 
 const exactCustomerItems = !exactCustomer
   ? []
   : scopedItems.filter(i => normCustomerKey_(i.customer) === normCustomerKey_(exactCustomer));
+
+if (exactCustomer) {
+  viewItems = exactCustomerItems.slice();
+}
 
 const customerTotalCost = exactCustomerItems.reduce((a,b)=>a + Number(b.cost_total || 0), 0);
 const hasEventSelection = selectedEvents.length > 0;
