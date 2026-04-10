@@ -45,13 +45,13 @@ header img{
 
     /* toast */
     #toast{
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      z-index: 200;
-      max-width: 420px;
-      display: none;
-    }
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  z-index: 200;
+  max-width: 360px;
+  display: none;
+}
   </style>
 </head>
 
@@ -822,6 +822,57 @@ function getSMR(d){
     return Number.isFinite(n) ? n : null;
   }
 
+  function getDeliveryYearWarning_(d){
+  const raw = pickKeyInsensitive(d, [
+    "DelDate",
+    "delivery_date",
+    "Delivery Date",
+    "delivery date",
+    "delivery",
+    "Delivery",
+    "tgl_delivery",
+    "tahun_delivery",
+    "delivery_year"
+  ]);
+
+  if (raw == null || String(raw).trim() === "") return null;
+
+  const text = String(raw).trim();
+
+  const directYear = Number(text);
+  if (Number.isFinite(directYear) && directYear >= 1900 && directYear <= 2100) {
+    return directYear;
+  }
+
+  const matchYear = text.match(/\b(19|20)\d{2}\b/);
+  if (matchYear) return Number(matchYear[0]);
+
+  const dt = new Date(text);
+  if (!Number.isNaN(dt.getTime())) return dt.getFullYear();
+
+  return null;
+}
+
+function hasUTDataQualityWarning_(){
+  return globalData.some(d => {
+    if (!isUT(d)) return false;
+
+    const missingDelivery = !getDeliveryYearWarning_(d);
+    const missingWarranty = !String(d.warranty_status || "").trim();
+
+    return missingDelivery || missingWarranty;
+  });
+}
+
+function showDataQualityWarningToast_(){
+  if (!hasUTDataQualityWarning_()) return;
+
+  showToast(
+    "Data Quality Notice",
+    "Sebagian data Unit UT belum memenuhi kelengkapan untuk seluruh analisis."
+  );
+}
+
   function getDeliveryYear_(d){
   const raw =
     pickKeyInsensitive(d, [
@@ -911,7 +962,18 @@ function getSMR(d){
           showToast("Data Kosong", "Data unit dari Supabase kosong. Pastikan tabel "+NAMA_TABEL_ACTIVE+" ada dan ada datanya.");
         } else {
           showToast("Load Berhasil", `Data unit loaded: ${globalData.length} rows (tabel: ${NAMA_TABEL_ACTIVE})`);
-          setTimeout(hideToast, 2200);
+
+          setTimeout(() => {
+            hideToast();
+
+            if (hasUTDataQualityWarning_()) {
+              showDataQualityWarningToast_();
+
+              setTimeout(() => {
+                hideToast();
+              }, 10000); // 10 detik
+            }
+          }, 2200);
         }
 
         if (stdRes.error) console.warn("Standards error:", stdRes.error.message);
@@ -1035,6 +1097,14 @@ function getSMR(d){
     setTimeout(hideToast, 1800);
     return;
   }
+
+  function showDataQualityWarningToast_(){
+  showToast(
+    "Data Quality Notice",
+    "Sebagian data Unit UT belum memenuhi kelengkapan untuk seluruh analisis."
+  );
+}
+
 
   const meta = CURRENT_PLANNING_EXPORT_META || {};
 
