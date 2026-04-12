@@ -224,7 +224,7 @@ th {
   --surface-2:#F9FAFB;
   --border:#E5E7EB;
   --text:#111827;
-  --muted:#6B7280;
+  --muted:#111827;
 
   --accent:#FFCC00;
   --accent-soft:#FFF4BF;
@@ -2958,11 +2958,9 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
   const canvas = document.getElementById('chartTrendYoY');
   if (!canvas) return;
 
-  // hanya ambil UT
   const utOnly = globalData.filter(isUT);
   const totalUT = utOnly.length;
 
-  // hitung jumlah unit UT per tahun delivery
   const yearlyMap = {};
   utOnly.forEach(d => {
     const y = getDeliveryYear_(d);
@@ -2972,7 +2970,6 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
 
   const years = Object.keys(yearlyMap).map(Number).sort((a,b)=>a-b);
 
-  // cumulative total
   let running = 0;
   const labels = years.map(String);
   const values = years.map(y => {
@@ -3004,12 +3001,19 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
     options:{
       responsive:true,
       maintainAspectRatio:false,
+      animation:{
+        duration: 1200,
+        easing: 'easeOutQuart'
+      },
       plugins:{
         legend:{ display:false },
         datalabels:{
           color:'#ffffff',
-          anchor:'end',
+          anchor:'center',
           align:'top',
+          offset: 8,
+          clamp:true,
+          clip:false,
           font:{ weight:'bold', size:10 },
           formatter:v=>v
         },
@@ -3033,6 +3037,7 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
       },
       scales:{
         x:{
+          offset:true,
           ticks:{ color:'#111827', font:{ weight:'bold' } },
           grid:{ display:false }
         },
@@ -3045,8 +3050,6 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
     }
   });
 }
-
-
 
     function initTrendEventYear_(){
   const el = document.getElementById("trendEventYear");
