@@ -37,6 +37,26 @@ header img{
   --bad:#DC2626;
 }
 
+@keyframes statPopUp {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.stat-pop-animate {
+  animation: statPopUp 0.55s ease-out;
+  will-change: transform, opacity;
+}
+
 /* paksa Amasis tampil bold/black */
   body{
   color: var(--text);
@@ -73,6 +93,46 @@ th {
   font-family: var(--font-ut) !important;
   font-weight: 900 !important;
 }
+
+.equipment-logo-card{
+  background: rgba(255,255,255,0.80);
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+  min-height: 120px;
+  padding: 16px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s ease;
+}
+
+.equipment-logo-card:hover{
+  background: rgba(255,255,255,0.92);
+  transform: scale(1.02);
+}
+
+.equipment-logo-frame{
+  width: 190px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.equipment-logo-frame img{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* fine tune per logo supaya visualnya seimbang */
+.equipment-logo-komatsu img{ max-width: 175px; max-height: 56px; }
+.equipment-logo-scania img{ max-width: 168px; max-height: 54px; }
+.equipment-logo-tadano img{ max-width: 160px; max-height: 52px; }
+.equipment-logo-ud img{ max-width: 190px; max-height: 74px; }
+.equipment-logo-bomag img{ max-width: 200px; max-height: 100px; }
 
 /* angka dan title card makin tegas */
 .card-title-lg{
@@ -349,6 +409,48 @@ nav button {
 
     <!-- PAGE MAIN -->
     <div id="page-main" class="tab-content">
+      <div class="soft-panel p-8 rounded-3xl mb-6">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+    <h3 class="text-[var(--text)] font-black uppercase text-xs italic flex items-center">
+      <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Equipment Monitoring
+    </h3>
+
+    <div class="text-[12px] text-[var(--muted)] font-black uppercase tracking-widest italic">
+    </div>
+  </div>
+
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+  <button onclick="openEquipmentMonitoringPage_('KOMATSU')" class="equipment-logo-card">
+    <div class="equipment-logo-frame equipment-logo-komatsu">
+      <img src="Komatsu.jpeg" alt="Komatsu">
+    </div>
+  </button>
+
+  <button onclick="openEquipmentMonitoringPage_('SCANIA')" class="equipment-logo-card">
+    <div class="equipment-logo-frame equipment-logo-scania">
+      <img src="Scania.jpeg" alt="Scania">
+    </div>
+  </button>
+
+  <button onclick="openEquipmentMonitoringPage_('TADANO')" class="equipment-logo-card">
+    <div class="equipment-logo-frame equipment-logo-tadano">
+      <img src="Tadano.jpeg" alt="Tadano">
+    </div>
+  </button>
+
+  <button onclick="openEquipmentMonitoringPage_('UD TRUCKS')" class="equipment-logo-card">
+    <div class="equipment-logo-frame equipment-logo-ud">
+      <img src="UD Trucks.jpeg" alt="UD Trucks">
+    </div>
+  </button>
+
+  <button onclick="openEquipmentMonitoringPage_('BOMAG')" class="equipment-logo-card">
+    <div class="equipment-logo-frame equipment-logo-bomag">
+      <img src="Bomag.jpeg" alt="Bomag">
+    </div>
+  </button>
+</div>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
   <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
     <span class="card-title-lg text-[var(--text)] font-black uppercase">Populasi Sangkulirang</span>
@@ -938,7 +1040,28 @@ nav button {
         active.classList.add('bg-[var(--accent)]','text-black','shadow-sm');
       }
 
-      if (target === 'trend') {
+if (target === 'main') {
+  setTimeout(() => {
+    animateMainStats_();
+  }, 120);
+}
+
+if (target === 'charts') {
+  setTimeout(() => {
+    animateChartsTextOnly_();
+    animateAnalyticsPieCharts_();
+    animateAnalyticsBarCharts_();
+  }, 160);
+}
+
+if (target === 'customer') {
+  setTimeout(() => {
+    animateCustomerTextOnly_();
+    animateCustomerBarChart_();
+  }, 160);
+}
+
+if (target === 'trend') {
   setTimeout(() => {
     renderTrendYoY();
     renderMonthlyEventTrend();
@@ -951,6 +1074,66 @@ if (target === 'planning') {
   }, 100);
 }
     }
+
+    function replayPopAnimation_(elements){
+  (elements || []).forEach((el, idx) => {
+    if (!el) return;
+
+    el.classList.remove('stat-pop-animate');
+    void el.offsetWidth;
+    el.style.animationDelay = `${idx * 45}ms`;
+    el.classList.add('stat-pop-animate');
+  });
+}
+
+function animateMainStats_(){
+  const els = [
+    ...document.querySelectorAll('#page-main .card-title-lg'),
+    document.getElementById('res-total-ut'),
+    document.getElementById('res-total-unit-ut'),
+    document.getElementById('res-total-unit-nonut'),
+    document.getElementById('res-warranty'),
+    document.getElementById('res-out-warranty'),
+    document.getElementById('res-skl'),
+    document.getElementById('res-sku'),
+    document.getElementById('res-skh'),
+    document.getElementById('res-kla')
+  ].filter(Boolean);
+
+  replayPopAnimation_(els);
+}
+
+function animateChartsTextOnly_(){
+  const page = document.getElementById('page-charts');
+  if (!page) return;
+
+  const els = [
+    ...page.querySelectorAll('h3')
+  ].filter(Boolean);
+
+  replayPopAnimation_(els);
+}
+
+function animateCustomerTextOnly_(){
+  const els = [
+    ...document.querySelectorAll('#page-customer h3'),
+    ...document.querySelectorAll('#page-customer p'),
+    document.getElementById('res-unique-cust'),
+    document.getElementById('customerSelectTop')
+  ].filter(Boolean);
+
+  replayPopAnimation_(els);
+}
+
+function animatePlanningTextOnly_(){
+  const els = [
+    ...document.querySelectorAll('#page-planning h3'),
+    document.getElementById('planMarketSize'),
+    document.getElementById('planMarketShare')
+  ].filter(Boolean);
+
+  replayPopAnimation_(els);
+}
 
     // ===== HELPERS =====
     function norm(v){ return String(v ?? "").trim().toUpperCase(); }
@@ -1183,6 +1366,10 @@ function showDataQualityWarningToast_(){
         renderUnitPages();
         initPlanningFromSupabase();
         fillCustomerTopDropdown();
+
+        setTimeout(() => {
+  animateMainStats_();
+}, 180);
 
       } catch(err){
         console.error(err);
@@ -1544,10 +1731,25 @@ function getTopCustomersByType_(rows, limit = 10){
   return sorted.slice(0, limit);
 }
 
+const BAR_ANIMATION_ = {
+  duration: 900,
+  easing: 'easeOutQuart',
+  delay(ctx) {
+    if (ctx.type !== 'data') return 0;
+    return ctx.dataIndex * 55;
+  }
+};
+
     function renderAllCharts() {
       const commonPie = {
   responsive:true,
   maintainAspectRatio:false,
+  animation:{
+    duration: 1000,
+    easing: 'easeOutQuart',
+    animateRotate: true,
+    animateScale: true
+  },
   plugins:{
     legend:{
       position:'bottom',
@@ -1699,6 +1901,7 @@ if (ctxBouwheer){
             }]
           },
           options:{
+              animation: BAR_ANIMATION_,
             indexAxis:'y',
             responsive:true,
             maintainAspectRatio:false,
@@ -1756,6 +1959,7 @@ if (ctxBouwheer){
             }]
           },
           options:{
+              animation: BAR_ANIMATION_,
             indexAxis:'y',
             responsive:true,
             maintainAspectRatio:false,
@@ -1822,7 +2026,7 @@ if (ctxSector){
   });
 }
 
-      // 6 Brand bar horizontal
+      // 9 Brand bar horizontal
       const prodMap = {};
       globalData.forEach(d=>{
         const p = String(d.prod_hier || "N/A").trim().toUpperCase();
@@ -1852,6 +2056,8 @@ if (ctxJ){
       }]
     },
     options:{
+        animation: BAR_ANIMATION_,
+
       indexAxis:'y',
       responsive:true,
       maintainAspectRatio:false,
@@ -1888,7 +2094,7 @@ if (ctxJ){
   });
 }
 
-      // 7 Customer bar + click
+      // 10 Customer bar + click
       const custMap = {};
       globalData.forEach(d=>{
         const c = String(d.customer||"").trim().toUpperCase();
@@ -1920,6 +2126,7 @@ if (ctxC){
       }]
     },
     options:{
+        animation: BAR_ANIMATION_,
       indexAxis:'y',
       responsive:true,
       maintainAspectRatio:false,
@@ -1961,6 +2168,56 @@ if (ctxC){
   });
 }
     }
+
+    function animateAnalyticsBarCharts_(){
+  const barCharts = [
+    charts.topCustomerUT,
+    charts.topCustomerNonUT,
+    charts.j
+  ].filter(Boolean);
+
+  barCharts.forEach(chart => {
+    try {
+      chart.stop();
+      chart.reset();
+      chart.update();
+    } catch(e) {
+      console.warn("Bar animation replay failed:", e);
+    }
+  });
+}
+
+function animateCustomerBarChart_(){
+  if (!charts.cust) return;
+
+  try {
+    charts.cust.stop();
+    charts.cust.reset();
+    charts.cust.update();
+  } catch(e) {
+    console.warn("Customer bar animation replay failed:", e);
+  }
+}
+
+    function animateAnalyticsPieCharts_(){
+  const pieCharts = [
+    charts.unitComposition,
+    charts.wc,
+    charts.p,
+    charts.bouwheer,
+    charts.sector
+  ].filter(Boolean);
+
+  pieCharts.forEach(chart => {
+    try {
+      chart.stop();
+      chart.reset();
+      chart.update();
+    } catch(e) {
+      console.warn("Pie animation replay failed:", e);
+    }
+  });
+}
 
     // ===== CUSTOMER TOP DROPDOWN =====
     function fillCustomerTopDropdown(){
@@ -4096,6 +4353,7 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
         }]
       },
       options:{
+          animation: BAR_ANIMATION_,
         indexAxis:"y",
         responsive:true,
         maintainAspectRatio:false,
