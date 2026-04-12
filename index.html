@@ -11,51 +11,212 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
 header img{
   display:block;
   height:auto;
 }
-    :root{
-      --bg:#F7F8FA;
-      --surface:#FFFFFF;
-      --surface-2:#F9FAFB;
-      --border:#E5E7EB;
-      --text:#111827;
-      --muted:#6B7280;
+:root{
+  --bg:#F7F8FA;
+  --surface:#FFFFFF;
+  --surface-2:#F9FAFB;
+  --border:#E5E7EB;
+  --text:#111827;
+  --muted:#6B7280;
 
-      --accent:#FFCC00;
-      --accent-soft:#FFF4BF;
+  --accent:#FFCC00;
+  --accent-soft:#FFF4BF;
 
-      --nav:#111111;
-      --nav2:#1a1a1a;
+  --nav:#111111;
+  --nav2:#1a1a1a;
 
-      --good:#16A34A;
-      --bad:#DC2626;
-    }
+  --good:#16A34A;
+  --bad:#DC2626;
+}
 
-    body{ background:var(--bg); color:var(--text); }
+/* paksa Amasis tampil bold/black */
+  body{
+  color: var(--text);
+  background:
+    linear-gradient(rgba(12,16,22,0.58), rgba(12,16,22,0.58)),
+    url("./Background.png") center center / cover fixed no-repeat;
+  min-height: 100vh;
+  letter-spacing: 0.01em;
+}
+.dashboard-card{
+  background: rgba(255,255,255,0.54);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.14);
+}
 
-    /* scrollbar */
-    .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #F3F4F6; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 12px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+.dashboard-card:hover{
+  background: rgba(255,255,255,0.60);
+}
 
-    /* toast */
-    #toast{
+.dashboard-card,
+.dashboard-card *,
+.soft-panel,
+.soft-panel *,
+header,
+header *,
+nav,
+nav *,
+button,
+.card-title-lg,
+.card-value-hero,
+.card-value-mid,
+h1, h2, h3, h4, h5, h6,
+th {
+  font-family: var(--font-ut) !important;
+  font-weight: 900 !important;
+}
+
+/* angka dan title card makin tegas */
+.card-title-lg{
+  font-size: 16px !important;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  font-weight: 800 !important;
+}
+
+.card-value-hero{
+  font-size: 5.4rem !important;
+  line-height: 1;
+  font-weight: 800 !important;
+}
+
+.card-value-mid{
+  font-size: 2.9rem !important;
+  line-height: 1;
+  font-weight: 800 !important;
+}
+
+.soft-panel{
+  background: rgba(255,255,255,0.58);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+
+/* khusus panel yang tetap lebih solid */
+.solid-panel{
+  background: rgba(255,255,255,0.82) !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12) !important;
+}
+
+/* panel grafik */
+.glass-panel{
+  background: rgba(255,255,255,0.58);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+
+.dashboard-card .card-title-lg{
+  color: #111827 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+}
+
+.card-value-hero,
+.card-value-mid{
+  text-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+/* wrapper lebih lebar */
+.page-shell{
+  width: min(96vw, 1800px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#page-charts h3{
+  font-size: 14px !important;
+  color: var(--text) !important;
+  letter-spacing: 0.06em;
+}
+
+/* scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 8px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: #F3F4F6; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 12px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* toast */
+#toast{
   position: fixed;
   right: 16px;
-  top: 16px;
+  bottom: 16px;
   z-index: 200;
   max-width: 360px;
   display: none;
 }
-  </style>
+
+:root{
+  --bg:#F7F8FA;
+  --surface:#FFFFFF;
+  --surface-2:#F9FAFB;
+  --border:#E5E7EB;
+  --text:#111827;
+  --muted:#6B7280;
+
+  --accent:#FFCC00;
+  --accent-soft:#FFF4BF;
+
+  --nav:#111111;
+  --nav2:#1a1a1a;
+
+  --good:#16A34A;
+  --bad:#DC2626;
+
+  --font-ut: "Open Sans", Arial, sans-serif;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+table,
+thead,
+tbody,
+th,
+td,
+label,
+span,
+p,
+a,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-ut) !important;
+}
+
+/* naikkan tulisan kecil sekitar +2 step */
+.text-\[9px\]  { font-size: 11px !important; }
+.text-\[10px\] { font-size: 12px !important; }
+.text-\[11px\] { font-size: 13px !important; }
+.text-\[12px\] { font-size: 14px !important; }
+
+.text-xs { font-size: 0.875rem !important; } /* 14px */
+.text-sm { font-size: 1rem !important; }     /* 16px */
+
+/* heading dan button terasa lebih tegas */
+h1, h2, h3, h4, h5, h6,
+button,
+nav a,
+nav button {
+  letter-spacing: 0.03em;
+}
+</style>
 </head>
 
-<body class="font-sans">
+<body>
 
   <!-- TOAST -->
   <div id="toast" class="rounded-2xl border border-[var(--border)] bg-white shadow-lg p-4">
@@ -71,122 +232,141 @@ header img{
 
   <!-- HEADER -->
 <header class="bg-white w-full shadow-sm border-b border-[var(--border)]">
-  <div class="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between gap-4">
-<div class="flex flex-col justify-center shrink-0">
-  <img src="Logo.png" alt="United Tractors Member of Astra" class="w-[180px] md:w-[280px] h-auto object-contain object-left block">
-  <p class="text-[9px] md:text-[10px] text-[var(--muted)] font-bold mt-1 tracking-[0.12em] uppercase">
-    Sangkulirang Unit Population Analytics
-  </p>
-</div>
+  <!-- TOP HEADER -->
+  <div class="page-shell px-6 py-3 flex items-center justify-between gap-6">
+    <!-- LEFT -->
+    <div class="flex flex-col justify-center shrink-0">
+      <img
+        src="Logo.png"
+        alt="United Tractors Member of Astra"
+        class="w-[180px] md:w-[280px] h-auto object-contain object-left block"
+      >
+      <p class="text-[9px] md:text-[12px] text-[var(--muted)] font-bold mt-1 tracking-[0.12em] uppercase">
+        Sangkulirang Unit Population Analytics
+      </p>
+    </div>
 
-<div class="shrink-0">
-  <img src="Moving As One.png" alt="Moving as One" class="w-[110px] md:w-[150px] h-auto object-contain block">
-</div>
+    <!-- RIGHT LOGOS -->
+    <div class="flex items-center gap-4 md:gap-6 shrink-0">
+      <img
+        src="Sangkulirang-Stronger.jpeg"
+        alt="Sangkulirang Stronger"
+        class="w-[88px] md:w-[118px] h-auto object-contain block"
+      >
+
+      <img
+        src="Moving As One.png"
+        alt="Moving as One"
+        class="w-[110px] md:w-[150px] h-auto object-contain block"
+      >
+    </div>
   </div>
 
   <!-- NAV -->
   <nav class="w-full border-t border-black/10" style="background: var(--nav);">
-      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between py-2">
-        <div class="flex space-x-1 py-2 md:py-0 items-center">
-          <button onclick="switchTab('main')" id="btn-main"
-            class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all bg-[var(--accent)] text-black shadow-sm">
-            Beranda
+    <div class="page-shell px-4 md:px-6 flex flex-col md:flex-row items-center justify-between py-2">
+      <div class="flex flex-wrap gap-1 py-2 md:py-0 items-center">
+        <button onclick="switchTab('main')" id="btn-main"
+          class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all bg-[var(--accent)] text-black shadow-sm">
+          Beranda
+        </button>
+
+        <div class="relative">
+          <button onclick="toggleUnitDropdown()"
+            class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white flex items-center gap-1">
+            UNIT <span class="text-xs">▼</span>
           </button>
 
-          <!-- UNIT DROPDOWN -->
-          <div class="relative">
-            <button onclick="toggleUnitDropdown()"
-              class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-200 hover:text-white flex items-center gap-1">
-              UNIT <span class="text-xs">▼</span>
+          <div id="unitDropdown"
+            class="absolute left-0 mt-2 w-44 bg-white border border-[var(--border)] rounded-xl shadow-lg hidden z-50 overflow-hidden">
+            <button onclick="switchTab('unit-ut'); closeUnitDropdown();"
+              class="w-full text-left px-4 py-2 text-[12px] font-black uppercase text-[var(--text)] hover:bg-[var(--accent)] hover:text-black">
+              Unit UT
             </button>
-
-            <div id="unitDropdown"
-              class="absolute left-0 mt-2 w-44 bg-white border border-[var(--border)] rounded-xl shadow-lg hidden z-50 overflow-hidden">
-              <button onclick="switchTab('unit-ut'); closeUnitDropdown();"
-                class="w-full text-left px-4 py-2 text-[10px] font-black uppercase text-[var(--text)] hover:bg-[var(--accent)] hover:text-black">
-                Unit UT
-              </button>
-              <button onclick="switchTab('unit-nonut'); closeUnitDropdown();"
-                class="w-full text-left px-4 py-2 text-[10px] font-black uppercase text-[var(--text)] hover:bg-[var(--accent)] hover:text-black">
-                Unit Non-UT
-              </button>
-            </div>
+            <button onclick="switchTab('unit-nonut'); closeUnitDropdown();"
+              class="w-full text-left px-4 py-2 text-[12px] font-black uppercase text-[var(--text)] hover:bg-[var(--accent)] hover:text-black">
+              Unit Competitor
+            </button>
           </div>
-
-          <button onclick="switchTab('charts')" id="btn-charts"
-            class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-200 hover:text-white">
-            Analytics
-          </button>
-          <button onclick="switchTab('customer')" id="btn-customer"
-            class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-200 hover:text-white">
-            Customer
-          </button>
-          <button onclick="switchTab('trend')" id="btn-trend"
-            class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-200 hover:text-white">
-            Trend
-          </button>
-          <button onclick="switchTab('planning')" id="btn-planning"
-            class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all text-gray-200 hover:text-white">
-            Market Analytics
-          </button>
         </div>
 
-        <div class="flex items-center space-x-3 mt-2 md:mt-0 pb-2 md:pb-0">
-          <a href="https://forms.gle/Ha5oe4xMubWhFnTT9" target="_blank"
-            class="bg-[var(--accent)] hover:brightness-95 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase shadow-sm transition-all active:scale-95 inline-flex items-center">
-            Ajukan Update
-          </a>
+        <button onclick="switchTab('charts')" id="btn-charts"
+          class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white">
+          Analytics
+        </button>
 
-          <button onclick="exportToExcelFromSupabase()"
-            class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 rounded-full text-[10px] font-black uppercase transition-all">
-            Export Excel
-          </button>
+        <button onclick="switchTab('customer')" id="btn-customer"
+          class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white">
+          Customer
+        </button>
 
-          <div class="flex items-center gap-2 ml-4">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            <div class="text-[11px] font-bold">
-              <span class="text-gray-200">Update</span>
-              <span id="teks-update-live" class="text-white ml-3 font-bold">Sedang memuat...</span>
-            </div>
+        <button onclick="switchTab('trend')" id="btn-trend"
+          class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white">
+          Trend
+        </button>
+
+        <button onclick="switchTab('planning')" id="btn-planning"
+          class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white">
+          Market Analytics
+        </button>
+      </div>
+
+      <div class="flex items-center space-x-3 mt-2 md:mt-0 pb-2 md:pb-0">
+        <a href="https://forms.gle/Ha5oe4xMubWhFnTT9" target="_blank"
+          class="bg-[var(--accent)] hover:brightness-95 text-black px-6 py-2 rounded-full text-[12px] font-black uppercase shadow-sm transition-all active:scale-95 inline-flex items-center">
+          Ajukan Update
+        </a>
+
+        <button onclick="exportToExcelFromSupabase()"
+          class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 rounded-full text-[12px] font-black uppercase transition-all">
+          Export Excel
+        </button>
+
+        <div class="flex items-center gap-2 ml-4">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-90"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </span>
+          <div class="text-[11px] font-bold">
+            <span class="text-gray-200">Update</span>
+            <span id="teks-update-live" class="text-white ml-3 font-bold">Sedang memuat...</span>
           </div>
         </div>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <div class="w-full h-[3px] bg-[var(--accent)]"></div>
-  </header>
+  <div class="w-full h-[3px] bg-[var(--accent)]"></div>
+</header>
 
   <!-- CONTENT -->
-  <div class="max-w-7xl mx-auto p-4 md:p-8">
+  <div class="page-shell p-4 md:p-6 xl:p-8">
 
     <!-- PAGE MAIN -->
     <div id="page-main" class="tab-content">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
-    <span class="text-[var(--text)] font-black uppercase text-[10px]">Populasi Sangkulirang</span>
-    <span id="res-total-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
+  <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
+    <span class="card-title-lg text-[var(--text)] font-black uppercase">Populasi Sangkulirang</span>
+    <span id="res-total-ut" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--accent)]">0</span>
   </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
-    <span class="text-[var(--text)] font-black uppercase text-[10px]">Total Unit UT</span>
-    <span id="res-total-unit-ut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
+  <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
+    <span class="card-title-lg text-[var(--text)] font-black uppercase">Total Unit UT</span>
+    <span id="res-total-unit-ut" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--accent)]">0</span>
   </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm text-center md:text-left">
-    <span class="text-[var(--text)] font-black uppercase text-[10px]">Total Unit Non-UT</span>
-    <span id="res-total-unit-nonut" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--accent)]">0</span>
+  <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
+    <span class="card-title-lg text-[var(--text)] font-black uppercase">Total Unit Competitor</span>
+    <span id="res-total-unit-nonut" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--accent)]">0</span>
   </div>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <div onclick="openDetailModal('Warranty')"
-    class="relative bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
-    <span class="text-[var(--good)] font-black uppercase text-[10px] block">Warranty </span>
-    <span id="res-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--good)]">0</span>
-    <div class="absolute bottom-6 right-6 w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--good)] transition-all shadow-sm pointer-events-none">
+    class="dashboard-card relative p-8 rounded-3xl cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
+    <span class="card-title-lg text-[var(--good)] font-black uppercase block">Warranty</span>
+    <span id="res-warranty" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--good)]">0</span>
+    <div class="absolute bottom-6 right-6 w-12 h-12 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--good)] transition-all shadow-sm pointer-events-none">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text)] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
       </svg>
@@ -194,10 +374,10 @@ header img{
   </div>
 
   <div onclick="openDetailModal('Out Warranty')"
-    class="relative bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
-    <span class="text-[var(--bad)] font-black uppercase text-[10px] block">Out Warranty </span>
-    <span id="res-out-warranty" class="text-7xl font-black block mt-2 tracking-tighter text-[var(--bad)]">0</span>
-    <div class="absolute bottom-6 right-6 w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--bad)] transition-all shadow-sm pointer-events-none">
+    class="dashboard-card relative p-8 rounded-3xl cursor-pointer hover:bg-[var(--accent-soft)] transition-all group overflow-hidden">
+    <span class="card-title-lg text-[var(--bad)] font-black uppercase block">Out Warranty</span>
+    <span id="res-out-warranty" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--bad)]">0</span>
+    <div class="absolute bottom-6 right-6 w-12 h-12 bg-black/5 rounded-xl flex items-center justify-center group-hover:bg-[var(--bad)] transition-all shadow-sm pointer-events-none">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--text)] group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
       </svg>
@@ -206,25 +386,25 @@ header img{
 </div>
 
 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white p-5 rounded-2xl border border-[var(--border)] text-center shadow-sm">
-          <span class="text-[var(--muted)] font-black text-[10px] uppercase block mb-1">SKL</span>
-          <span id="res-skl" class="text-4xl font-black text-[var(--accent)]">0</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-[var(--border)] text-center shadow-sm">
-          <span class="text-[var(--muted)] font-black text-[10px] uppercase block mb-1">SKU</span>
-          <span id="res-sku" class="text-4xl font-black text-[var(--accent)]">0</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-[var(--border)] text-center shadow-sm">
-          <span class="text-[var(--muted)] font-black text-[10px] uppercase block mb-1">SKH</span>
-          <span id="res-skh" class="text-4xl font-black text-[var(--accent)]">0</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-[var(--border)] text-center shadow-sm">
-          <span class="text-[var(--muted)] font-black text-[10px] uppercase block mb-1">KLA</span>
-          <span id="res-kla" class="text-4xl font-black text-[var(--accent)]">0</span>
-        </div>
-      </div>
+  <div class="dashboard-card p-5 rounded-2xl text-center">
+    <span class="card-title-lg text-[var(--muted)] font-black uppercase block mb-2">SKL</span>
+    <span id="res-skl" class="card-value-mid font-black text-[var(--accent)]">0</span>
+  </div>
+  <div class="dashboard-card p-5 rounded-2xl text-center">
+    <span class="card-title-lg text-[var(--muted)] font-black uppercase block mb-2">SKU</span>
+    <span id="res-sku" class="card-value-mid font-black text-[var(--accent)]">0</span>
+  </div>
+  <div class="dashboard-card p-5 rounded-2xl text-center">
+    <span class="card-title-lg text-[var(--muted)] font-black uppercase block mb-2">SKH</span>
+    <span id="res-skh" class="card-value-mid font-black text-[var(--accent)]">0</span>
+  </div>
+  <div class="dashboard-card p-5 rounded-2xl text-center">
+    <span class="card-title-lg text-[var(--muted)] font-black uppercase block mb-2">KLA</span>
+    <span id="res-kla" class="card-value-mid font-black text-[var(--accent)]">0</span>
+  </div>
+</div>
 
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+      <div class="soft-panel p-8 rounded-3xl">
         <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
           <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Grafik Populasi per Model Number
         </h3>
@@ -239,64 +419,59 @@ header img{
     <!-- PAGE CHARTS -->
 <div id="page-charts" class="tab-content hidden">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Sangkulirang Unit UT vs Non-UT (%)</h3>
+    <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Sangkulirang Unit UT vs Competitor (%)</h3>
       <div class="w-full h-[250px]"><canvas id="chartUnitComposition"></canvas></div>
     </div>
 
-    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Work Center Distribution (%)</h3>
+    <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Work Center Distribution (%)</h3>
       <div class="w-full h-[250px]"><canvas id="chartWorkCenter"></canvas></div>
     </div>
 
-    <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Status Warranty (%)</h3>
+    <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Status Warranty (%)</h3>
       <div class="w-full h-[250px]"><canvas id="chartWarranty"></canvas></div>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi Per Wilayah (%)</h3>
-    <div class="w-full h-[250px]"><canvas id="chartWilayah"></canvas></div>
-  </div>
-
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Bouwheer Indexim vs GAM</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Bouwheer Indexim vs GAM</h3>
     <div class="w-full h-[250px]"><canvas id="chartBouwheer"></canvas></div>
   </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col items-center">
-    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">Populasi per Sektor</h3>
+  <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Populasi per Sektor</h3>
     <div class="w-full h-[250px]"><canvas id="chartSector"></canvas></div>
   </div>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">
+  <div class="soft-panel p-8 rounded-3xl">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
       Top Customer - Unit UT
     </h3>
     <div class="w-full h-[360px]"><canvas id="chartTopCustomerUT"></canvas></div>
   </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-6 tracking-widest italic text-center">
-      Top Customer - Unit Non-UT
+  <div class="soft-panel p-8 rounded-3xl">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
+      Top Customer - Unit Competitor
     </h3>
     <div class="w-full h-[360px]"><canvas id="chartTopCustomerNonUT"></canvas></div>
   </div>
 </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-    <h3 class="text-[var(--text)] font-black uppercase text-[10px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
+  <div class="soft-panel p-8 rounded-3xl">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-8 tracking-widest italic text-center">Populasi Berdasarkan Brand (Prod Hier)</h3>
     <div class="w-full h-[400px]"><canvas id="chartJenisBar"></canvas></div>
   </div>
 </div>
 
     <!-- PAGE TREND -->
 <div id="page-trend" class="tab-content hidden">
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm mb-6">
+  <div class="glass-panel p-8 rounded-3xl mb-6">
     <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
       <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Populasi Unit Year to Year
     </h3>
@@ -305,16 +480,16 @@ header img{
     </div>
   </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+  <div class="soft-panel p-8 rounded-3xl">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
       <h3 class="text-[var(--text)] font-black uppercase text-xs italic flex items-center">
-        <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Opportunity Bulanan per Event
+        <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Opportunity Bulanan Job Type
       </h3>
 
       <div class="flex items-center gap-2">
         <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Year</label>
         <select id="trendEventYear" onchange="renderMonthlyEventTrend()"
-          class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[120px]">
+          class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[120px]">
         </select>
       </div>
     </div>
@@ -328,12 +503,12 @@ header img{
 <!-- PAGE PLANNING -->
 <div id="page-planning" class="tab-content hidden">
 
-  <div class="bg-white p-6 rounded-2xl border border-[var(--border)] shadow-sm mb-6">
-    <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Share (Populasi)</div>
+  <div class="glass-panel p-6 rounded-2xl mb-6">
+    <div class="text-[12px] text-[var(--muted)] font-black uppercase mb-3">Market Share (Populasi)</div>
     <div class="h-[360px]"><canvas id="chartPlanMarketShare"></canvas></div>
   </div>
 
-  <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+  <div class="soft-panel p-8 rounded-3xl">
     <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">
       Market Size Servis
     </h3>
@@ -344,14 +519,14 @@ header img{
           <div class="flex items-center gap-2">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Year</label>
             <select id="planYear" onchange="renderPlanningFromSupabase()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[100px]">
+              class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[100px]">
             </select>
           </div>
 
           <div class="flex items-center gap-2">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Month</label>
             <select id="planMonth" onchange="renderPlanningFromSupabase()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[140px]">
+              class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[140px]">
                 <option value="ALL">ALL</option>
             </select>
           </div>
@@ -364,7 +539,7 @@ header img{
   onchange="applyPlanCustomerSelection_()"
   onfocus="handlePlanCustomerFocus_()"
   placeholder="ALL / ketik customer..."
-  class="bg-white text-[var(--text)] text-[10px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
+  class="bg-white text-[var(--text)] text-[12px] font-bold border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[260px]" />
 
           <datalist id="planCustomerList"></datalist>
         </div>
@@ -382,7 +557,7 @@ header img{
             </select>
 
               <button type="button" onclick="togglePlanEventDropdown_()"
-                class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[160px] flex items-center justify-between">
+                class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[160px] flex items-center justify-between">
                 <span id="planEventTriggerText">ALL</span>
                 <span class="text-xs">▼</span>
               </button>
@@ -391,13 +566,13 @@ header img{
                 class="hidden absolute left-0 mt-2 w-[260px] bg-white border border-[var(--border)] rounded-xl shadow-lg z-50 overflow-hidden">
 
                 <button type="button" onclick="selectOnlyPlanEvent_('ALL')"
-                  class="w-full text-left px-4 py-3 text-[10px] font-black uppercase text-[var(--text)] hover:bg-[var(--surface-2)] border-b border-[var(--border)]">
+                  class="w-full text-left px-4 py-3 text-[12px] font-black uppercase text-[var(--text)] hover:bg-[var(--surface-2)] border-b border-[var(--border)]">
                   ALL
                 </button>
 
                 <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--surface-2)]">
                   <button type="button" onclick="selectOnlyPlanEvent_('MIDLIFE')"
-                    class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                    class="text-[12px] font-black uppercase text-[var(--text)] text-left flex-1">
                     MIDLIFE
                   </button>
                 <button type="button" id="toggleEventMIDLIFE" onclick="togglePlanEvent_('MIDLIFE', event)"
@@ -407,7 +582,7 @@ header img{
 
                 <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--surface-2)]">
                   <button type="button" onclick="selectOnlyPlanEvent_('GOH')"
-                    class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                    class="text-[12px] font-black uppercase text-[var(--text)] text-left flex-1">
                     GOH
                   </button>
                   <button type="button" id="toggleEventGOH" onclick="togglePlanEvent_('GOH', event)"
@@ -417,7 +592,7 @@ header img{
 
               <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--border)] hover:bg-[var(--surface-2)]">
                 <button type="button" onclick="selectOnlyPlanEvent_('PCR')"
-                  class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                  class="text-[12px] font-black uppercase text-[var(--text)] text-left flex-1">
                   PCR
                 </button>
                 <button type="button" id="toggleEventPCR" onclick="togglePlanEvent_('PCR', event)"
@@ -427,7 +602,7 @@ header img{
 
               <div class="flex items-center justify-between px-4 py-3 hover:bg-[var(--surface-2)]">
                 <button type="button" onclick="selectOnlyPlanEvent_('CYLINDER')"
-                  class="text-[10px] font-black uppercase text-[var(--text)] text-left flex-1">
+                  class="text-[12px] font-black uppercase text-[var(--text)] text-left flex-1">
                   CYLINDER
                 </button>
                 <button type="button" id="toggleEventCYLINDER" onclick="togglePlanEvent_('CYLINDER', event)"
@@ -442,19 +617,19 @@ header img{
         <!-- SUMMARY -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Size</div>
+            <div class="text-[12px] text-[var(--muted)] font-black uppercase">Market Size</div>
             <div id="planMarketSize" class="text-3xl font-black text-[var(--accent)] mt-2">IDR 0</div>
           </div>
 
           <div class="bg-white p-5 rounded-2xl border border-[var(--border)]">
-            <div class="text-[10px] text-[var(--muted)] font-black uppercase">Market Share</div>
+            <div class="text-[12px] text-[var(--muted)] font-black uppercase">Market Share</div>
             <div id="planMarketShare" class="text-3xl font-black text-[var(--text)] mt-2">-</div>
           </div>
         </div>
 
         <div class="bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)] mb-6">
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-    <div class="text-[var(--text)] font-black uppercase text-[10px]">Trend Bulanan Job Typpe</div>
+    <div class="text-[var(--text)] font-black uppercase text-[12px]">Trend Bulanan Job Typpe</div>
   </div>
 
   <div class="h-[360px]">
@@ -465,14 +640,14 @@ header img{
 <!-- CHARTS -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
   <!-- KIRI: PIE -->
-  <div class="bg-white p-6 rounded-2xl border border-[var(--border)] lg:col-span-1">
-    <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Share Composition</div>
+  <div class="glass-panel p-6 rounded-2xl lg:col-span-1">
+    <div class="text-[12px] text-[var(--muted)] font-black uppercase mb-3">Market Share Composition</div>
     <div class="h-[320px]"><canvas id="chartPlanSharePie"></canvas></div>
   </div>
 
   <!-- KANAN: BAR -->
-  <div class="bg-white p-6 rounded-2xl border border-[var(--border)] lg:col-span-2">
-    <div class="text-[10px] text-[var(--muted)] font-black uppercase mb-3">Market Size vs Market Share</div>
+  <div class="glass-panel p-6 rounded-2xl lg:col-span-2">
+    <div class="text-[12px] text-[var(--muted)] font-black uppercase mb-3">Market Size vs Market Share</div>
     <div class="h-[320px]"><canvas id="chartPlanBudget"></canvas></div>
   </div>
 </div>
@@ -481,25 +656,25 @@ header img{
         <div class="mt-6">
           <div class="mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
-              <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH / Cylinder Unit</div>
+              <div class="text-[var(--text)] font-black uppercase text-[12px]">Standard Midlife / GOH / Cylinder Unit</div>
             </div>
             <div id="planningStandardsTable"></div>
           </div>
 
 <div>
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 bg-[var(--surface-2)] p-4 rounded-2xl border border-[var(--border)]">
-    <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
+    <div class="text-[var(--text)] font-black uppercase text-[12px]">Opportunity Unit</div>
 
 <div class="flex flex-col sm:flex-row gap-3 items-center">
   <button onclick="exportPlanningFilteredView_()"
-    class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">
+    class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
     Export Filtered
   </button>
 
   <div class="flex items-center gap-2">
     <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Model</label>
     <select id="planModelFilter" onchange="renderPlanningFromSupabase()"
-      class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
+      class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 min-w-[180px]">
       <option value="ALL">ALL</option>
     </select>
   </div>
@@ -514,16 +689,16 @@ header img{
 
     <!-- PAGE UNIT UT -->
     <div id="page-unit-ut" class="tab-content hidden">
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
+      <div class="soft-panel p-8 rounded-3xl">
         <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">Unit UT Sangkulirang</h3>
-        <div class="text-[var(--muted)] text-sm mb-4">Data Unit UT dari Supabase.</div>
+        <div class="text-[var(--muted)] text-sm mb-4"></div>
 
         <div id="unit-ut-summary" class="text-[var(--text)] text-sm font-bold mb-3"></div>
 
         <div class="flex items-center gap-3 mb-4 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
           <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Analisa Customer</label>
           <select id="filter-ut-customer" onchange="applyUnitFilters()"
-            class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[220px]">
+            class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[220px]">
             <option value="ALL">-- PILIH CUSTOMER --</option>
           </select>
         </div>
@@ -534,16 +709,16 @@ header img{
 
     <!-- PAGE UNIT NON UT -->
     <div id="page-unit-nonut" class="tab-content hidden">
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm">
-        <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">Unit Non-UT Sangkulirang</h3>
-        <div class="text-[var(--muted)] text-sm mb-4">Data Unit Non-UT dari Supabase.</div>
+      <div class="soft-panel p-8 rounded-3xl">
+        <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">Unit Competitor Sangkulirang</h3>
+        <div class="text-[var(--muted)] text-sm mb-4"></div>
 
         <div id="unit-nonut-summary" class="text-[var(--text)] text-sm font-bold mb-3"></div>
 
         <div class="flex items-center gap-3 mb-4 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
           <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Analisa Customer</label>
           <select id="filter-nonut-customer" onchange="applyUnitFilters()"
-            class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[220px]">
+            class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)] min-w-[220px]">
             <option value="ALL">-- PILIH CUSTOMER --</option>
           </select>
         </div>
@@ -554,7 +729,7 @@ header img{
 
     <!-- PAGE CUSTOMER -->
     <div id="page-customer" class="tab-content hidden">
-      <div class="bg-white p-8 rounded-3xl border border-[var(--border)] shadow-sm flex flex-col h-[750px]">
+      <div class="glass-panel p-8 rounded-3xl flex flex-col h-[750px]">
 
         <div class="flex flex-col md:flex-row justify-between items-start mb-8 flex-none gap-4">
           <div class="mt-4">
@@ -579,7 +754,7 @@ header img{
               </div>
             </div>
 
-            <p class="text-[10px] text-[var(--muted)] font-black uppercase tracking-widest italic text-right">
+            <p class="text-[12px] text-[var(--muted)] font-black uppercase tracking-widest italic text-right">
               Klik bar untuk melihat detail tipe unit & status warranty
             </p>
           </div>
@@ -602,7 +777,7 @@ header img{
       <div class="p-6 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-2)] rounded-t-2xl">
         <div>
           <h2 id="modalCustName" class="text-[var(--text)] text-2xl font-black uppercase"></h2>
-          <p class="text-[var(--muted)] text-[10px] font-bold uppercase tracking-widest mt-1">Unit Type & Warranty Analysis</p>
+          <p class="text-[var(--muted)] text-[12px] font-bold uppercase tracking-widest mt-1">Unit Type & Warranty Analysis</p>
         </div>
         <button onclick="closeModal()" class="text-[var(--muted)] hover:text-[var(--text)] text-3xl font-light">&times;</button>
       </div>
@@ -610,7 +785,7 @@ header img{
       <div id="modalContent" class="p-6 overflow-y-auto flex-grow bg-white"></div>
 
       <div class="p-4 border-t border-[var(--border)] text-right bg-[var(--surface-2)] rounded-b-2xl">
-        <button onclick="closeModal()" class="bg-[var(--accent)] text-black px-8 py-2 rounded-lg text-[10px] font-black uppercase shadow-sm hover:brightness-95">Tutup</button>
+        <button onclick="closeModal()" class="bg-[var(--accent)] text-black px-8 py-2 rounded-lg text-[12px] font-black uppercase shadow-sm hover:brightness-95">Tutup</button>
       </div>
     </div>
   </div>
@@ -618,7 +793,7 @@ header img{
   <!-- WARRANTY / OUT WARRANTY MODAL -->
   <div id="subHalamanModal" class="fixed inset-0 z-[100] hidden overflow-y-auto bg-black/50 backdrop-blur-sm">
     <div class="min-h-screen p-4 md:p-8">
-      <div class="max-w-7xl mx-auto bg-white rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden">
+      <div class="page-shell bg-white rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden">
 
         <div class="p-6 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-2)]">
           <div>
@@ -644,7 +819,16 @@ header img{
 
   <script>
     // Safe register plugin (biar gak crash kalau CDN ke-block)
-    try { if (window.Chart && window.ChartDataLabels) Chart.register(ChartDataLabels); } catch(e){}
+    try {
+  if (window.Chart && window.ChartDataLabels) Chart.register(ChartDataLabels);
+
+  if (window.Chart) {
+    Chart.defaults.font.family = '"Open Sans", Arial, sans-serif';
+    Chart.defaults.font.size = 13;
+    Chart.defaults.font.weight = '700';
+    Chart.defaults.color = '#111827';
+  }
+} catch(e){}
 
     // ===== SUPABASE CONFIG =====
     const SUPABASE_URL = 'https://nhubmgvjhuqayssohvei.supabase.co';
@@ -1087,7 +1271,6 @@ function showDataQualityWarningToast_(){
     safe(meta.monthLabel),
     safe(meta.year)
   ].filter(Boolean).join("_") + ".xlsx";
-
   XLSX.writeFile(wb, fileName);
 }
 
@@ -1098,16 +1281,7 @@ function showDataQualityWarningToast_(){
     return;
   }
 
-  function showDataQualityWarningToast_(){
-  showToast(
-    "Data Quality Notice",
-    "Sebagian data Unit UT belum memenuhi kelengkapan untuk seluruh analisis."
-  );
-}
-
-
   const meta = CURRENT_PLANNING_EXPORT_META || {};
-
   const rows = CURRENT_PLANNING_VIEW_ITEMS.map((it, idx) => ({
   No: idx + 1,
   "Job Type": it.event || "-",
@@ -1227,23 +1401,34 @@ function showDataQualityWarningToast_(){
       intersect:true
     },
     plugins:{
-      legend:{ display:false },
-      datalabels:{
-        display:false
-      },
-      tooltip:{
-        callbacks:{
-          title:(items)=>{
-            const i = items[0].dataIndex;
-            return sortedModels[i];
-          },
-          label:(ctx)=>{
-            const val = ctx.parsed.y ?? 0;
-            return `Qty: ${val} unit`;
-          }
-        }
-      }
+  legend:{ display:false },
+  datalabels:{
+    display:true,
+    anchor:'end',
+    align:'top',
+    offset: 4,
+    color:'#111827',
+    clamp:true,
+    clip:false,
+    font:{
+      size:10,
+      weight:'700'
     },
+    formatter:(value)=> value
+  },
+  tooltip:{
+    callbacks:{
+      title:(items)=>{
+        const i = items[0].dataIndex;
+        return sortedModels[i];
+      },
+      label:(ctx)=>{
+        const val = ctx.parsed.y ?? 0;
+        return `Qty: ${val} unit`;
+      }
+    }
+  }
+},
     scales:{
       y:{
         beginAtZero:true,
@@ -1267,7 +1452,6 @@ function showDataQualityWarningToast_(){
     // ===== CHARTS PAGE + CUSTOMER CHART =====
 // ===== CHARTS PAGE + CUSTOMER CHART =====
 function getBouwheerGroup_(d){
-  // prioritas ambil dari AREA, karena kamu bilang basisnya area INDEXIM dan GAM
   const raw = norm(
     pickKeyInsensitive(d, [
       "area",
@@ -1357,20 +1541,29 @@ function getTopCustomersByType_(rows, limit = 10){
 
     function renderAllCharts() {
       const commonPie = {
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{ position:'bottom', labels:{ color:'#6B7280', font:{ size:10, weight:'bold' }, padding:15 } },
-          datalabels:{
-            color:'#ffffff',
-            font:{ weight:'bold', size:10 },
-            formatter:(v,c)=>{
-              let s = c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
-              return s>0 ? ((v*100)/s).toFixed(1)+"%" : "0%";
-            }
-          }
-        }
-      };
+  responsive:true,
+  maintainAspectRatio:false,
+  plugins:{
+    legend:{
+      position:'bottom',
+      labels:{
+        color:'#111827',
+        font:{ size:12, weight:'bold' },
+        padding:15,
+        boxWidth:18,
+        boxHeight:10
+      }
+    },
+    datalabels:{
+      color:'#ffffff',
+      font:{ weight:'bold', size:10 },
+      formatter:(v,c)=>{
+        let s = c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+        return s>0 ? ((v*100)/s).toFixed(1)+"%" : "0%";
+      }
+    }
+  }
+};
 
       // 1 Wilayah pie
       const areas = [...new Set(globalData.map(d => String(d.area || "N/A").toUpperCase()))];
@@ -1441,7 +1634,7 @@ if (ctxUnitComp){
   charts.unitComposition = new Chart(ctxUnitComp, {
     type:'pie',
     data:{
-      labels:['UT','Non-UT'],
+      labels:['UT','Competitor'],
       datasets:[{
         data: unitCompositionData,
         backgroundColor: ['#FFCC00', '#111827'],
@@ -1574,7 +1767,7 @@ if (ctxBouwheer){
                 callbacks:{
                   label:(ctx)=>{
                     const val = ctx.parsed.x ?? 0;
-                    return `Total Non-UT: ${val} unit`;
+                    return `Total Competitor: ${val} unit`;
                   }
                 }
               }
@@ -1806,7 +1999,7 @@ if (ctxJ){
           <div class="flex items-center gap-3">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Filter Typpe:</label>
             <select id="typeTableFilter" onchange="filterTableOnly()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)]">
+              class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)]">
               <option value="ALL">SEMUA TIPE UNIT</option>
               ${Object.keys(typeSummary).map(t=>`<option value="${t}">${t}</option>`).join("")}
             </select>
@@ -1815,7 +2008,7 @@ if (ctxJ){
           <div class="flex items-center gap-3">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Filter Status:</label>
             <select id="statusTableFilter" onchange="filterTableOnly()"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)]">
+              class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)]">
               <option value="ALL">SEMUA STATUS</option>
               <option value="WARRANTY">WARRANTY</option>
               <option value="OUT WARRANTY">OUT WARRANTY</option>
@@ -1939,17 +2132,17 @@ if (ctxJ){
       content.innerHTML = `
         <div class="mb-4 flex justify-between items-center">
           <div class="text-sm text-[var(--muted)]">Total: <b class="text-[var(--text)]">${filtered.length}</b> unit</div>
-          <div class="text-[10px] text-[var(--muted)] uppercase tracking-widest italic">Sangkulirang Database</div>
+          <div class="text-[12px] text-[var(--muted)] uppercase tracking-widest italic">Sangkulirang Database</div>
         </div>
 
         <div class="overflow-x-auto rounded-xl border border-[var(--border)] bg-white">
           <table class="w-full text-left border-collapse whitespace-nowrap">
             <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
               <tr>
-                <th class="p-4 text-[10px]">Typpe</th>
-                <th class="p-4 text-[10px]">Customer</th>
-                <th class="p-4 text-[10px]">Serial Number</th>
-                <th class="p-4 text-[10px] text-right">SMR[H]</th>
+                <th class="p-4 text-[12px]">Typpe</th>
+                <th class="p-4 text-[12px]">Customer</th>
+                <th class="p-4 text-[12px]">Serial Number</th>
+                <th class="p-4 text-[12px] text-right">SMR[H]</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-[var(--border)]">
@@ -2003,7 +2196,7 @@ if (ctxJ){
           <div class="flex items-center gap-3">
             <label class="text-[9px] font-black text-[var(--muted)] uppercase italic">Filter Typpe:</label>
             <select id="typpeFilterSelect"
-              class="bg-white text-[var(--text)] text-[10px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)]">
+              class="bg-white text-[var(--text)] text-[12px] font-black uppercase border border-[var(--border)] rounded-lg px-3 py-2 outline-none focus:border-[var(--accent)]">
               <option value="ALL">SEMUA TYPPE</option>
               ${typpeList.map(t=>`<option value="${t}">${t}</option>`).join("")}
             </select>
@@ -2113,10 +2306,10 @@ function openServiceProductsModal(stdKey, eventName, modelName, labelName){
         <table class="w-full text-left border-collapse whitespace-nowrap">
           <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
             <tr>
-              <th class="p-4 text-[10px]">Unit Model</th>
-              <th class="p-4 text-[10px]">Description</th>
-              <th class="p-4 text-[10px]">Part No</th>
-              <th class="p-4 text-[10px] text-right">Unit Price</th>
+              <th class="p-4 text-[12px]">Unit Model</th>
+              <th class="p-4 text-[12px]">Description</th>
+              <th class="p-4 text-[12px]">Part No</th>
+              <th class="p-4 text-[12px] text-right">Unit Price</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--border)]">
@@ -2162,11 +2355,11 @@ function openServiceProductsModal(stdKey, eventName, modelName, labelName){
       <table class="w-full text-left border-collapse whitespace-nowrap">
         <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
           <tr>
-            <th class="p-4 text-[10px]">Part Desc</th>
-            <th class="p-4 text-[10px]">Part No</th>
-            <th class="p-4 text-[10px] text-right">Qty</th>
-            <th class="p-4 text-[10px] text-right">Unit Price</th>
-            <th class="p-4 text-[10px] text-right">Subtotal</th>
+            <th class="p-4 text-[12px]">Part Desc</th>
+            <th class="p-4 text-[12px]">Part No</th>
+            <th class="p-4 text-[12px] text-right">Qty</th>
+            <th class="p-4 text-[12px] text-right">Unit Price</th>
+            <th class="p-4 text-[12px] text-right">Subtotal</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-[var(--border)]">
@@ -2240,14 +2433,14 @@ function openMonthlyTrendDetailModal_(eventName, monthNum, year, sourceScope = "
   filterWrap.innerHTML = `
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
       <div class="flex flex-wrap items-center gap-3">
-        <div class="text-[10px] font-black uppercase text-[var(--text)]">Source: ${sourceScope}</div>
-        <div class="text-[10px] font-black uppercase text-[var(--muted)]">Event: ${normU(eventName)}</div>
-        <div class="text-[10px] font-black uppercase text-[var(--muted)]">Month: ${getMonthLabelShort_(monthNum)}</div>
-        <div class="text-[10px] font-black uppercase text-[var(--muted)]">Year: ${year}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--text)]">Source: ${sourceScope}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Event: ${normU(eventName)}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Month: ${getMonthLabelShort_(monthNum)}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Year: ${year}</div>
       </div>
 
       <button onclick="exportMonthlyTrendDetail_()"
-        class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all">
+        class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
         Export Detail
       </button>
     </div>
@@ -2335,21 +2528,21 @@ CURRENT_MONTHLY_TREND_DETAIL_META = {
   content.innerHTML = `
     <div class="mb-4 flex justify-between items-center">
       <div class="text-sm text-[var(--muted)]">Total: <b class="text-[var(--text)]">${items.length}</b> unit</div>
-      <div class="text-[10px] text-[var(--muted)] uppercase tracking-widest italic">Trend Drill Down</div>
+      <div class="text-[12px] text-[var(--muted)] uppercase tracking-widest italic">Trend Drill Down</div>
     </div>
 
     <div class="overflow-x-auto rounded-xl border border-[var(--border)] bg-white">
       <table class="w-full text-left border-collapse whitespace-nowrap">
         <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
           <tr>
-            <th class="p-4 text-[10px]">Job Typpe</th>
-            <th class="p-4 text-[10px]">Customer</th>
-            <th class="p-4 text-[10px]">Model</th>
-            <th class="p-4 text-[10px]">Serial</th>
-            <th class="p-4 text-[10px] text-right">HM Actual</th>
-            <th class="p-4 text-[10px] text-center">Service Product</th>
-            <th class="p-4 text-[10px] text-right">Cost</th>
-            <th class="p-4 text-[10px] text-right">Missing Price</th>
+            <th class="p-4 text-[12px]">Job Typpe</th>
+            <th class="p-4 text-[12px]">Customer</th>
+            <th class="p-4 text-[12px]">Model</th>
+            <th class="p-4 text-[12px]">Serial</th>
+            <th class="p-4 text-[12px] text-right">HM Actual</th>
+            <th class="p-4 text-[12px] text-center">Service Product</th>
+            <th class="p-4 text-[12px] text-right">Cost</th>
+            <th class="p-4 text-[12px] text-right">Missing Price</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-[var(--border)]">
@@ -2486,7 +2679,7 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
       const nonFiltered = (nonVal==="ALL") ? nonUtRowsCache : nonUtRowsCache.filter(d => String(d.customer||"").trim()===nonVal);
       const nonSummary = document.getElementById("unit-nonut-summary");
       const nonTable = document.getElementById("unit-nonut-table");
-      if (nonSummary) nonSummary.innerText = `Total Unit Non-UT: ${nonFiltered.length}`;
+      if (nonSummary) nonSummary.innerText = `Total Unit Competitor: ${nonFiltered.length}`;
       if (nonTable) nonTable.innerHTML = makeUnitTable(nonFiltered);
     }
 
@@ -3363,7 +3556,7 @@ function renderPlanningStandardsTable_(selectedModel, selectedEvents){
   wrap.innerHTML = `
     <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
       <div class="p-4 border-b border-[var(--border)] flex justify-between">
-        <div class="text-[var(--text)] font-black uppercase text-[10px]">Standard Midlife / GOH / Cylinder</div>
+        <div class="text-[var(--text)] font-black uppercase text-[12px]">Standard Midlife / GOH / Cylinder</div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-[11px] text-left whitespace-nowrap">
@@ -3605,7 +3798,7 @@ if (elShare) {
     tbl.innerHTML = `
       <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
         <div class="p-4 border-b border-[var(--border)] flex justify-between">
-          <div class="text-[var(--text)] font-black uppercase text-[10px]">Opportunity Unit</div>
+          <div class="text-[var(--text)] font-black uppercase text-[12px]">Opportunity Unit</div>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-[11px] text-left whitespace-nowrap">
