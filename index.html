@@ -25,7 +25,7 @@ header img{
   --surface-2:#F9FAFB;
   --border:#E5E7EB;
   --text:#111827;
-  --muted:#6B7280;
+  --muted:#111827;
 
   --accent:#FFCC00;
   --accent-soft:#FFF4BF;
@@ -117,6 +117,11 @@ th {
 .dashboard-card .card-title-lg{
   color: #111827 !important;
   text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+}
+
+.text-\[var\(--muted\)\]{
+  color:#111827 !important;
+  font-weight:800 !important;
 }
 
 .card-value-hero,
@@ -1388,7 +1393,7 @@ function showDataQualityWarningToast_(){
     borderRadius: 3,
     categoryPercentage: 0.9,
     barPercentage: 0.8,
-    maxBarThickness: 18,
+    maxBarThickness: 22,
     minBarLength: 12,
     hoverBackgroundColor: '#FFCC00'
   }]
@@ -1723,7 +1728,7 @@ if (ctxBouwheer){
               x:{
                 beginAtZero:true,
                 grid:{ color:'#E5E7EB' },
-                ticks:{ color:'#6B7280', font:{ size:11, weight:'bold' } },
+                ticks:{ color:'#111827', font:{ size:11, weight:'bold' } },
                 position:'top'
               }
             }
@@ -1780,7 +1785,7 @@ if (ctxBouwheer){
               x:{
                 beginAtZero:true,
                 grid:{ color:'#E5E7EB' },
-                ticks:{ color:'#6B7280', font:{ size:11, weight:'bold' } },
+                ticks:{ color:'#111827', font:{ size:11, weight:'bold' } },
                 position:'top'
               }
             }
@@ -1876,7 +1881,7 @@ if (ctxJ){
         x:{
           beginAtZero:true,
           grid:{ color:'#E5E7EB' },
-          ticks:{ color:'#6B7280', font:{ size:11, weight:'bold' } }
+          ticks:{ color:'#111827', font:{ size:11, weight:'bold' } }
         }
       }
     }
@@ -1890,63 +1895,71 @@ if (ctxJ){
         if (c) custMap[c] = (custMap[c]||0)+1;
       });
       const sortedCust = Object.keys(custMap).sort((a,b)=>custMap[b]-custMap[a]);
-      const sortedCustValues = sortedCust.map(c=>custMap[c]);
+const sortedCustValues = sortedCust.map(c=>custMap[c]);
 
-      const resUnique = document.getElementById('res-unique-cust');
-      if (resUnique) resUnique.innerText = sortedCust.length;
+const resUnique = document.getElementById('res-unique-cust');
+if (resUnique) resUnique.innerText = sortedCust.length;
 
-      const container = document.getElementById('container-customer-chart');
-      if (container) container.style.height = Math.max(520, sortedCust.length*32) + "px";
+/* target: 1 layar kira-kira memuat 15 customer */
+const ROW_HEIGHT = 42;
+const container = document.getElementById('container-customer-chart');
+if (container) container.style.height = Math.max(630, sortedCust.length * ROW_HEIGHT) + "px";
 
-      if (charts.cust) charts.cust.destroy();
-      const ctxC = document.getElementById('chartCustomerBar');
-      if (ctxC){
-        charts.cust = new Chart(ctxC, {
-          type:'bar',
-          data:{
-            labels: sortedCust,
-            datasets:[{
-              data: sortedCustValues,
-              backgroundColor: sortedCustValues.map((v,i)=> i===0 ? '#FFCC00' : '#111827'),
-              borderRadius: 6,
-              barThickness: 18
-            }]
-          },
-          options:{
-            indexAxis:'y',
-            responsive:true,
-            maintainAspectRatio:false,
-            onHover:(event,elements)=>{
-              const canvas = event.native?.target;
-              if (!canvas) return;
-              canvas.style.cursor = elements.length ? "pointer" : "default";
-            },
-            onClick:(e,items)=>{
-              if (items.length){
-                const idx = items[0].index;
-                const customerName = charts.cust.data.labels[idx];
-                showCustomerDetail(customerName);
-              }
-            },
-            plugins:{
-              legend:{ display:false },
-              datalabels:{ anchor:'end', align:'right', color:'#ffffff', font:{ weight:'bold', size:10 } },
-              tooltip:{
-                callbacks:{
-                  label:(ctx)=>{
-                    const val = ctx.parsed.x ?? ctx.parsed.y ?? 0;
-                    return `Total: ${val} unit • Klik untuk detail`;
-                  }
-                }
-              }
-            },
-            scales:{
-              y:{ grid:{ display:false }, ticks:{ color:'#111827', font:{ size:9, weight:'bold' } } },
-              x:{ beginAtZero:true, grid:{ color:'#E5E7EB' }, ticks:{ color:'#6B7280' }, position:'top' }
+if (charts.cust) charts.cust.destroy();
+const ctxC = document.getElementById('chartCustomerBar');
+if (ctxC){
+  charts.cust = new Chart(ctxC, {
+    type:'bar',
+    data:{
+      labels: sortedCust,
+      datasets:[{
+        data: sortedCustValues,
+        backgroundColor: sortedCustValues.map((v,i)=> i===0 ? '#FFCC00' : '#111827'),
+        borderRadius: 6,
+        barThickness: 18
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      maintainAspectRatio:false,
+      onHover:(event,elements)=>{
+        const canvas = event.native?.target;
+        if (!canvas) return;
+        canvas.style.cursor = elements.length ? "pointer" : "default";
+      },
+      onClick:(e,items)=>{
+        if (items.length){
+          const idx = items[0].index;
+          const customerName = charts.cust.data.labels[idx];
+          showCustomerDetail(customerName);
+        }
+      },
+      plugins:{
+        legend:{ display:false },
+        datalabels:{ anchor:'end', align:'right', color:'#ffffff', font:{ weight:'bold', size:10 } },
+        tooltip:{
+          callbacks:{
+            label:(ctx)=>{
+              const val = ctx.parsed.x ?? ctx.parsed.y ?? 0;
+              return `Total: ${val} unit • Klik untuk detail`;
             }
           }
-        });
+        }
+      },
+      scales:{
+        y:{
+          grid:{ display:false },
+          ticks:{
+            color:'#111827',
+            font:{ size:12, weight:'bold' }
+          }
+        },
+        x:{ beginAtZero:true, grid:{ color:'#E5E7EB' }, ticks:{ color:'#111827' }, position:'top' }
       }
+    }
+  });
+}
     }
 
     // ===== CUSTOMER TOP DROPDOWN =====
@@ -2768,7 +2781,7 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
         },
         y:{
           beginAtZero:true,
-          ticks:{ color:'#6B7280' },
+          ticks:{ color:'#111827' },
           grid:{ color:'#E5E7EB' }
         }
       }
