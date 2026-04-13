@@ -52,6 +52,23 @@ header img{
   }
 }
 
+@keyframes unitTableRowDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.unit-table-row-reveal {
+  opacity: 0;
+  animation: unitTableRowDrop 0.42s ease-out forwards;
+  will-change: transform, opacity;
+}
+
 .stat-pop-animate {
   animation: statPopUp 0.55s ease-out;
   will-change: transform, opacity;
@@ -104,12 +121,37 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all .2s ease;
+  transition:
+    background 0.28s ease,
+    box-shadow 0.28s ease,
+    filter 0.28s ease;
+  overflow: hidden;
 }
 
 .equipment-logo-card:hover{
-  background: rgba(255,255,255,0.92);
-  transform: scale(1.02);
+  background: rgba(255,255,255,0.94);
+  box-shadow: 0 16px 28px rgba(0,0,0,0.16);
+}
+
+.equipment-logo-card:active{
+  transform: scale(0.98);
+}
+
+.equipment-logo-card img{
+  transition: transform 0.25s ease;
+}
+
+.equipment-logo-card:hover img{
+  transform: scale(1.015);
+}
+
+@keyframes equipmentBounceBall {
+  0%, 100% { transform: translateY(0) scale(1); }
+  15%      { transform: translateY(-9px) scale(1.01); }
+  30%      { transform: translateY(0) scale(0.995); }
+  45%      { transform: translateY(-6px) scale(1.006); }
+  60%      { transform: translateY(0) scale(0.998); }
+  75%      { transform: translateY(-3px) scale(1.003); }
 }
 
 .equipment-logo-frame{
@@ -118,6 +160,12 @@ th {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.equipment-logo-card:hover .equipment-logo-frame{
+  animation: equipmentBounceBall 1.8s cubic-bezier(.28,.84,.42,1) infinite;
 }
 
 .equipment-logo-frame img{
@@ -1071,6 +1119,10 @@ if (target === 'trend') {
 if (target === 'planning') {
   setTimeout(() => {
     renderPlanningFromSupabase();
+
+    setTimeout(() => {
+      animatePlanningBarCharts_();
+    }, 180);
   }, 100);
 }
     }
@@ -1088,7 +1140,7 @@ if (target === 'planning') {
 
 function animateMainStats_(){
   const els = [
-    ...document.querySelectorAll('#page-main .card-title-lg'),
+  ...document.querySelectorAll('#page-main .card-title-lg'),
     document.getElementById('res-total-ut'),
     document.getElementById('res-total-unit-ut'),
     document.getElementById('res-total-unit-nonut'),
@@ -1108,16 +1160,16 @@ function animateChartsTextOnly_(){
   if (!page) return;
 
   const els = [
-    ...page.querySelectorAll('h3')
-  ].filter(Boolean);
+  ...page.querySelectorAll('h3')
+].filter(Boolean);
 
   replayPopAnimation_(els);
 }
 
 function animateCustomerTextOnly_(){
   const els = [
-    ...document.querySelectorAll('#page-customer h3'),
-    ...document.querySelectorAll('#page-customer p'),
+  ...document.querySelectorAll('#page-customer h3'),
+  ...document.querySelectorAll('#page-customer p'),
     document.getElementById('res-unique-cust'),
     document.getElementById('customerSelectTop')
   ].filter(Boolean);
@@ -1127,7 +1179,7 @@ function animateCustomerTextOnly_(){
 
 function animatePlanningTextOnly_(){
   const els = [
-    ...document.querySelectorAll('#page-planning h3'),
+  ...document.querySelectorAll('#page-planning h3'),
     document.getElementById('planMarketSize'),
     document.getElementById('planMarketShare')
   ].filter(Boolean);
@@ -2199,6 +2251,22 @@ function animateCustomerBarChart_(){
   }
 }
 
+function animatePlanningBarCharts_(){
+  const barCharts = [
+    charts.planShare
+  ].filter(Boolean);
+
+  barCharts.forEach(chart => {
+    try {
+      chart.stop();
+      chart.reset();
+      chart.update();
+    } catch(e) {
+      console.warn("Planning bar animation replay failed:", e);
+    }
+  });
+}
+
     function animateAnalyticsPieCharts_(){
   const pieCharts = [
     charts.unitComposition,
@@ -2225,8 +2293,8 @@ function animateCustomerBarChart_(){
       if (!sel) return;
 
       const customers = [...new Set(
-        getCustomerTabData().map(d => norm(d.customer)).filter(Boolean)
-      )].sort((a,b)=>a.localeCompare(b));
+  getCustomerTabData().map(d => norm(d.customer)).filter(Boolean)
+)].sort((a,b)=>a.localeCompare(b));
 
       sel.innerHTML = `<option value="">-- Pilih Customer --</option>` +
         customers.map(c=>`<option value="${c.replaceAll('"','&quot;')}">${c}</option>`).join("");
@@ -2889,39 +2957,43 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
     }
 
     function makeUnitTable(rows){
-      return `
-        <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
-          <div class="overflow-x-auto">
-            <table class="w-full text-[11px] text-left whitespace-nowrap">
-              <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
-                <tr>
-                  <th class="p-4">Prod Hier</th>
-                  <th class="p-4">Type</th>
-                  <th class="p-4">Model Number</th>
-                  <th class="p-4">Serial Number</th>
-                  <th class="p-4">Work Center</th>
-                  <th class="p-4">Customer</th>
-                  <th class="p-4">Area</th>
+  return `
+    <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4">Prod Hier</th>
+              <th class="p-4">Type</th>
+              <th class="p-4">Model Number</th>
+              <th class="p-4">Serial Number</th>
+              <th class="p-4">Work Center</th>
+              <th class="p-4">Customer</th>
+              <th class="p-4">Area</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${rows.map((d, idx)=>{
+             const delay = idx < 10 ? idx * 35 : 0;
+const animClass = idx < 10 ? "unit-table-row-reveal" : "";
+              return `
+                <tr class="${animClass} hover:bg-black/5 transition-colors" style="animation-delay:${delay}ms;">
+                  <td class="p-4 font-bold text-[var(--text)]">${d.prod_hier || "-"}</td>
+                  <td class="p-4 text-[var(--text)] font-bold">${d.Typpe || d.typpe || "-"}</td>
+                  <td class="p-4 text-[var(--text)] font-bold">${d.model_number || "-"}</td>
+                  <td class="p-4 text-[var(--text)] font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
+                  <td class="p-4 text-[var(--text)] font-bold">${d.wrk_cntr || "-"}</td>
+                  <td class="p-4 text-[var(--text)] font-bold">${d.customer || "-"}</td>
+                  <td class="p-4 text-[var(--text)] font-bold">${d.area || "-"}</td>
                 </tr>
-              </thead>
-              <tbody class="divide-y divide-[var(--border)]">
-                ${rows.map(d=>`
-                  <tr class="hover:bg-black/5 transition-colors">
-                    <td class="p-4 font-bold text-[var(--text)]">${d.prod_hier || "-"}</td>
-                    <td class="p-4 text-[var(--text)] font-bold">${d.Typpe || d.typpe || "-"}</td>
-                    <td class="p-4 text-[var(--text)] font-bold">${d.model_number || "-"}</td>
-                    <td class="p-4 text-[var(--text)] font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
-                    <td class="p-4 text-[var(--text)] font-bold">${d.wrk_cntr || "-"}</td>
-                    <td class="p-4 text-[var(--text)] font-bold">${d.customer || "-"}</td>
-                    <td class="p-4 text-[var(--text)] font-bold">${d.area || "-"}</td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
 
     function renderUnitPages(){
       utRowsCache = globalData.filter(isUT);
@@ -2979,6 +3051,19 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
 
   if (charts.trend) charts.trend.destroy();
 
+  let delayed = false;
+  const delayBetweenPoints = 90;
+
+  const previousY = (ctx) => {
+    if (ctx.index === 0) {
+      return ctx.chart.scales.y.getPixelForValue(0);
+    }
+    return ctx.chart
+      .getDatasetMeta(ctx.datasetIndex)
+      .data[ctx.index - 1]
+      .getProps(['y'], true).y;
+  };
+
   charts.trend = new Chart(canvas, {
     type:'line',
     data:{
@@ -2990,7 +3075,7 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
         backgroundColor:'rgba(255,204,0,0.20)',
         fill:true,
         borderWidth:3,
-        tension:0.3,
+        tension:0.25,
         pointRadius:4,
         pointHoverRadius:6,
         pointBackgroundColor:'#FFCC00',
@@ -3002,8 +3087,31 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
       responsive:true,
       maintainAspectRatio:false,
       animation:{
-        duration: 1200,
-        easing: 'easeOutQuart'
+        onComplete: () => {
+          delayed = true;
+        },
+        x:{
+          type:'number',
+          easing:'linear',
+          duration: delayBetweenPoints,
+          from: NaN,
+          delay(ctx){
+            if (ctx.type !== 'data' || ctx.xStarted) return 0;
+            ctx.xStarted = true;
+            return ctx.dataIndex * delayBetweenPoints;
+          }
+        },
+        y:{
+          type:'number',
+          easing:'easeOutCubic',
+          duration: delayBetweenPoints,
+          from: previousY,
+          delay(ctx){
+            if (ctx.type !== 'data' || ctx.yStarted) return 0;
+            ctx.yStarted = true;
+            return ctx.dataIndex * delayBetweenPoints;
+          }
+        }
       },
       plugins:{
         legend:{ display:false },
@@ -3011,7 +3119,7 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
           color:'#ffffff',
           anchor:'center',
           align:'top',
-          offset: 8,
+          offset:8,
           clamp:true,
           clip:false,
           font:{ weight:'bold', size:10 },
@@ -3762,7 +3870,9 @@ function initPlanningFromSupabase(){
     mEl.value = "ALL";
   }
 
-  PLAN_CUSTOMERS_ALL = [...new Set(globalData.map(d=>String(d.customer||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  PLAN_CUSTOMERS_ALL = [...new Set(
+  globalData.map(d => String(d.customer || "").trim()).filter(Boolean)
+)].sort((a,b)=>a.localeCompare(b));
   const customerInput = document.getElementById("planCustomer");
   if (customerInput) customerInput.value = "";
   setPlanCustomerOptions(PLAN_CUSTOMERS_ALL.slice(0, 20));
@@ -3779,8 +3889,8 @@ function initPlanningFromSupabase(){
       if (!el) return;
       const current = el.value;
       el.innerHTML = `<option value="ALL">${placeholderAll}</option>` + options.map(v=>`<option value="${String(v).replaceAll('"','&quot;')}">${v}</option>`).join("");
-      if ([...el.options].some(o=>o.value===current)) el.value=current;
-      else el.value="ALL";
+      if ([...el.options].some(o => o.value === current)) el.value = current;
+      else el.value = "ALL";
     }
 
 function renderPlanningStandardsTable_(selectedModel, selectedEvents){
@@ -4345,53 +4455,52 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
     }
 
     charts.planShare = new Chart(shareCanvas, {
-      type:"bar",
-      data:{
-        labels,
-        datasets:[{
-          data,
-          backgroundColor:"#111827",
-          borderRadius:6,
-          barThickness:18
-        }]
+  type:'bar',
+  data:{
+  labels: labels,
+  datasets:[{
+    data: data,
+    backgroundColor: data.map((v,i)=> i===0 ? '#FFCC00' : '#111827'),
+      borderRadius: 6,
+      barThickness: 18
+    }]
+  },
+  options:{
+    animation: BAR_ANIMATION_,
+    indexAxis:'y',
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{ display:false },
+      datalabels:{
+        anchor:'end',
+        align:'right',
+        color:'#ffffff',
+        font:{ weight:'bold', size:10 }
       },
-      options:{
-          animation: BAR_ANIMATION_,
-        indexAxis:"y",
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{ display:false },
-          datalabels:{
-            anchor:"end",
-            align:"right",
-            color:"#ffffff",
-            font:{ weight:"bold", size:10 },
-            formatter:v => v
-          },
-          tooltip:{
-            callbacks:{
-              label:(ctx)=>{
-                const val = ctx.parsed.x ?? 0;
-                return `Total: ${val} unit`;
-              }
-            }
-          }
-        },
-        scales:{
-          y:{
-            grid:{ display:false },
-            ticks:{ color:"#111827", font:{ size:12, weight:"bold" } }
-          },
-          x:{
-            beginAtZero:true,
-            grid:{ color:"#E5E7EB" },
-            ticks:{ color:"#6B7280", font:{ size:11, weight:"bold" } },
-            position:"top"
+      tooltip:{
+        callbacks:{
+          label:(ctx)=>{
+            const val = ctx.parsed.x ?? ctx.parsed.y ?? 0;
+            return `Total: ${val} unit`;
           }
         }
       }
-    });
+    },
+    scales:{
+      y:{
+        grid:{ display:false },
+        ticks:{ color:'#111827', font:{ size:12, weight:'bold' } }
+      },
+      x:{
+        beginAtZero:true,
+        grid:{ color:'#E5E7EB' },
+        ticks:{ color:'#111827' },
+        position:'top'
+      }
+    }
+  }
+});
   }
 }
 
