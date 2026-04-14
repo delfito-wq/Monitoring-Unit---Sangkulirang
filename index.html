@@ -380,16 +380,15 @@ nav button {
   }
 
   .ut-mobile-tagline{
-    margin-top:4px;
-    font-size:9px;
-    line-height:1.15;
-    font-weight:900;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:#111827;
-    white-space:normal;
-  }
-
+  margin-top:4px;
+  font-size:8px;
+  line-height:1.1;
+  font-weight:900;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:#111827;
+  max-width:160px;
+}
   .ut-mobile-right{
     display:flex;
     align-items:center;
@@ -546,31 +545,6 @@ nav button {
     border:1.5px solid var(--accent);
     color:var(--accent);
     background:transparent;
-  }
-
-  /* ===== MOBILE START HINT ===== */
-  #mobileStartHint{
-    display:block;
-    margin-bottom:14px;
-    padding:18px 16px;
-    border-radius:22px;
-    background:rgba(255,255,255,0.60);
-    border:1px solid rgba(255,255,255,0.16);
-    box-shadow:0 10px 22px rgba(0,0,0,0.12);
-    color:#111827;
-  }
-
-  #mobileStartHint .hint-title{
-    font-size:14px;
-    font-weight:900;
-    text-transform:uppercase;
-    margin-bottom:6px;
-  }
-
-  #mobileStartHint .hint-sub{
-    font-size:12px;
-    font-weight:700;
-    line-height:1.45;
   }
 
   /* ===== MOBILE CONTENT ===== */
@@ -791,7 +765,7 @@ nav button {
   </div>
 
   <!-- DESKTOP NAV -->
-  <nav class="w-full border-t border-black/10 desktop-nav-wrap" style="background: var(--nav);">
+  <nav class="w-full border-t border-black/10 desktop-nav-wrap mobile-hidden" style="background: var(--nav);">
     <div class="page-shell px-4 md:px-6 flex flex-col md:flex-row items-center justify-between py-2">
       <div class="flex flex-wrap gap-1 py-2 md:py-0 items-center">
         <button onclick="switchTab('main')" id="btn-main"
@@ -865,13 +839,6 @@ nav button {
   </nav>
 
   <div class="w-full h-[3px] bg-[var(--accent)]"></div>
-  <div id="mobileStartHint" class="mobile-only">
-  <div class="hint-title">Pilih Menu Terlebih Dahulu</div>
-  <div class="hint-sub">
-    Untuk tampilan mobile, section dashboard disembunyikan terlebih dahulu.
-    Tekan <b>Menu</b>, lalu pilih section yang ingin dibuka.
-  </div>
-</div>
 </header>
 
   <!-- CONTENT -->
@@ -1508,35 +1475,6 @@ function toggleMobileUnitMenu(){
   sub.classList.toggle('hidden');
 }
 
-function isMobileView_(){
-  return window.innerWidth <= 767;
-}
-
-function showMobileStartHint_(){
-  const el = document.getElementById('mobileStartHint');
-  if (el) el.style.display = 'block';
-}
-
-function hideMobileStartHint_(){
-  const el = document.getElementById('mobileStartHint');
-  if (el) el.style.display = 'none';
-}
-
-function enterMobileLanding_(){
-  if (!isMobileView_()) return;
-
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-  showMobileStartHint_();
-  closeMobileMenu();
-
-  const mobileBtnIds = ['main','charts','customer','trend','planning'];
-  mobileBtnIds.forEach(id => {
-    const b = document.getElementById('m-btn-'+id);
-    if (!b) return;
-    b.classList.remove('active');
-  });
-}
-
 document.addEventListener('click', function(e) {
   if (!e.target.closest('#unitDropdown') && !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
     closeUnitDropdown();
@@ -1585,7 +1523,6 @@ if (mobileActive){
   mobileActive.classList.add('active');
 }
 
-hideMobileStartHint_();
 closeMobileMenu();
 
 if (target === 'main') {
@@ -1943,10 +1880,6 @@ function hasCompetitorCluster_(rows){
         renderUnitPages();
         initPlanningFromSupabase();
         fillCustomerTopDropdown();
-
-        if (isMobileView_()) {
-          enterMobileLanding_();
-        }
 
         setTimeout(() => {
   animateMainStats_();
