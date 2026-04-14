@@ -1000,6 +1000,30 @@ header{
       </div>
     </div>
 
+    <!-- PAGE EQUIPMENT DETAIL -->
+<div id="page-equipment" class="tab-content hidden">
+  <div class="soft-panel p-5 md:p-8 rounded-3xl mb-6">
+    <div class="mb-6">
+      <button onclick="switchTab('main')"
+        class="inline-flex items-center gap-2 bg-[var(--accent)] text-black px-4 py-2 rounded-full text-[12px] font-black uppercase shadow-sm hover:brightness-95 transition-all">
+        ← Kembali ke Beranda
+      </button>
+
+      <h3 id="equipmentPageTitle"
+        class="text-[var(--text)] font-black uppercase text-sm md:text-base italic flex items-center mt-4">
+        <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span>
+        Equipment Monitoring - Komatsu
+      </h3>
+
+    <div class="soft-panel p-5 md:p-6 rounded-3xl">
+      <h4 class="text-[var(--text)] font-black uppercase text-[12px] mb-4 italic">
+        Detail Unit Brand 
+      </h4>
+      <div id="equipmentDetailTable"></div>
+    </div>
+  </div>
+</div>
+
     <!-- PAGE CHARTS -->
 <div id="page-charts" class="tab-content hidden">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
@@ -1843,6 +1867,163 @@ function hasCompetitorCluster_(rows){
   return (rows || []).some(d => isNonUT(d) && getCompetitorQty_(d) > 1);
 }
 
+function normEquipmentBrand_(v){
+  return String(v || "").trim().toUpperCase();
+}
+
+const EQUIPMENT_BRAND_ORDER = ["KOMATSU", "BOMAG", "TADANO", "UD TRUCKS", "SCANIA"];
+let currentEquipmentBrand_ = "KOMATSU";
+
+const EQUIPMENT_PROD_HIER_MAP = {
+  "KOMATSU": "KOMAT",
+  "BOMAG": "BOMAG",
+  "TADANO": "TDANH",
+  "UD TRUCKS": "NSSAN",
+  "SCANIA": "SCNIA"
+};
+
+function getEquipmentProdHierCode_(brand){
+  return EQUIPMENT_PROD_HIER_MAP[normEquipmentBrand_(brand)] || null;
+}
+
+function getEquipmentBrandFromRow_(d){
+  if (!isUT(d)) return null;
+
+  const prod = normEquipmentBrand_(
+    pickKeyInsensitive(d, ["prod_hier", "prod hier", "prod.hier."])
+  );
+
+  if (!prod) return null;
+
+  if (prod === "KOMAT") return "KOMATSU";
+  if (prod === "BOMAG") return "BOMAG";
+  if (prod === "TDANH") return "TADANO";
+  if (prod === "NSSAN") return "UD TRUCKS";
+  if (prod === "SCNIA") return "SCANIA";
+
+  return null;
+}
+
+function getEquipmentRows_(brand){
+  const code = getEquipmentProdHierCode_(brand);
+  if (!code) return [];
+
+  return globalData.filter(d => {
+    if (!isUT(d)) return false;
+    const prod = normEquipmentBrand_(
+      pickKeyInsensitive(d, ["prod_hier", "prod hier", "prod.hier."])
+    );
+    return prod === code;
+  });
+}
+
+function getEquipmentBrandTotals_(){
+  const totals = {};
+  EQUIPMENT_BRAND_ORDER.forEach(b => totals[b] = 0);
+
+  globalData.forEach(d => {
+    const brand = getEquipmentBrandFromRow_(d);
+    if (!brand) return;
+    totals[brand] = (totals[brand] || 0) + getRowPopulation_(d);
+  });
+
+  return totals;
+}
+
+function makeEquipmentSummaryTable_(totals){
+  return `
+    <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
+      <table class="w-full text-[12px] text-left">
+        <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+          <tr>
+            <th class="p-4">Brand</th>
+            <th class="p-4 text-right">Total Unit</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)]">
+          ${EQUIPMENT_BRAND_ORDER.map((brand) => `
+            <tr class="hover:bg-black/5 transition-colors">
+              <td class="p-4 font-bold text-[var(--text)]">${brand}</td>
+              <td class="p-4 text-right font-black text-[var(--accent)]">${totals[brand] || 0}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function makeEquipmentDetailTable_(rows){
+  if (!rows.length){
+    return `
+      <div class="bg-white rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)] font-bold">
+        Data unit untuk brand ini belum tersedia.
+      </div>
+    `;
+  }
+
+  return `
+    <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+          <tr>
+            <th class="p-4">Prod Hier</th>
+            <th class="p-4">Model Number</th>
+            <th class="p-4">Customer</th>
+            <th class="p-4">Serial Number</th>
+            <th class="p-4">Work Center</th>
+            <th class="p-4">Area</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)]">
+          ${rows.map((d) => `
+            <tr class="hover:bg-black/5 transition-colors">
+              <td class="p-4 font-bold text-[var(--text)]">${d.prod_hier || "-"}</td>
+              <td class="p-4 font-bold text-[var(--text)]">${d.model_number || "-"}</td>
+              <td class="p-4 font-bold text-[var(--text)]">${d.customer || "-"}</td>
+              <td class="p-4 font-mono font-bold text-[var(--text)] uppercase">${getSerial(d)}</td>
+              <td class="p-4 font-bold text-[var(--text)]">${d.wrk_cntr || "-"}</td>
+              <td class="p-4 font-bold text-[var(--text)]">${d.area || "-"}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderEquipmentMonitoringPage_(brand){
+  currentEquipmentBrand_ = String(brand || "KOMATSU").trim().toUpperCase();
+
+  const rows = getEquipmentRows_(currentEquipmentBrand_).sort((a,b) => {
+    const modelA = String(a.model_number || "").toUpperCase();
+    const modelB = String(b.model_number || "").toUpperCase();
+    return modelA.localeCompare(modelB);
+  });
+
+  const totals = getEquipmentBrandTotals_();
+  const selectedTotal = totals[currentEquipmentBrand_] || 0;
+
+  const titleEl = document.getElementById("equipmentPageTitle");
+  const subtitleEl = document.getElementById("equipmentPageSubtitle");
+  const detailTableEl = document.getElementById("equipmentDetailTable");
+
+  if (titleEl) {
+    titleEl.innerHTML = `<span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Equipment Monitoring - ${currentEquipmentBrand_}`;
+  }
+
+  if (detailTableEl) {
+    detailTableEl.innerHTML = makeEquipmentDetailTable_(rows);
+  }
+}
+
+function openEquipmentMonitoringPage_(brand){
+  renderEquipmentMonitoringPage_(brand);
+  switchTab('equipment');
+}
+
     // ===== LOAD DATA (Supabase) =====
     async function fetchUnitsWithFallback(){
       const candidates = [NAMA_TABEL_PRIMARY, ...NAMA_TABEL_FALLBACKS];
@@ -2340,8 +2521,8 @@ const BAR_ANIMATION_ = {
             datasets:[{
               data: areas.map(a => globalData.filter(d => String(d.area||"").toUpperCase()===a).length),
               backgroundColor: ['#111827','#FFCC00','#16A34A','#DC2626','#6B7280'],
-              borderWidth: 2
-            }]
+              borderWidth: 0,
+  borderColor: 'transparent'            }]
           },
           options: commonPie
         });
@@ -2360,8 +2541,8 @@ const BAR_ANIMATION_ = {
             datasets:[{
               data: wcData,
               backgroundColor: ['#14213D','#C9A227','#6F8A6D','#A56A5B'],
-              borderWidth: 2
-            }]
+              borderWidth: 0,
+  borderColor: 'transparent'            }]
           },
           options: commonPie
         });
@@ -2380,7 +2561,8 @@ const wData = [
           type:'pie',
           data:{
             labels:['Warranty','Out Warranty'],
-            datasets:[{ data:wData, backgroundColor:['#4E8B63','#B45A52'], borderWidth:2 }]
+            datasets:[{ data:wData, backgroundColor:['#4E8B63','#B45A52'], borderWidth: 0,
+  borderColor: 'transparent'            }]
           },
           options: commonPie
         });
@@ -2402,8 +2584,8 @@ if (ctxUnitComp){
       datasets:[{
         data: unitCompositionData,
         backgroundColor: ['#FFCC00', '#111827'],
-        borderWidth: 2
-      }]
+        borderWidth: 0,
+  borderColor: 'transparent'      }]
     },
     options: commonPie
   });
@@ -2431,8 +2613,8 @@ if (ctxBouwheer){
       datasets:[{
         data: bouwheerData,
         backgroundColor: ['#14213D','#C9A227'],
-        borderWidth: 2
-      }]
+        borderWidth: 0,
+  borderColor: 'transparent'      }]
     },
     options: commonPie
   });
@@ -2576,8 +2758,8 @@ if (ctxSector){
       datasets:[{
         data: sectorData,
         backgroundColor: ['#6F8A6D','#394B63','#8A6B3F'],
-        borderWidth: 2
-      }]
+        borderWidth: 0,
+  borderColor: 'transparent'      }]
     },
     options: commonPie
   });
@@ -4830,8 +5012,8 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
         datasets:[{
           data: pieData,
           backgroundColor: pieColors,
-          borderWidth: 2
-        }]
+          borderWidth: 0,
+  borderColor: 'transparent'        }]
       },
       options:{
         responsive:true,
