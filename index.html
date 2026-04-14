@@ -326,6 +326,314 @@ nav a,
 nav button {
   letter-spacing: 0.03em;
 }
+
+/* ===== MOBILE LAYOUT ===== */
+#mobileMenuPanel{
+  display:none;
+}
+
+.mobile-only{
+  display:none;
+}
+
+@media (max-width: 767px){
+  .page-shell{
+    width:min(100vw, 100vw);
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+  .mobile-only{
+    display:flex !important;
+  }
+
+  .mobile-hidden{
+    display:none !important;
+  }
+
+  header .page-shell{
+    width:100%;
+  }
+
+  .ut-topbar-mobile{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 14px;
+  }
+
+  .ut-topbar-mobile .ut-brand-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+    flex:1;
+  }
+
+  .ut-topbar-mobile .ut-brand-wrap img{
+    max-width:170px;
+    height:auto;
+  }
+
+  .ut-topbar-mobile .ut-right-logo{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex-shrink:0;
+  }
+
+  .ut-topbar-mobile .ut-right-logo img{
+    width:90px;
+    height:auto;
+    object-fit:contain;
+  }
+
+  .ut-mobile-navbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 14px;
+    background:var(--nav);
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+
+  .ut-mobile-menu-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:#fff;
+    font-weight:900;
+    font-size:15px;
+    letter-spacing:0.03em;
+    background:transparent;
+    border:none;
+    padding:0;
+  }
+
+  .ut-mobile-menu-btn svg{
+    width:22px;
+    height:22px;
+  }
+
+  .ut-mobile-live{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+    text-align:right;
+  }
+
+  .ut-mobile-live .live-text{
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+    line-height:1.3;
+  }
+
+  #mobileMenuPanel{
+    display:none;
+    background:var(--nav);
+    border-top:1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    padding:14px;
+  }
+
+  #mobileMenuPanel.open{
+    display:block;
+  }
+
+  .mobile-menu-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .mobile-menu-btn{
+    width:100%;
+    min-height:46px;
+    border-radius:14px;
+    padding:10px 12px;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    text-align:center;
+    background:rgba(255,255,255,0.06);
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.08);
+  }
+
+  .mobile-menu-btn.active{
+    background:var(--accent);
+    color:#000;
+    border-color:var(--accent);
+  }
+
+  .mobile-menu-subgrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:8px;
+  }
+
+  .mobile-menu-subbtn{
+    width:100%;
+    min-height:42px;
+    border-radius:12px;
+    padding:8px 10px;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    background:#fff;
+    color:#111827;
+    border:1px solid rgba(17,24,39,0.08);
+  }
+
+  .mobile-action-wrap{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+  }
+
+  .mobile-action-wrap a,
+  .mobile-action-wrap button{
+    width:100%;
+    min-height:46px;
+    border-radius:16px;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .mobile-update-note{
+    margin-top:12px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    color:#fff;
+  }
+
+  .mobile-update-note .dot-wrap{
+    margin-top:4px;
+    flex-shrink:0;
+  }
+
+  .mobile-update-note .note-text{
+    font-size:11px;
+    line-height:1.45;
+    font-weight:800;
+  }
+
+  /* desktop nav/action disembunyikan di mobile */
+  .desktop-nav-wrap{
+    display:none !important;
+  }
+
+  /* content spacing */
+  .page-shell.p-4.md\:p-6.xl\:p-8{
+    padding:14px !important;
+  }
+
+  /* panel utama */
+  .soft-panel,
+  .glass-panel,
+  .dashboard-card{
+    border-radius:24px !important;
+  }
+
+  #page-main .soft-panel{
+    padding:18px !important;
+  }
+
+  #page-main .dashboard-card{
+    padding:18px !important;
+  }
+
+  .card-title-lg{
+    font-size:13px !important;
+    line-height:1.25 !important;
+  }
+
+  .card-value-hero{
+    font-size:3rem !important;
+  }
+
+  .card-value-mid{
+    font-size:2rem !important;
+  }
+
+  /* equipment cards */
+  .equipment-logo-card{
+    min-height:96px;
+    padding:12px;
+    border-radius:18px;
+  }
+
+  .equipment-logo-frame{
+    width:120px;
+    height:42px;
+  }
+
+  .equipment-logo-komatsu img{ max-width:115px; max-height:36px; }
+  .equipment-logo-scania img{ max-width:118px; max-height:42px; }
+  .equipment-logo-tadano img{ max-width:106px; max-height:34px; }
+  .equipment-logo-ud img{ max-width:122px; max-height:48px; }
+  .equipment-logo-bomag img{ max-width:126px; max-height:54px; }
+
+  /* hero cards jadi 1 kolom di mobile */
+  #page-main .grid.grid-cols-1.md\:grid-cols-3{
+    grid-template-columns:1fr !important;
+    gap:14px !important;
+  }
+
+  #page-main .grid.grid-cols-1.md\:grid-cols-2{
+    grid-template-columns:1fr !important;
+    gap:14px !important;
+  }
+
+  #page-main .grid.grid-cols-2.md\:grid-cols-4{
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+    gap:12px !important;
+  }
+
+  /* chart panel */
+  #container-model-chart{
+    min-width:980px !important;
+  }
+
+  /* customer page controls */
+  #page-customer .glass-panel{
+    height:auto !important;
+    min-height:unset !important;
+    padding:18px !important;
+  }
+
+  #page-customer .flex.flex-col.md\:flex-row.justify-between.items-start.mb-8.flex-none.gap-4{
+    gap:14px !important;
+    margin-bottom:18px !important;
+  }
+
+  #page-customer .flex.items-center.gap-3{
+    width:100%;
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  #page-customer .min-w-\[180px\],
+  #page-customer .min-w-\[140px\]{
+    min-width:100% !important;
+    width:100% !important;
+  }
+
+  #page-customer #container-customer-chart{
+    height:760px !important;
+  }
+}
 </style>
 </head>
 
@@ -345,9 +653,89 @@ nav button {
 
   <!-- HEADER -->
 <header class="bg-white w-full shadow-sm border-b border-[var(--border)]">
-  <!-- TOP HEADER -->
-  <div class="page-shell px-6 py-3 flex items-center justify-between gap-6">
-    <!-- LEFT -->
+  <!-- MOBILE HEADER -->
+  <div class="mobile-only ut-topbar-mobile">
+    <div class="ut-brand-wrap">
+      <img
+        src="Logo.png"
+        alt="United Tractors Member of Astra"
+        class="h-auto object-contain"
+      >
+    </div>
+
+    <div class="ut-right-logo">
+      <img
+        src="Moving As One.png"
+        alt="Moving as One"
+      >
+    </div>
+  </div>
+
+  <div class="mobile-only ut-mobile-navbar">
+    <button type="button" class="ut-mobile-menu-btn" onclick="toggleMobileMenu()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+      <span>Menu</span>
+    </button>
+
+    <div class="ut-mobile-live">
+      <span class="relative flex h-2.5 w-2.5">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-90"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+      </span>
+      <div class="live-text">
+        <div>Update</div>
+        <div id="teks-update-live-mobile">Sedang memuat...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mobileMenuPanel" class="mobile-only">
+    <div class="mobile-menu-grid">
+      <button onclick="switchTab('main'); closeMobileMenu();" id="m-btn-main" class="mobile-menu-btn active">Beranda</button>
+
+      <button type="button" onclick="toggleMobileUnitMenu()" id="m-btn-unit" class="mobile-menu-btn">Unit</button>
+
+      <button onclick="switchTab('charts'); closeMobileMenu();" id="m-btn-charts" class="mobile-menu-btn">Analytics</button>
+      <button onclick="switchTab('customer'); closeMobileMenu();" id="m-btn-customer" class="mobile-menu-btn">Customer</button>
+      <button onclick="switchTab('trend'); closeMobileMenu();" id="m-btn-trend" class="mobile-menu-btn">Trend</button>
+      <button onclick="switchTab('planning'); closeMobileMenu();" id="m-btn-planning" class="mobile-menu-btn">Market Analytics</button>
+    </div>
+
+    <div id="mobileUnitSubmenu" class="mobile-menu-subgrid hidden">
+      <button onclick="switchTab('unit-ut'); closeMobileMenu();" class="mobile-menu-subbtn">Unit UT</button>
+      <button onclick="switchTab('unit-nonut'); closeMobileMenu();" class="mobile-menu-subbtn">Unit Competitor</button>
+    </div>
+
+    <div class="mobile-action-wrap">
+      <a href="https://forms.gle/Ha5oe4xMubWhFnTT9" target="_blank"
+        class="bg-[var(--accent)] hover:brightness-95 text-black px-6 py-2 shadow-sm transition-all active:scale-95 inline-flex items-center">
+        Ajukan Update
+      </a>
+
+      <button onclick="exportToExcelFromSupabase()"
+        class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 transition-all inline-flex items-center">
+        Export Excel
+      </button>
+    </div>
+
+    <div class="mobile-update-note">
+      <div class="dot-wrap">
+        <span class="relative flex h-2.5 w-2.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-90"></span>
+          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+        </span>
+      </div>
+      <div class="note-text">
+        <div>Update terakhir</div>
+        <div id="teks-update-live-mobile-2">Sedang memuat...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESKTOP HEADER -->
+  <div class="page-shell px-6 py-3 flex items-center justify-between gap-6 mobile-hidden">
     <div class="flex flex-col justify-center shrink-0">
       <img
         src="Logo.png"
@@ -359,7 +747,6 @@ nav button {
       </p>
     </div>
 
-    <!-- RIGHT LOGOS -->
     <div class="flex items-center gap-4 md:gap-6 shrink-0">
       <img
         src="Sangkulirang-Stronger.jpeg"
@@ -375,8 +762,8 @@ nav button {
     </div>
   </div>
 
-  <!-- NAV -->
-  <nav class="w-full border-t border-black/10" style="background: var(--nav);">
+  <!-- DESKTOP NAV -->
+  <nav class="w-full border-t border-black/10 desktop-nav-wrap" style="background: var(--nav);">
     <div class="page-shell px-4 md:px-6 flex flex-col md:flex-row items-center justify-between py-2">
       <div class="flex flex-wrap gap-1 py-2 md:py-0 items-center">
         <button onclick="switchTab('main')" id="btn-main"
@@ -457,7 +844,7 @@ nav button {
 
     <!-- PAGE MAIN -->
     <div id="page-main" class="tab-content">
-      <div class="soft-panel p-8 rounded-3xl mb-6">
+      <div class="soft-panel p-5 md:p-8 rounded-3xl mb-6">
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
     <h3 class="text-[var(--text)] font-black uppercase text-xs italic flex items-center">
       <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Equipment Monitoring
@@ -467,7 +854,7 @@ nav button {
     </div>
   </div>
 
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
   <button onclick="openEquipmentMonitoringPage_('KOMATSU')" class="equipment-logo-card">
     <div class="equipment-logo-frame equipment-logo-komatsu">
       <img src="Komatsu.jpeg" alt="Komatsu">
@@ -499,7 +886,7 @@ nav button {
   </button>
 </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
   <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
     <span class="card-title-lg text-[var(--text)] font-black uppercase">Populasi Sangkulirang</span>
     <span id="res-total-ut" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--accent)]">0</span>
@@ -573,7 +960,7 @@ nav button {
 
     <!-- PAGE CHARTS -->
 <div id="page-charts" class="tab-content hidden">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
     <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
       <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Sangkulirang Unit UT vs Competitor (%)</h3>
       <div class="w-full h-[250px]"><canvas id="chartUnitComposition"></canvas></div>
@@ -884,7 +1271,7 @@ nav button {
 
     <!-- PAGE CUSTOMER -->
     <div id="page-customer" class="tab-content hidden">
-      <div class="glass-panel p-8 rounded-3xl flex flex-col h-[750px]">
+      <div class="glass-panel p-5 md:p-8 rounded-3xl flex flex-col h-auto md:h-[750px]">
 
         <div class="flex flex-col md:flex-row justify-between items-start mb-8 flex-none gap-4">
           <div class="mt-4">
@@ -1047,16 +1434,64 @@ nav button {
       const el = document.getElementById("toast");
       if (el) el.style.display = "none";
     }
+    function syncMobileUpdateText_(){
+  const desktopText = document.getElementById("teks-update-live")?.textContent || "Sedang memuat...";
+  const mobileText1 = document.getElementById("teks-update-live-mobile");
+  const mobileText2 = document.getElementById("teks-update-live-mobile-2");
+
+  if (mobileText1) mobileText1.textContent = desktopText;
+  if (mobileText2) mobileText2.textContent = desktopText;
+}
 
     // ===== DROPDOWN =====
     function toggleUnitDropdown() {
       const dd = document.getElementById('unitDropdown');
       if (dd) dd.classList.toggle('hidden');
     }
-    function closeUnitDropdown() {
-      const dd = document.getElementById('unitDropdown');
-      if (dd) dd.classList.add('hidden');
-    }
+    function toggleUnitDropdown() {
+  const dd = document.getElementById('unitDropdown');
+  if (dd) dd.classList.toggle('hidden');
+}
+
+function closeUnitDropdown() {
+  const dd = document.getElementById('unitDropdown');
+  if (dd) dd.classList.add('hidden');
+}
+
+function toggleMobileMenu(){
+  const panel = document.getElementById('mobileMenuPanel');
+  if (!panel) return;
+  panel.classList.toggle('open');
+}
+
+function closeMobileMenu(){
+  const panel = document.getElementById('mobileMenuPanel');
+  if (!panel) return;
+  panel.classList.remove('open');
+
+  const sub = document.getElementById('mobileUnitSubmenu');
+  if (sub) sub.classList.add('hidden');
+}
+
+function toggleMobileUnitMenu(){
+  const sub = document.getElementById('mobileUnitSubmenu');
+  if (!sub) return;
+  sub.classList.toggle('hidden');
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#unitDropdown') && !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
+    closeUnitDropdown();
+  }
+
+  if (!e.target.closest('#mobileMenuPanel') && !e.target.closest('[onclick="toggleMobileMenu()"]')) {
+    closeMobileMenu();
+  }
+
+  if (!e.target.closest('#planEventDropdownWrap')) {
+    closePlanEventDropdown_();
+  }
+});
     document.addEventListener('click', function(e) {
       if (!e.target.closest('#unitDropdown') && !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
         closeUnitDropdown();
@@ -1087,6 +1522,19 @@ nav button {
         active.classList.remove('text-gray-200');
         active.classList.add('bg-[var(--accent)]','text-black','shadow-sm');
       }
+      const mobileBtnIds = ['main','charts','customer','trend','planning'];
+mobileBtnIds.forEach(id => {
+  const b = document.getElementById('m-btn-'+id);
+  if (!b) return;
+  b.classList.remove('active');
+});
+
+const mobileActive = document.getElementById('m-btn-'+target);
+if (mobileActive){
+  mobileActive.classList.add('active');
+}
+
+closeMobileMenu();
 
 if (target === 'main') {
   setTimeout(() => {
@@ -1338,9 +1786,33 @@ function showDataQualityWarningToast_(){
       return v === "UT";
     }
     function isNonUT(d){
-      const v = norm(pickKeyInsensitive(d, ["unit non-UT","unit_non_ut","unit nonut","non_ut","unit non ut"]));
-      return v.includes("NON");
-    }
+  const v = norm(pickKeyInsensitive(d, ["unit non-UT","unit_non_ut","unit nonut","non_ut","unit non ut"]));
+  return v.includes("NON");
+}
+
+function getCompetitorQty_(d){
+  const raw =
+    d.competitor_qty ??
+    d["competitor_qty"] ??
+    d["Competitor Qty"] ??
+    d.qty ??
+    d["qty"];
+
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+function getRowPopulation_(d){
+  return isNonUT(d) ? getCompetitorQty_(d) : 1;
+}
+
+function sumPopulation_(rows){
+  return (rows || []).reduce((sum, d) => sum + getRowPopulation_(d), 0);
+}
+
+function hasCompetitorCluster_(rows){
+  return (rows || []).some(d => isNonUT(d) && getCompetitorQty_(d) > 1);
+}
 
     // ===== LOAD DATA (Supabase) =====
     async function fetchUnitsWithFallback(){
@@ -1382,6 +1854,7 @@ function showDataQualityWarningToast_(){
         }
 
         globalData = unitsRes.data || [];
+        syncMobileUpdateText_();
         if (!globalData.length){
           showToast("Data Kosong", "Data unit dari Supabase kosong. Pastikan tabel "+NAMA_TABEL_ACTIVE+" ada dan ada datanya.");
         } else {
@@ -1563,135 +2036,137 @@ function showDataQualityWarningToast_(){
 
     // ===== MAIN SUMMARY + MAIN BAR =====
     function calculateSummary() {
-      const totalEl = document.getElementById('res-total-ut');
-      if (totalEl) totalEl.innerText = globalData.length;
+  const totalEl = document.getElementById('res-total-ut');
+  if (totalEl) totalEl.innerText = sumPopulation_(globalData);
 
-      const totalUT = globalData.filter(isUT).length;
-      const totalNonUT = globalData.filter(isNonUT).length;
+  const utOnly = globalData.filter(isUT);
+  const nonUtOnly = globalData.filter(isNonUT);
 
-      const totalUTEl = document.getElementById('res-total-unit-ut');
-      const totalNonUTEl = document.getElementById('res-total-unit-nonut');
-      if (totalUTEl) totalUTEl.innerText = totalUT;
-      if (totalNonUTEl) totalNonUTEl.innerText = totalNonUT;
+  const totalUT = sumPopulation_(utOnly);
+  const totalNonUT = sumPopulation_(nonUtOnly);
 
-      const utOnly = globalData.filter(isUT);
+  const totalUTEl = document.getElementById('res-total-unit-ut');
+  const totalNonUTEl = document.getElementById('res-total-unit-nonut');
+  if (totalUTEl) totalUTEl.innerText = totalUT;
+  if (totalNonUTEl) totalNonUTEl.innerText = totalNonUT;
 
-      const war = utOnly.filter(d => norm(d.warranty_status) === "WARRANTY").length;
-      const out = utOnly.filter(d => norm(d.warranty_status).includes("OUT")).length;
+  const war = sumPopulation_(utOnly.filter(d => norm(d.warranty_status) === "WARRANTY"));
+  const out = sumPopulation_(utOnly.filter(d => norm(d.warranty_status).includes("OUT")));
 
-      const warEl = document.getElementById('res-warranty');
-      const outEl = document.getElementById('res-out-warranty');
-      if (warEl) warEl.innerText = war;
-      if (outEl) outEl.innerText = out;
+  const warEl = document.getElementById('res-warranty');
+  const outEl = document.getElementById('res-out-warranty');
+  if (warEl) warEl.innerText = war;
+  if (outEl) outEl.innerText = out;
 
-      const hitungWC = (kode) => {
-        return globalData.filter(d => {
-          const val = String(d.wrk_cntr || "").toUpperCase();
-          return val.includes(kode);
-        }).length;
-      };
+  const hitungWC = (kode) => {
+    return globalData.reduce((sum, d) => {
+      const val = String(d.wrk_cntr || "").toUpperCase();
+      return val.includes(kode) ? sum + getRowPopulation_(d) : sum;
+    }, 0);
+  };
 
-      const skl = document.getElementById('res-skl');
-      const sku = document.getElementById('res-sku');
-      const skh = document.getElementById('res-skh');
-      const kla = document.getElementById('res-kla');
-      if (skl) skl.innerText = hitungWC("SKL");
-      if (sku) sku.innerText = hitungWC("SKU");
-      if (skh) skh.innerText = hitungWC("SKH");
-      if (kla) kla.innerText = hitungWC("KLA");
+  const skl = document.getElementById('res-skl');
+  const sku = document.getElementById('res-sku');
+  const skh = document.getElementById('res-skh');
+  const kla = document.getElementById('res-kla');
+  if (skl) skl.innerText = hitungWC("SKL");
+  if (sku) sku.innerText = hitungWC("SKU");
+  if (skh) skh.innerText = hitungWC("SKH");
+  if (kla) kla.innerText = hitungWC("KLA");
 
-      // bar model number
-      const modelMap = {};
-      globalData.forEach(d => {
-        const m = String(d.model_number || "N/A").trim();
-        if (m) modelMap[m] = (modelMap[m] || 0) + 1;
-      });
+  // bar model number (pakai population, bukan row count)
+  const modelMap = {};
+  globalData.forEach(d => {
+    const m = String(d.model_number || "N/A").trim();
+    if (!m) return;
+    modelMap[m] = (modelMap[m] || 0) + getRowPopulation_(d);
+  });
 
-      const sortedModels = Object.keys(modelMap).sort((a,b)=>modelMap[b]-modelMap[a]);
-      const counts = sortedModels.map(m => modelMap[m]);
-      const modelContainer = document.getElementById('container-model-chart');
-      if (modelContainer) {
-        const minWidth = 1400;
-        const widthPerItem = 42;
-        modelContainer.style.width = Math.max(minWidth, sortedModels.length * widthPerItem) + 'px';
-      }
-
-      if (charts.mainBar) charts.mainBar.destroy();
-      const canvas = document.getElementById('chartModelUtama');
-      if (!canvas) return;
-
-      charts.mainBar = new Chart(canvas, {
-  type:'bar',
-  data:{
-  labels: sortedModels,
-  datasets:[{
-    data: counts,
-    backgroundColor: '#FFCC00',
-    borderColor: '#D4A800',
-    borderWidth: 1,
-    borderRadius: 3,
-    categoryPercentage: 0.9,
-    barPercentage: 0.8,
-    maxBarThickness: 22,
-    minBarLength: 12,
-    hoverBackgroundColor: '#FFCC00'
-  }]
-},
-  options:{
-    responsive:true,
-    maintainAspectRatio:false,
-    interaction:{
-      mode:'nearest',
-      intersect:true
-    },
-    plugins:{
-  legend:{ display:false },
-  datalabels:{
-    display:true,
-    anchor:'end',
-    align:'top',
-    offset: 4,
-    color:'#111827',
-    clamp:true,
-    clip:false,
-    font:{
-      size:10,
-      weight:'700'
-    },
-    formatter:(value)=> value
-  },
-  tooltip:{
-    callbacks:{
-      title:(items)=>{
-        const i = items[0].dataIndex;
-        return sortedModels[i];
-      },
-      label:(ctx)=>{
-        const val = ctx.parsed.y ?? 0;
-        return `Qty: ${val} unit`;
-      }
-    }
+  const sortedModels = Object.keys(modelMap).sort((a,b)=>modelMap[b]-modelMap[a]);
+  const counts = sortedModels.map(m => modelMap[m]);
+  const modelContainer = document.getElementById('container-model-chart');
+  if (modelContainer) {
+    const minWidth = 1400;
+    const widthPerItem = 42;
+    modelContainer.style.width = Math.max(minWidth, sortedModels.length * widthPerItem) + 'px';
   }
-},
-    scales:{
-      y:{
-        beginAtZero:true,
-        grid:{ color:'#E5E7EB' },
-        ticks:{ color:'#111827' }
+
+  if (charts.mainBar) charts.mainBar.destroy();
+  const canvas = document.getElementById('chartModelUtama');
+  if (!canvas) return;
+
+  charts.mainBar = new Chart(canvas, {
+    type:'bar',
+    data:{
+      labels: sortedModels,
+      datasets:[{
+        data: counts,
+        backgroundColor: '#FFCC00',
+        borderColor: '#D4A800',
+        borderWidth: 1,
+        borderRadius: 3,
+        categoryPercentage: 0.9,
+        barPercentage: 0.8,
+        maxBarThickness: 22,
+        minBarLength: 12,
+        hoverBackgroundColor: '#FFCC00'
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{
+        mode:'nearest',
+        intersect:true
       },
-      x:{
-        grid:{ display:false },
-        ticks:{
+      plugins:{
+        legend:{ display:false },
+        datalabels:{
+          display:true,
+          anchor:'end',
+          align:'top',
+          offset: 4,
           color:'#111827',
-          font:{ size:8 },
-          maxRotation:55,
-          minRotation:55
+          clamp:true,
+          clip:false,
+          font:{
+            size:10,
+            weight:'700'
+          },
+          formatter:(value)=> value
+        },
+        tooltip:{
+          callbacks:{
+            title:(items)=>{
+              const i = items[0].dataIndex;
+              return sortedModels[i];
+            },
+            label:(ctx)=>{
+              const val = ctx.parsed.y ?? 0;
+              return `Qty: ${val} unit`;
+            }
+          }
+        }
+      },
+      scales:{
+        y:{
+          beginAtZero:true,
+          grid:{ color:'#E5E7EB' },
+          ticks:{ color:'#111827' }
+        },
+        x:{
+          grid:{ display:false },
+          ticks:{
+            color:'#111827',
+            font:{ size:8 },
+            maxRotation:55,
+            minRotation:55
+          }
         }
       }
     }
-  }
-});
-    }
+  });
+}
 
     // ===== CHARTS PAGE + CUSTOMER CHART =====
 // ===== CHARTS PAGE + CUSTOMER CHART =====
@@ -1776,7 +2251,7 @@ function getTopCustomersByType_(rows, limit = 10){
   rows.forEach(d => {
     const c = String(d.customer || "").trim().toUpperCase();
     if (!c) return;
-    map[c] = (map[c] || 0) + 1;
+    map[c] = (map[c] || 0) + getRowPopulation_(d);
   });
 
   const sorted = Object.entries(map).sort((a,b) => b[1] - a[1]);
@@ -1864,10 +2339,11 @@ const BAR_ANIMATION_ = {
       }
 
       // 3 Warranty pie
-      const wData = [
-        globalData.filter(d=>norm(d.warranty_status)==="WARRANTY").length,
-        globalData.filter(d=>norm(d.warranty_status).includes("OUT")).length
-      ];
+      const utOnlyForWarranty = globalData.filter(isUT);
+const wData = [
+  sumPopulation_(utOnlyForWarranty.filter(d=>norm(d.warranty_status)==="WARRANTY")),
+  sumPopulation_(utOnlyForWarranty.filter(d=>norm(d.warranty_status).includes("OUT")))
+];
       if (charts.p) charts.p.destroy();
       const ctxP = document.getElementById('chartWarranty');
       if (ctxP){
@@ -1883,8 +2359,8 @@ const BAR_ANIMATION_ = {
 
       // 4 UT vs Non-UT pie
 const unitCompositionData = [
-  globalData.filter(isUT).length,
-  globalData.filter(isNonUT).length
+  sumPopulation_(globalData.filter(isUT)),
+  sumPopulation_(globalData.filter(isNonUT))
 ];
 
 if (charts.unitComposition) charts.unitComposition.destroy();
@@ -1910,7 +2386,7 @@ const bouwheerMap = { INDEXIM: 0, GAM: 0 };
 globalData.forEach(d => {
   const grp = getBouwheerGroup_(d);
   if (!grp) return;
-  bouwheerMap[grp] = (bouwheerMap[grp] || 0) + 1;
+  bouwheerMap[grp] = (bouwheerMap[grp] || 0) + getRowPopulation_(d);
 });
 
 const bouwheerLabels = Object.keys(bouwheerMap).filter(k => bouwheerMap[k] > 0);
@@ -2055,7 +2531,7 @@ const sectorMap = { AGRO: 0, MINING: 0, FORESTRY: 0 };
 globalData.forEach(d => {
   const grp = getSectorGroup_(d);
   if (!grp) return;
-  sectorMap[grp] = (sectorMap[grp] || 0) + 1;
+  sectorMap[grp] = (sectorMap[grp] || 0) + getRowPopulation_(d);
 });
 
 const sectorLabels = Object.keys(sectorMap).filter(k => sectorMap[k] > 0);
@@ -2082,7 +2558,7 @@ if (ctxSector){
       const prodMap = {};
       globalData.forEach(d=>{
         const p = String(d.prod_hier || "N/A").trim().toUpperCase();
-        prodMap[p] = (prodMap[p]||0)+1;
+        prodMap[p] = (prodMap[p] || 0) + getRowPopulation_(d);
       });
       const sortedBrands = Object.entries(prodMap)
   .sort((a,b) => b[1] - a[1]);
@@ -2147,18 +2623,22 @@ if (ctxJ){
 }
 
       // 10 Customer bar + click
-      const custMap = {};
-      globalData.forEach(d=>{
-        const c = String(d.customer||"").trim().toUpperCase();
-        if (c) custMap[c] = (custMap[c]||0)+1;
-      });
-      const sortedCust = Object.keys(custMap).sort((a,b)=>custMap[b]-custMap[a]);
+const custMap = {};
+globalData.forEach(d=>{
+  const c = String(d.customer||"").trim().toUpperCase();
+  if (c) custMap[c] = (custMap[c]||0)+1;
+});
+
+const sortedCustAll = Object.keys(custMap).sort((a,b)=>custMap[b]-custMap[a]);
+
+const TOP_CUSTOMER_LIMIT = 25;
+const sortedCust = sortedCustAll.slice(0, TOP_CUSTOMER_LIMIT);
 const sortedCustValues = sortedCust.map(c=>custMap[c]);
 
 const resUnique = document.getElementById('res-unique-cust');
-if (resUnique) resUnique.innerText = sortedCust.length;
+if (resUnique) resUnique.innerText = sortedCustAll.length;
 
-/* target: 1 layar kira-kira memuat 15 customer */
+/* tinggi container mengikuti jumlah bar yang ditampilkan saja */
 const ROW_HEIGHT = 42;
 const container = document.getElementById('container-customer-chart');
 if (container) container.style.height = Math.max(630, sortedCust.length * ROW_HEIGHT) + "px";
@@ -2178,7 +2658,7 @@ if (ctxC){
       }]
     },
     options:{
-        animation: BAR_ANIMATION_,
+      animation: BAR_ANIMATION_,
       indexAxis:'y',
       responsive:true,
       maintainAspectRatio:false,
@@ -2196,7 +2676,12 @@ if (ctxC){
       },
       plugins:{
         legend:{ display:false },
-        datalabels:{ anchor:'end', align:'right', color:'#ffffff', font:{ weight:'bold', size:10 } },
+        datalabels:{
+          anchor:'end',
+          align:'right',
+          color:'#ffffff',
+          font:{ weight:'bold', size:10 }
+        },
         tooltip:{
           callbacks:{
             label:(ctx)=>{
@@ -2214,7 +2699,12 @@ if (ctxC){
             font:{ size:12, weight:'bold' }
           }
         },
-        x:{ beginAtZero:true, grid:{ color:'#E5E7EB' }, ticks:{ color:'#111827' }, position:'top' }
+        x:{
+          beginAtZero:true,
+          grid:{ color:'#E5E7EB' },
+          ticks:{ color:'#111827' },
+          position:'top'
+        }
       }
     }
   });
@@ -2308,12 +2798,13 @@ function animatePlanningBarCharts_(){
 
       const typeSummary = {};
       currentModalData.forEach(d=>{
-        const t = String(d.Typpe||"N/A").toUpperCase();
-        if (!typeSummary[t]) typeSummary[t] = { count:0, war:0, out:0 };
-        typeSummary[t].count++;
-        if (normStatus(d.warranty_status)==="WARRANTY") typeSummary[t].war++;
-        else if (normStatus(d.warranty_status)==="OUT WARRANTY") typeSummary[t].out++;
-      });
+  const t = String(d.Typpe||"N/A").toUpperCase();
+  const qty = getRowPopulation_(d);
+  if (!typeSummary[t]) typeSummary[t] = { count:0, war:0, out:0 };
+  typeSummary[t].count += qty;
+  if (normStatus(d.warranty_status)==="WARRANTY") typeSummary[t].war += qty;
+  else if (normStatus(d.warranty_status)==="OUT WARRANTY") typeSummary[t].out += qty;
+});
 
       let summaryHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">`;
       for (const [type,data] of Object.entries(typeSummary)){
@@ -2956,7 +3447,9 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
         customers.map(c=>`<option value="${c.replaceAll('"','&quot;')}">${c}</option>`).join("");
     }
 
-    function makeUnitTable(rows){
+    function makeUnitTable(rows, mode = "UT"){
+  const showQty = mode === "COMPETITOR" || hasCompetitorCluster_(rows);
+
   return `
     <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
       <div class="overflow-x-auto">
@@ -2966,7 +3459,8 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
               <th class="p-4">Prod Hier</th>
               <th class="p-4">Type</th>
               <th class="p-4">Model Number</th>
-              <th class="p-4">Serial Number</th>
+              <th class="p-4">Serial Number / Kode Unit</th>
+              ${showQty ? `<th class="p-4 text-right">Qty</th>` : ``}
               <th class="p-4">Work Center</th>
               <th class="p-4">Customer</th>
               <th class="p-4">Area</th>
@@ -2974,14 +3468,26 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
           </thead>
           <tbody class="divide-y divide-[var(--border)]">
             ${rows.map((d, idx)=>{
-             const delay = idx < 10 ? idx * 35 : 0;
-const animClass = idx < 10 ? "unit-table-row-reveal" : "";
+              const delay = idx < 10 ? idx * 35 : 0;
+              const animClass = idx < 10 ? "unit-table-row-reveal" : "";
+              const qty = getRowPopulation_(d);
+              const roomCode =
+                d.room_code ??
+                d["room_code"] ??
+                d["Room(Kode Unit)"] ??
+                d["Room / Kode Unit"] ??
+                d["kode unit"] ??
+                d["Kode Unit"] ??
+                "-";
+              const serialDisplay = getSerial(d) !== "-" ? getSerial(d) : (roomCode || "-");
+
               return `
                 <tr class="${animClass} hover:bg-black/5 transition-colors" style="animation-delay:${delay}ms;">
                   <td class="p-4 font-bold text-[var(--text)]">${d.prod_hier || "-"}</td>
                   <td class="p-4 text-[var(--text)] font-bold">${d.Typpe || d.typpe || "-"}</td>
                   <td class="p-4 text-[var(--text)] font-bold">${d.model_number || "-"}</td>
-                  <td class="p-4 text-[var(--text)] font-mono font-bold uppercase tracking-wider">${getSerial(d)}</td>
+                  <td class="p-4 text-[var(--text)] font-mono font-bold uppercase tracking-wider">${serialDisplay || "-"}</td>
+                  ${showQty ? `<td class="p-4 text-right text-[var(--text)] font-black">${qty}</td>` : ``}
                   <td class="p-4 text-[var(--text)] font-bold">${d.wrk_cntr || "-"}</td>
                   <td class="p-4 text-[var(--text)] font-bold">${d.customer || "-"}</td>
                   <td class="p-4 text-[var(--text)] font-bold">${d.area || "-"}</td>
@@ -3006,24 +3512,24 @@ const animClass = idx < 10 ? "unit-table-row-reveal" : "";
     }
 
     function applyUnitFilters(){
-      const utSelect = document.getElementById("filter-ut-customer");
-      const utVal = utSelect ? utSelect.value : "ALL";
+  const utSelect = document.getElementById("filter-ut-customer");
+  const utVal = utSelect ? utSelect.value : "ALL";
 
-      const utFiltered = (utVal==="ALL") ? utRowsCache : utRowsCache.filter(d => String(d.customer||"").trim()===utVal);
-      const utSummary = document.getElementById("unit-ut-summary");
-      const utTable = document.getElementById("unit-ut-table");
-      if (utSummary) utSummary.innerText = `Total Unit UT: ${utFiltered.length}`;
-      if (utTable) utTable.innerHTML = makeUnitTable(utFiltered);
+  const utFiltered = (utVal==="ALL") ? utRowsCache : utRowsCache.filter(d => String(d.customer||"").trim()===utVal);
+  const utSummary = document.getElementById("unit-ut-summary");
+  const utTable = document.getElementById("unit-ut-table");
+  if (utSummary) utSummary.innerText = `Total Unit UT: ${sumPopulation_(utFiltered)}`;
+  if (utTable) utTable.innerHTML = makeUnitTable(utFiltered, "UT");
 
-      const nonSelect = document.getElementById("filter-nonut-customer");
-      const nonVal = nonSelect ? nonSelect.value : "ALL";
+  const nonSelect = document.getElementById("filter-nonut-customer");
+  const nonVal = nonSelect ? nonSelect.value : "ALL";
 
-      const nonFiltered = (nonVal==="ALL") ? nonUtRowsCache : nonUtRowsCache.filter(d => String(d.customer||"").trim()===nonVal);
-      const nonSummary = document.getElementById("unit-nonut-summary");
-      const nonTable = document.getElementById("unit-nonut-table");
-      if (nonSummary) nonSummary.innerText = `Total Unit Competitor: ${nonFiltered.length}`;
-      if (nonTable) nonTable.innerHTML = makeUnitTable(nonFiltered);
-    }
+  const nonFiltered = (nonVal==="ALL") ? nonUtRowsCache : nonUtRowsCache.filter(d => String(d.customer||"").trim()===nonVal);
+  const nonSummary = document.getElementById("unit-nonut-summary");
+  const nonTable = document.getElementById("unit-nonut-table");
+  if (nonSummary) nonSummary.innerText = `Total Unit Competitor: ${sumPopulation_(nonFiltered)}`;
+  if (nonTable) nonTable.innerHTML = makeUnitTable(nonFiltered, "COMPETITOR");
+}
 
     // ===== TREND =====
     function renderTrendYoY(){
