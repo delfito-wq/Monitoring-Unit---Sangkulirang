@@ -328,75 +328,96 @@ nav button {
 }
 
 /* ===== MOBILE LAYOUT ===== */
-#mobileMenuPanel{
-  display:none;
-}
-
-.mobile-only{
-  display:none;
-}
+.mobile-only{ display:none; }
+.mobile-flex{ display:none; }
+.mobile-hidden{ display:block; }
+#mobileMenuPanel{ display:none; }
+#mobileStartHint{ display:none; }
 
 @media (max-width: 767px){
   .page-shell{
-    width:min(100vw, 100vw);
+    width:100%;
+    max-width:100%;
     padding-left:14px;
     padding-right:14px;
   }
 
-  .mobile-only{
-    display:flex !important;
-  }
-
-  .mobile-hidden{
-    display:none !important;
-  }
+  .mobile-only{ display:block !important; }
+  .mobile-flex{ display:flex !important; }
+  .mobile-hidden{ display:none !important; }
 
   header .page-shell{
     width:100%;
   }
 
-  .ut-topbar-mobile{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    padding:12px 14px;
+  body{
+    background:
+      linear-gradient(rgba(12,16,22,0.42), rgba(12,16,22,0.42)),
+      url("./Background.png") center center / cover fixed no-repeat;
   }
 
-  .ut-topbar-mobile .ut-brand-wrap{
-    display:flex;
+  /* ===== MOBILE HEADER TOP ===== */
+  .ut-mobile-top{
     align-items:center;
+    justify-content:space-between;
     gap:10px;
+    padding:10px 14px 8px;
+    background:#fff;
+  }
+
+  .ut-mobile-brand{
+    display:flex;
+    flex-direction:column;
     min-width:0;
     flex:1;
   }
 
-  .ut-topbar-mobile .ut-brand-wrap img{
-    max-width:170px;
-    height:auto;
-  }
-
-  .ut-topbar-mobile .ut-right-logo{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    flex-shrink:0;
-  }
-
-  .ut-topbar-mobile .ut-right-logo img{
-    width:90px;
+  .ut-mobile-brand-logo{
+    width:160px;
+    max-width:100%;
     height:auto;
     object-fit:contain;
   }
 
-  .ut-mobile-navbar{
+  .ut-mobile-tagline{
+    margin-top:4px;
+    font-size:9px;
+    line-height:1.15;
+    font-weight:900;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#111827;
+    white-space:normal;
+  }
+
+  .ut-mobile-right{
     display:flex;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+  }
+
+  .ut-mobile-stronger{
+    width:44px;
+    height:44px;
+    object-fit:contain;
+  }
+
+  .ut-mobile-moving{
+    width:82px;
+    height:auto;
+    object-fit:contain;
+  }
+
+  /* ===== MENU BAR ===== */
+  .ut-mobile-navbar{
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    padding:12px 14px;
+    padding:10px 14px;
     background:var(--nav);
     border-top:1px solid rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.08);
   }
 
   .ut-mobile-menu-btn{
@@ -406,15 +427,14 @@ nav button {
     color:#fff;
     font-weight:900;
     font-size:15px;
-    letter-spacing:0.03em;
     background:transparent;
     border:none;
     padding:0;
   }
 
   .ut-mobile-menu-btn svg{
-    width:22px;
-    height:22px;
+    width:20px;
+    height:20px;
   }
 
   .ut-mobile-live{
@@ -422,22 +442,23 @@ nav button {
     align-items:center;
     gap:8px;
     min-width:0;
-    text-align:right;
+    flex-shrink:0;
   }
 
   .ut-mobile-live .live-text{
     color:#fff;
-    font-size:11px;
+    font-size:10px;
+    line-height:1.2;
     font-weight:800;
-    line-height:1.3;
+    text-align:right;
   }
 
+  /* ===== MOBILE MENU PANEL ===== */
   #mobileMenuPanel{
     display:none;
     background:var(--nav);
-    border-top:1px solid rgba(255,255,255,0.08);
-    border-bottom:1px solid rgba(255,255,255,0.08);
-    padding:14px;
+    padding:12px 14px 14px;
+    border-bottom:3px solid var(--accent);
   }
 
   #mobileMenuPanel.open{
@@ -452,13 +473,12 @@ nav button {
 
   .mobile-menu-btn{
     width:100%;
-    min-height:46px;
+    min-height:52px;
     border-radius:14px;
     padding:10px 12px;
     font-size:12px;
     font-weight:900;
     text-transform:uppercase;
-    letter-spacing:0.03em;
     text-align:center;
     background:rgba(255,255,255,0.06);
     color:#fff;
@@ -471,85 +491,100 @@ nav button {
     border-color:var(--accent);
   }
 
-  .mobile-menu-subgrid{
+  .mobile-unit-submenu{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:8px;
     margin-top:8px;
   }
 
-  .mobile-menu-subbtn{
+  .mobile-unit-submenu.hidden{
+    display:none !important;
+  }
+
+  .mobile-subbtn{
     width:100%;
     min-height:42px;
     border-radius:12px;
     padding:8px 10px;
-    font-size:11px;
-    font-weight:900;
-    text-transform:uppercase;
     background:#fff;
     color:#111827;
     border:1px solid rgba(17,24,39,0.08);
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
   }
 
-  .mobile-action-wrap{
+  .mobile-action-row{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:14px;
+    gap:12px;
+    margin-top:12px;
   }
 
-  .mobile-action-wrap a,
-  .mobile-action-wrap button{
+  .mobile-action-rect{
     width:100%;
-    min-height:46px;
+    min-height:56px;
     border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
     font-size:12px;
     font-weight:900;
     text-transform:uppercase;
-    justify-content:center;
-    text-align:center;
+    line-height:1.2;
+    padding:10px 12px;
   }
 
-  .mobile-update-note{
-    margin-top:12px;
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    color:#fff;
+  .mobile-action-primary{
+    background:var(--accent);
+    color:#000;
   }
 
-  .mobile-update-note .dot-wrap{
-    margin-top:4px;
-    flex-shrink:0;
+  .mobile-action-outline{
+    border:1.5px solid var(--accent);
+    color:var(--accent);
+    background:transparent;
   }
 
-  .mobile-update-note .note-text{
-    font-size:11px;
+  /* ===== MOBILE START HINT ===== */
+  #mobileStartHint{
+    display:block;
+    margin-bottom:14px;
+    padding:18px 16px;
+    border-radius:22px;
+    background:rgba(255,255,255,0.60);
+    border:1px solid rgba(255,255,255,0.16);
+    box-shadow:0 10px 22px rgba(0,0,0,0.12);
+    color:#111827;
+  }
+
+  #mobileStartHint .hint-title{
+    font-size:14px;
+    font-weight:900;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+
+  #mobileStartHint .hint-sub{
+    font-size:12px;
+    font-weight:700;
     line-height:1.45;
-    font-weight:800;
   }
 
-  /* desktop nav/action disembunyikan di mobile */
-  .desktop-nav-wrap{
-    display:none !important;
-  }
-
-  /* content spacing */
+  /* ===== MOBILE CONTENT ===== */
   .page-shell.p-4.md\:p-6.xl\:p-8{
     padding:14px !important;
   }
 
-  /* panel utama */
   .soft-panel,
   .glass-panel,
   .dashboard-card{
     border-radius:24px !important;
   }
 
-  #page-main .soft-panel{
-    padding:18px !important;
-  }
-
+  #page-main .soft-panel,
   #page-main .dashboard-card{
     padding:18px !important;
   }
@@ -567,7 +602,6 @@ nav button {
     font-size:2rem !important;
   }
 
-  /* equipment cards */
   .equipment-logo-card{
     min-height:96px;
     padding:12px;
@@ -585,7 +619,6 @@ nav button {
   .equipment-logo-ud img{ max-width:122px; max-height:48px; }
   .equipment-logo-bomag img{ max-width:126px; max-height:54px; }
 
-  /* hero cards jadi 1 kolom di mobile */
   #page-main .grid.grid-cols-1.md\:grid-cols-3{
     grid-template-columns:1fr !important;
     gap:14px !important;
@@ -601,12 +634,15 @@ nav button {
     gap:12px !important;
   }
 
-  /* chart panel */
+  #page-main .grid.grid-cols-2.md\:grid-cols-3.lg\:grid-cols-5{
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+    gap:12px !important;
+  }
+
   #container-model-chart{
     min-width:980px !important;
   }
 
-  /* customer page controls */
   #page-customer .glass-panel{
     height:auto !important;
     min-height:unset !important;
@@ -654,85 +690,77 @@ nav button {
   <!-- HEADER -->
 <header class="bg-white w-full shadow-sm border-b border-[var(--border)]">
   <!-- MOBILE HEADER -->
-  <div class="mobile-only ut-topbar-mobile">
-    <div class="ut-brand-wrap">
-      <img
-        src="Logo.png"
-        alt="United Tractors Member of Astra"
-        class="h-auto object-contain"
-      >
-    </div>
-
-    <div class="ut-right-logo">
-      <img
-        src="Moving As One.png"
-        alt="Moving as One"
-      >
-    </div>
+<div class="mobile-flex ut-mobile-top">
+  <div class="ut-mobile-brand">
+    <img
+      src="Logo.png"
+      alt="United Tractors Member of Astra"
+      class="ut-mobile-brand-logo"
+    >
+    <div class="ut-mobile-tagline">Sangkulirang Unit Population Analytics</div>
   </div>
 
-  <div class="mobile-only ut-mobile-navbar">
-    <button type="button" class="ut-mobile-menu-btn" onclick="toggleMobileMenu()">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 7h16M4 12h16M4 17h16" />
-      </svg>
-      <span>Menu</span>
+  <div class="ut-mobile-right">
+    <img
+      src="Sangkulirang-Stronger.jpeg"
+      alt="Sangkulirang Stronger"
+      class="ut-mobile-stronger"
+    >
+    <img
+      src="Moving As One.png"
+      alt="Moving as One"
+      class="ut-mobile-moving"
+    >
+  </div>
+</div>
+
+<div class="mobile-flex ut-mobile-navbar">
+  <button type="button" class="ut-mobile-menu-btn" onclick="toggleMobileMenu()">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+    <span>Menu</span>
+  </button>
+
+  <div class="ut-mobile-live">
+    <span class="relative flex h-2.5 w-2.5">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-90"></span>
+      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+    </span>
+    <div class="live-text">
+      <div>Update</div>
+      <div id="teks-update-live-mobile">Sedang memuat...</div>
+    </div>
+  </div>
+</div>
+
+<div id="mobileMenuPanel" class="mobile-only">
+  <div class="mobile-menu-grid">
+    <button onclick="switchTab('main'); closeMobileMenu();" id="m-btn-main" class="mobile-menu-btn">Beranda</button>
+    <button type="button" onclick="toggleMobileUnitMenu()" id="m-btn-unit" class="mobile-menu-btn">Unit</button>
+    <button onclick="switchTab('charts'); closeMobileMenu();" id="m-btn-charts" class="mobile-menu-btn">Analytics</button>
+    <button onclick="switchTab('customer'); closeMobileMenu();" id="m-btn-customer" class="mobile-menu-btn">Customer</button>
+    <button onclick="switchTab('trend'); closeMobileMenu();" id="m-btn-trend" class="mobile-menu-btn">Trend</button>
+    <button onclick="switchTab('planning'); closeMobileMenu();" id="m-btn-planning" class="mobile-menu-btn">Market Analytics</button>
+  </div>
+
+  <div id="mobileUnitSubmenu" class="mobile-unit-submenu hidden">
+    <button onclick="switchTab('unit-ut'); closeMobileMenu();" class="mobile-subbtn">Unit UT</button>
+    <button onclick="switchTab('unit-nonut'); closeMobileMenu();" class="mobile-subbtn">Unit Competitor</button>
+  </div>
+
+  <div class="mobile-action-row">
+    <a href="https://forms.gle/Ha5oe4xMubWhFnTT9" target="_blank"
+      class="mobile-action-rect mobile-action-primary">
+      Ajukan Update
+    </a>
+
+    <button onclick="exportToExcelFromSupabase()"
+      class="mobile-action-rect mobile-action-outline">
+      Export Excel
     </button>
-
-    <div class="ut-mobile-live">
-      <span class="relative flex h-2.5 w-2.5">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-90"></span>
-        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-      </span>
-      <div class="live-text">
-        <div>Update</div>
-        <div id="teks-update-live-mobile">Sedang memuat...</div>
-      </div>
-    </div>
   </div>
-
-  <div id="mobileMenuPanel" class="mobile-only">
-    <div class="mobile-menu-grid">
-      <button onclick="switchTab('main'); closeMobileMenu();" id="m-btn-main" class="mobile-menu-btn active">Beranda</button>
-
-      <button type="button" onclick="toggleMobileUnitMenu()" id="m-btn-unit" class="mobile-menu-btn">Unit</button>
-
-      <button onclick="switchTab('charts'); closeMobileMenu();" id="m-btn-charts" class="mobile-menu-btn">Analytics</button>
-      <button onclick="switchTab('customer'); closeMobileMenu();" id="m-btn-customer" class="mobile-menu-btn">Customer</button>
-      <button onclick="switchTab('trend'); closeMobileMenu();" id="m-btn-trend" class="mobile-menu-btn">Trend</button>
-      <button onclick="switchTab('planning'); closeMobileMenu();" id="m-btn-planning" class="mobile-menu-btn">Market Analytics</button>
-    </div>
-
-    <div id="mobileUnitSubmenu" class="mobile-menu-subgrid hidden">
-      <button onclick="switchTab('unit-ut'); closeMobileMenu();" class="mobile-menu-subbtn">Unit UT</button>
-      <button onclick="switchTab('unit-nonut'); closeMobileMenu();" class="mobile-menu-subbtn">Unit Competitor</button>
-    </div>
-
-    <div class="mobile-action-wrap">
-      <a href="https://forms.gle/Ha5oe4xMubWhFnTT9" target="_blank"
-        class="bg-[var(--accent)] hover:brightness-95 text-black px-6 py-2 shadow-sm transition-all active:scale-95 inline-flex items-center">
-        Ajukan Update
-      </a>
-
-      <button onclick="exportToExcelFromSupabase()"
-        class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 transition-all inline-flex items-center">
-        Export Excel
-      </button>
-    </div>
-
-    <div class="mobile-update-note">
-      <div class="dot-wrap">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-90"></span>
-          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-        </span>
-      </div>
-      <div class="note-text">
-        <div>Update terakhir</div>
-        <div id="teks-update-live-mobile-2">Sedang memuat...</div>
-      </div>
-    </div>
-  </div>
+</div>
 
   <!-- DESKTOP HEADER -->
   <div class="page-shell px-6 py-3 flex items-center justify-between gap-6 mobile-hidden">
@@ -837,6 +865,13 @@ nav button {
   </nav>
 
   <div class="w-full h-[3px] bg-[var(--accent)]"></div>
+  <div id="mobileStartHint" class="mobile-only">
+  <div class="hint-title">Pilih Menu Terlebih Dahulu</div>
+  <div class="hint-sub">
+    Untuk tampilan mobile, section dashboard disembunyikan terlebih dahulu.
+    Tekan <b>Menu</b>, lalu pilih section yang ingin dibuka.
+  </div>
+</div>
 </header>
 
   <!-- CONTENT -->
@@ -1434,21 +1469,15 @@ nav button {
       const el = document.getElementById("toast");
       if (el) el.style.display = "none";
     }
-    function syncMobileUpdateText_(){
+   function syncMobileUpdateText_(){
   const desktopText = document.getElementById("teks-update-live")?.textContent || "Sedang memuat...";
   const mobileText1 = document.getElementById("teks-update-live-mobile");
-  const mobileText2 = document.getElementById("teks-update-live-mobile-2");
 
   if (mobileText1) mobileText1.textContent = desktopText;
-  if (mobileText2) mobileText2.textContent = desktopText;
 }
 
-    // ===== DROPDOWN =====
-    function toggleUnitDropdown() {
-      const dd = document.getElementById('unitDropdown');
-      if (dd) dd.classList.toggle('hidden');
-    }
-    function toggleUnitDropdown() {
+// ===== DROPDOWN =====
+function toggleUnitDropdown() {
   const dd = document.getElementById('unitDropdown');
   if (dd) dd.classList.toggle('hidden');
 }
@@ -1479,12 +1508,43 @@ function toggleMobileUnitMenu(){
   sub.classList.toggle('hidden');
 }
 
+function isMobileView_(){
+  return window.innerWidth <= 767;
+}
+
+function showMobileStartHint_(){
+  const el = document.getElementById('mobileStartHint');
+  if (el) el.style.display = 'block';
+}
+
+function hideMobileStartHint_(){
+  const el = document.getElementById('mobileStartHint');
+  if (el) el.style.display = 'none';
+}
+
+function enterMobileLanding_(){
+  if (!isMobileView_()) return;
+
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+  showMobileStartHint_();
+  closeMobileMenu();
+
+  const mobileBtnIds = ['main','charts','customer','trend','planning'];
+  mobileBtnIds.forEach(id => {
+    const b = document.getElementById('m-btn-'+id);
+    if (!b) return;
+    b.classList.remove('active');
+  });
+}
+
 document.addEventListener('click', function(e) {
   if (!e.target.closest('#unitDropdown') && !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
     closeUnitDropdown();
   }
 
-  if (!e.target.closest('#mobileMenuPanel') && !e.target.closest('[onclick="toggleMobileMenu()"]')) {
+  if (!e.target.closest('#mobileMenuPanel') &&
+      !e.target.closest('[onclick="toggleMobileMenu()"]') &&
+      !e.target.closest('.ut-mobile-menu-btn')) {
     closeMobileMenu();
   }
 
@@ -1492,15 +1552,6 @@ document.addEventListener('click', function(e) {
     closePlanEventDropdown_();
   }
 });
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('#unitDropdown') && !e.target.closest('[onclick="toggleUnitDropdown()"]')) {
-        closeUnitDropdown();
-      }
-
-      if (!e.target.closest('#planEventDropdownWrap')) {
-        closePlanEventDropdown_();
-      }
-    });
 
     // ===== TAB SWITCH =====
     function switchTab(target) {
@@ -1534,6 +1585,7 @@ if (mobileActive){
   mobileActive.classList.add('active');
 }
 
+hideMobileStartHint_();
 closeMobileMenu();
 
 if (target === 'main') {
@@ -1891,6 +1943,10 @@ function hasCompetitorCluster_(rows){
         renderUnitPages();
         initPlanningFromSupabase();
         fillCustomerTopDropdown();
+
+        if (isMobileView_()) {
+          enterMobileLanding_();
+        }
 
         setTimeout(() => {
   animateMainStats_();
