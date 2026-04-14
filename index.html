@@ -262,8 +262,29 @@ th {
   right: 16px;
   bottom: 16px;
   z-index: 200;
-  max-width: 360px;
+  max-width: 320px;
   display: none;
+}
+
+@media (max-width: 767px){
+  #toast{
+    right: 10px;
+    bottom: 10px;
+    max-width: 260px;
+  }
+
+  #toast .p-4{
+    padding: 12px !important;
+  }
+
+  #toastTitle{
+    font-size: 10px !important;
+  }
+
+  #toastMsg{
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+  }
 }
 
 :root{
@@ -382,12 +403,12 @@ nav button {
   .ut-mobile-tagline{
   margin-top:4px;
   font-size:8px;
-  line-height:1.1;
+  line-height:1.08;
   font-weight:900;
-  letter-spacing:0.05em;
+  letter-spacing:0.04em;
   text-transform:uppercase;
   color:#111827;
-  max-width:160px;
+  max-width:158px;
 }
   .ut-mobile-right{
     display:flex;
@@ -453,16 +474,35 @@ nav button {
   }
 
   /* ===== MOBILE MENU PANEL ===== */
-  #mobileMenuPanel{
-    display:none;
-    background:var(--nav);
-    padding:12px 14px 14px;
-    border-bottom:3px solid var(--accent);
-  }
+header{
+  position:relative;
+}
 
-  #mobileMenuPanel.open{
-    display:block;
-  }
+#mobileMenuPanel{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  z-index:120;
+  background:var(--nav);
+  padding:12px 14px 14px;
+  border-bottom:3px solid var(--accent);
+  max-height:calc(100vh - 118px);
+  overflow-y:auto;
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-8px);
+  transition:opacity .22s ease, transform .22s ease, visibility .22s ease;
+}
+
+#mobileMenuPanel.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0);
+}
 
   .mobile-menu-grid{
     display:grid;
@@ -1850,16 +1890,16 @@ function hasCompetitorCluster_(rows){
           showToast("Load Berhasil", `Data unit loaded: ${globalData.length} rows (tabel: ${NAMA_TABEL_ACTIVE})`);
 
           setTimeout(() => {
-            hideToast();
+  hideToast();
 
-            if (hasUTDataQualityWarning_()) {
-              showDataQualityWarningToast_();
+  if (hasUTDataQualityWarning_()) {
+    showDataQualityWarningToast_();
 
-              setTimeout(() => {
-                hideToast();
-              }, 10000); // 10 detik
-            }
-          }, 2200);
+    setTimeout(() => {
+      hideToast();
+    }, 4500);
+  }
+}, 1200);
         }
 
         if (stdRes.error) console.warn("Standards error:", stdRes.error.message);
