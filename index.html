@@ -37,6 +37,17 @@ header img{
   --bad:#DC2626;
 }
 
+.planning-scroll-10{
+  max-height: 820px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.planning-scroll-10 table{
+  width: 100%;
+  border-collapse: collapse;
+}
+
 @keyframes statPopUp {
   0% {
     opacity: 0;
@@ -250,11 +261,41 @@ th {
   letter-spacing: 0.06em;
 }
 
-/* scrollbar */
-.custom-scrollbar::-webkit-scrollbar { width: 8px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: #F3F4F6; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 12px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+/* scrollbar - versi lebih clean */
+.custom-scrollbar{
+  scrollbar-width: thin;
+  scrollbar-color: rgba(17,24,39,0.28) transparent;
+  scrollbar-gutter: stable;
+}
+
+.custom-scrollbar::-webkit-scrollbar{
+  width: 12px;
+  height: 12px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track{
+  background: transparent;
+  border-radius: 999px;
+  margin-top: 58px;
+  margin-bottom: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb{
+  background: rgba(17,24,39,0.20);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover{
+  background: rgba(17,24,39,0.34);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner{
+  background: transparent;
+}
 
 /* toast */
 #toast{
@@ -1078,6 +1119,23 @@ header{
   </div>
 </div>
 
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
+        Perbandingan Unit UT vs Competitor - KPP (PCB)
+      </h3>
+      <div class="w-full h-[250px]"><canvas id="chartKppPcbPie"></canvas></div>
+    </div>
+
+    <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
+        Perbandingan Unit UT vs Competitor - GAM (PCB)
+      </h3>
+      <div class="w-full h-[250px]"><canvas id="chartGamPcbPie"></canvas></div>
+    </div>
+  </div>
+</div>
+
     <!-- PAGE TREND -->
 <div id="page-trend" class="tab-content hidden">
   <div class="glass-panel p-8 rounded-3xl mb-6">
@@ -1119,7 +1177,7 @@ header{
 
   <div class="soft-panel p-8 rounded-3xl">
     <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">
-      Market Size Servis
+      Market Size Service
     </h3>
 
         <!-- FILTER -->
@@ -2469,6 +2527,55 @@ function getTopCustomersByType_(rows, limit = 10){
   return sorted.slice(0, limit);
 }
 
+function getTyppeValue_(d){
+  return norm(d.Typpe || d.typpe || pickKeyInsensitive(d, ["Typpe", "typpe", "type", "Type"]));
+}
+
+function getKppGamBucket_(d){
+  const customer = norm(d.customer);
+  const areaLike = norm(
+    pickKeyInsensitive(d, [
+      "area",
+      "Area",
+      "bouwheer",
+      "Bouwheer",
+      "group_bouwheer",
+      "bouwheer_group",
+      "customer_group",
+      "owner_group"
+    ])
+  );
+
+  if (
+    customer === "KALIMANTAN PRIMA PERSADA" ||
+    customer === "KPP" ||
+    areaLike === "KPP" ||
+    areaLike.includes("KPP")
+  ) return "KPP";
+
+  if (
+    areaLike === "GAM" ||
+    areaLike.includes("GAM") ||
+    customer === "GAM"
+  ) return "GAM";
+
+  return null;
+}
+
+function getUtVsCompetitorByBucketAndTyppe_(bucket, typpe){
+  const filtered = globalData.filter(d => {
+    return (
+      getKppGamBucket_(d) === bucket &&
+      getTyppeValue_(d) === norm(typpe)
+    );
+  });
+
+  return {
+    ut: sumPopulation_(filtered.filter(isUT)),
+    competitor: sumPopulation_(filtered.filter(isNonUT))
+  };
+}
+
 const BAR_ANIMATION_ = {
   duration: 900,
   easing: 'easeOutQuart',
@@ -2784,6 +2891,45 @@ const brandVals = topBrands.map(([, value]) => value);
 if (charts.j) charts.j.destroy();
 const ctxJ = document.getElementById('chartJenisBar');
 if (ctxJ){
+  // 9b KPP PCB pie
+const kppPcb = getUtVsCompetitorByBucketAndTyppe_("KPP", "PCB");
+if (charts.kppPcbPie) charts.kppPcbPie.destroy();
+const ctxKppPcb = document.getElementById('chartKppPcbPie');
+if (ctxKppPcb){
+  charts.kppPcbPie = new Chart(ctxKppPcb, {
+    type:'pie',
+    data:{
+      labels:['UT','Competitor'],
+      datasets:[{
+        data:[kppPcb.ut, kppPcb.competitor],
+        backgroundColor:['#FFCC00','#111827'],
+        borderWidth: 0,
+        borderColor: 'transparent'
+      }]
+    },
+    options: commonPie
+  });
+}
+
+// 9c GAM PCB pie
+const gamPcb = getUtVsCompetitorByBucketAndTyppe_("GAM", "PCB");
+if (charts.gamPcbPie) charts.gamPcbPie.destroy();
+const ctxGamPcb = document.getElementById('chartGamPcbPie');
+if (ctxGamPcb){
+  charts.gamPcbPie = new Chart(ctxGamPcb, {
+    type:'pie',
+    data:{
+      labels:['UT','Competitor'],
+      datasets:[{
+        data:[gamPcb.ut, gamPcb.competitor],
+        backgroundColor:['#FFCC00','#111827'],
+        borderWidth: 0,
+        borderColor: 'transparent'
+      }]
+    },
+    options: commonPie
+  });
+}
   charts.j = new Chart(ctxJ, {
     type:'bar',
     data:{
@@ -4059,6 +4205,92 @@ function formatIDR_(n){
   return "IDR " + v.toLocaleString("id-ID");
 }
 
+function mergePartsRows_(rows){
+  const map = new Map();
+
+  (rows || []).forEach(p => {
+    const key = normU((p.part_no || "") + "|" + (p.part_desc || ""));
+    if (!map.has(key)) {
+      map.set(key, {
+        part_no: p.part_no || "-",
+        part_desc: p.part_desc || "-",
+        qty: Number(p.qty || 0),
+        event: p.event || "",
+        model_number: p.model_number || "",
+        service_variant: p.service_variant || "",
+        component_name: p.component_name || ""
+      });
+    } else {
+      map.get(key).qty += Number(p.qty || 0);
+    }
+  });
+
+  return Array.from(map.values());
+}
+
+function findPartsForStandard_(stdKey, eventName, modelName, variantName, componentName){
+  const exactKey = String(stdKey || "").trim();
+  const exact = PARTS_BY_KEY.get(exactKey) || [];
+  if (exact.length) return mergePartsRows_(exact);
+
+  const eventKey = normU(eventName);
+  const modelKey = normU(modelName);
+  const variantKey = normU(variantName);
+  const compKey = normalizeComponentName_(componentName).replace(/[^A-Z0-9]/g, "");
+
+  let foundStrict = [];
+  let foundNoComp = [];
+  let foundModelOnly = [];
+
+  PARTS_BY_KEY.forEach((rows) => {
+    (rows || []).forEach(p => {
+      const pEvent = normU(p.event);
+      const pModel = normU(p.model_number);
+      const pVariant = normU(p.service_variant);
+      const pComp = normalizeComponentName_(p.component_name).replace(/[^A-Z0-9]/g, "");
+      const descComp = normalizeComponentName_(p.part_desc).replace(/[^A-Z0-9]/g, "");
+
+      if (eventKey && pEvent && pEvent !== eventKey) return;
+      if (modelKey && pModel && pModel !== modelKey) return;
+
+      foundModelOnly.push(p);
+
+      const variantOk = !variantKey || !pVariant || pVariant === variantKey;
+      const compOk =
+        !compKey ||
+        !pComp ||
+        pComp === compKey ||
+        descComp.includes(compKey) ||
+        compKey.includes(descComp);
+
+      if (variantOk && compOk) {
+        foundStrict.push(p);
+        return;
+      }
+
+      if (variantOk) {
+        foundNoComp.push(p);
+      }
+    });
+  });
+
+  if (foundStrict.length) return mergePartsRows_(foundStrict);
+  if (foundNoComp.length) return mergePartsRows_(foundNoComp);
+  return mergePartsRows_(foundModelOnly);
+}
+
+function normalizeComponentName_(v){
+  const s = normU(v).replace(/[^A-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+
+  if (s.includes("ENGINE")) return "ENGINE";
+  if (s.includes("TRANSMISSION")) return "TRANSMISSION";
+  if (s.includes("TENSION PULLEY")) return "ENGINE";
+  if (s.includes("MAIN PUMP")) return "MAIN PUMP";
+  if (s.includes("PTO")) return "PTO";
+  if (s.includes("FD") || s.includes("TGB")) return "FD/TGB";
+  return s;
+}
+
 function normCustomerKey_(v){
   return String(v ?? "")
     .trim()
@@ -4184,15 +4416,27 @@ const std = {
   std_key,
   standard_key: std_key,
   event: normU(pick(r, ["event"])),
-  model_number: String(pick(r, ["model_number", "Model Number"]) || "").trim() || null,
+  model_number: String(pick(r, ["model_number", "Model Number", "Unit Model"]) || "").trim() || null,
+  service_variant: String(pick(r, ["service_variant", "Service Variant"]) || "").trim() || null,
+  component_name: String(pick(r, ["component_name", "Component Name"]) || "").trim() || null,
+  uom: String(pick(r, ["uom", "UOM"]) || "").trim() || null,
+  ramp_lifetime: asNum(pick(r, ["ramp_lifetime", "Ramp Lifetime"])),
+  batas_ideal: asNum(pick(r, ["batas_ideal", "Batas Ideal", "Batas Ideal Lifetime"])),
   hm_trigger: asNum(pick(r, ["hm_trigger", "HM Trigger"])),
+  service_scope: String(pick(r, [
+    "service_scope",
+    "Service Product / Scope",
+    "service_product",
+    "scope"
+  ]) || "").trim() || null,
   package_total_price: asNum(pick(r, [
     "package_total_price",
     "package_price",
     "total_package_price",
     "Package Total Price",
     "Package Price",
-    "Package Total"
+    "Package Total",
+    "Package Total Price (IDR)"
   ])),
   active: pick(r, ["active"])
 };
@@ -4200,23 +4444,55 @@ const std = {
     STD_BY_KEY.set(std_key, std);
   });
 
-    partsRows.forEach(r => {
-      const std_key = String(pick(r, ["standard_key", "std_key"]) || "").trim();
-      if (!std_key) return;
+    function parseStdKeyMeta_(stdKey){
+  const raw = String(stdKey || "").trim();
+  const parts = raw.split("|");
 
-      const part_no = normU(pick(r, ["part_no", "part", "pn"]));
-      const part_desc = String(
-        pick(r, ["part_desc", "description", "Part Desc", "Description"]) || ""
-      ).trim();
-      const qty = asNum(pick(r, ["qty", "quantity"]));
+  return {
+    event: parts[0] || "",
+    model_number: parts[2] || "",
+    service_variant: parts[3] || "",
+    component_name: parts.slice(4).join("|") || ""
+  };
+}
 
-      if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
-      PARTS_BY_KEY.get(std_key).push({
-        part_no,
-        part_desc,
-        qty
-      });
-    });
+partsRows.forEach(r => {
+  const std_key = String(pick(r, ["standard_key", "std_key"]) || "").trim();
+  if (!std_key) return;
+
+  const meta = parseStdKeyMeta_(std_key);
+
+  const event = normU(pick(r, ["event"]) || meta.event);
+  const model_number = String(
+    pick(r, ["model_number", "Model Number", "Unit Model"]) || meta.model_number || ""
+  ).trim();
+
+  const service_variant = String(
+    pick(r, ["service_variant", "Service Variant"]) || meta.service_variant || ""
+  ).trim();
+
+  const component_name = String(
+    pick(r, ["component_name", "Component Name", "Service Product / Scope"]) || meta.component_name || ""
+  ).trim();
+
+  const part_no = normU(pick(r, ["part_no", "part", "pn", "Part No"]));
+  const part_desc = String(
+    pick(r, ["part_desc", "description", "Part Desc", "Description"]) || ""
+  ).trim();
+  const qty = asNum(pick(r, ["qty", "quantity", "Qty", "QTY"]));
+
+  if (!PARTS_BY_KEY.has(std_key)) PARTS_BY_KEY.set(std_key, []);
+  PARTS_BY_KEY.get(std_key).push({
+    standard_key: std_key,
+    event,
+    model_number,
+    service_variant,
+    component_name,
+    part_no,
+    part_desc,
+    qty
+  });
+});
 
     pricesRows.forEach(r => {
       const part_no_raw = String(pick(r, ["part_no", "part", "pn", "Part No"]) || "").trim();
@@ -4611,84 +4887,275 @@ function initPlanningFromSupabase(){
       else el.value = "ALL";
     }
 
-function renderPlanningStandardsTable_(selectedModel, selectedEvents){
-  const wrap = document.getElementById("planningStandardsTable");
-  if (!wrap) return;
+    let STANDARD_MODAL_STACK = [];
 
-  let stdRows = Array.from(STD_BY_KEY.values()).map(s => {
-    const eventValue =
-      String(s.event || s.standard_key || s.std_key || "")
-        .split("|")[0]
-        .trim()
-        .toUpperCase();
+function resetStandardModalStack_() {
+  STANDARD_MODAL_STACK = [];
+}
 
-    return {
-      ...s,
-      event: eventValue
-    };
-  }).filter(s => ["MIDLIFE", "GOH", "CYLINDER"].includes(s.event));
+function pushStandardModalState_(state) {
+  STANDARD_MODAL_STACK.push(state);
+}
 
-  if (selectedEvents && selectedEvents.length) {
-    const eventSet = new Set(selectedEvents.map(normU));
-    stdRows = stdRows.filter(s => eventSet.has(normU(s.event)));
-  }
+function popStandardModalState_() {
+  if (!STANDARD_MODAL_STACK.length) return null;
+  return STANDARD_MODAL_STACK.pop();
+}
 
-  if (selectedModel !== "ALL") {
-    stdRows = stdRows.filter(s => String(s.model_number || "").trim() === String(selectedModel));
-  }
+function closeSubHalaman() {
+  resetStandardModalStack_();
+  const modal = document.getElementById('subHalamanModal');
+  if (modal) modal.classList.add('hidden');
+  document.body.style.overflow = '';
+}
 
-  stdRows.sort((a, b) => {
-    const modelCmp = String(a.model_number || "").localeCompare(String(b.model_number || ""));
-    if (modelCmp !== 0) return modelCmp;
-    return String(a.event || "").localeCompare(String(b.event || ""));
+function groupPlanningStandards_(selectedModel, selectedEvents) {
+  let rows = Array.from(STD_BY_KEY.values()).filter(s => {
+    if (!s || !s.active) return false;
+    const ev = normU(s.event);
+    if (!["MIDLIFE", "GOH", "CYLINDER"].includes(ev)) return false;
+    if (selectedEvents?.length && !selectedEvents.map(normU).includes(ev)) return false;
+    if (selectedModel !== "ALL" && String(s.model_number || "") !== String(selectedModel)) return false;
+    return true;
   });
 
-  if (!stdRows.length) {
-    wrap.innerHTML = `
-      <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
-        <div class="py-10 text-center text-[var(--muted)] font-bold">
-          Standard MIDLIFE / GOH belum tersedia.
-        </div>
+  const grouped = new Map();
+
+  rows.forEach(s => {
+    const gKey = [
+      normU(s.event),
+      String(s.model_number || "").trim().toUpperCase(),
+      String(s.service_variant || "").trim().toUpperCase()
+    ].join("|");
+
+    if (!grouped.has(gKey)) {
+      grouped.set(gKey, {
+        group_key: gKey,
+        event: s.event || "-",
+        model_number: s.model_number || "-",
+        service_variant: s.service_variant || "-",
+        hm_trigger: s.hm_trigger ?? null,
+        batas_ideal: s.batas_ideal ?? null,
+        package_total_price: 0,
+        standards: []
+      });
+    }
+
+    const g = grouped.get(gKey);
+    g.standards.push(s);
+    g.package_total_price += Number(s.package_total_price || 0);
+
+    if ((g.hm_trigger == null || Number(g.hm_trigger) <= 0) && Number(s.hm_trigger || 0) > 0) {
+      g.hm_trigger = Number(s.hm_trigger);
+    }
+    if ((g.batas_ideal == null || Number(g.batas_ideal) <= 0) && Number(s.batas_ideal || 0) > 0) {
+      g.batas_ideal = Number(s.batas_ideal);
+    }
+  });
+
+  return Array.from(grouped.values()).sort((a, b) => {
+    const eventCmp = String(a.event || "").localeCompare(String(b.event || ""));
+    if (eventCmp !== 0) return eventCmp;
+
+    const modelCmp = String(a.model_number || "").localeCompare(String(b.model_number || ""));
+    if (modelCmp !== 0) return modelCmp;
+
+    return String(a.service_variant || "").localeCompare(String(b.service_variant || ""));
+  });
+}
+
+function openStandardComponentsModal_(eventName, modelName, variantName) {
+  const modal = document.getElementById('subHalamanModal');
+  const title = document.getElementById('modalTitle');
+  const filterWrap = document.getElementById('subModalFilter');
+  const content = document.getElementById('subModalContent');
+
+  if (!modal || !title || !content) return;
+
+  const rows = Array.from(STD_BY_KEY.values())
+    .filter(s =>
+      normU(s.event) === normU(eventName) &&
+      String(s.model_number || "").trim() === String(modelName || "").trim() &&
+      String(s.service_variant || "").trim() === String(variantName || "").trim()
+    )
+    .sort((a, b) => String(a.component_name || "").localeCompare(String(b.component_name || "")));
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  title.innerText = `DETAIL KOMPONEN - ${normU(eventName)} | ${modelName} | ${variantName || "-"}`;
+  title.className = "text-2xl font-black uppercase tracking-tight text-[var(--text)]";
+
+  filterWrap.innerHTML = `
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="text-[12px] font-black uppercase text-[var(--text)]">Job Type: ${normU(eventName)}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Model: ${modelName}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Variant: ${variantName || "-"}</div>
       </div>
-    `;
+      <button onclick="closeSubHalaman()"
+        class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
+        Kembali ke Standard
+      </button>
+    </div>
+  `;
+
+  if (!rows.length) {
+    content.innerHTML = `<div class="py-16 text-center text-[var(--muted)] font-bold">Detail komponen tidak ditemukan.</div>`;
     return;
   }
 
-  wrap.innerHTML = `
+  content.innerHTML = `
     <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
-      <div class="p-4 border-b border-[var(--border)] flex justify-between">
-        <div class="text-[var(--text)] font-black uppercase text-[12px]">Standard Midlife / GOH / Cylinder</div>
-      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-[11px] text-left whitespace-nowrap">
           <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
             <tr>
-              <th class="p-4">Job Typpe</th>
-              <th class="p-4">Model</th>
-              <th class="p-4 text-center">Parts Package</th>
+              <th class="p-4">Detail Komponent</th>
+              <th class="p-4">Part Package</th>
+              <th class="p-4 text-right">Ramp Lifetime</th>
               <th class="p-4 text-right">HM Trigger</th>
+              <th class="p-4 text-right">Batas Ideal</th>
               <th class="p-4 text-right">Package Total Price</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--border)]">
-            ${stdRows.map(s => `
-              <tr class="hover:bg-black/5 transition-colors">
-                <td class="p-4 font-black ${s.event === "GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${s.event || "-"}</td>
-                <td class="p-4 text-[var(--text)] font-bold">${s.model_number || "-"}</td>
-                <td class="p-4 text-center">
-                  <button
-                    data-std-key="${escHtmlAttr_(s.standard_key || s.std_key || "")}"
-                    data-event="${escHtmlAttr_(s.event || "")}"
-                    data-model="${escHtmlAttr_(s.model_number || "")}"
-                    data-label="Parts Package"
-                    onclick="openServiceProductsModal(this.dataset.stdKey,this.dataset.event,this.dataset.model,this.dataset.label)"
-                    class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
-                  >
-                    Parts Package
-                  </button>
-                </td>
-                <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.hm_trigger || 0) > 0 ? Number(s.hm_trigger).toLocaleString("id-ID") : "-"}</td>
-                <td class="p-4 text-right text-[var(--accent)] font-black">${Number(s.package_total_price || 0) > 0 ? formatIDR_(s.package_total_price) : "-"}</td>
+            ${rows.map(s => {
+              const stdKey = s.standard_key || s.std_key || "";
+              const parts = findPartsForStandard_(
+  stdKey,
+  eventName,
+  modelName,
+  variantName,
+  s.component_name || s.service_scope || ""
+);
+              const hasParts = parts.length > 0;
+              const pkgLabel = String(s.service_scope || s.component_name || "Detail Part Package").trim() || "Detail Part Package";
+
+              return `
+                <tr class="hover:bg-black/5 transition-colors">
+                  <td class="p-4 text-[var(--text)] font-bold">${s.component_name || "-"}</td>
+                  <td class="p-4">
+                    <button
+                      onclick="openStandardPartPackageModal_('${String(stdKey).replace(/'/g, "\\'")}', '${String(eventName).replace(/'/g, "\\'")}', '${String(modelName).replace(/'/g, "\\'")}', '${String(variantName || "").replace(/'/g, "\\'")}', '${String(s.component_name || "-").replace(/'/g, "\\'")}')"
+                      class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+                    >
+                      ${hasParts ? pkgLabel : "Lihat Detail"}
+                    </button>
+                  </td>
+                  <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.ramp_lifetime || 0) > 0 ? Number(s.ramp_lifetime).toLocaleString("id-ID") : "-"}</td>
+                  <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.hm_trigger || 0) > 0 ? Number(s.hm_trigger).toLocaleString("id-ID") : "-"}</td>
+                  <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.batas_ideal || 0) > 0 ? Number(s.batas_ideal).toLocaleString("id-ID") : "-"}</td>
+                  <td class="p-4 text-right text-[var(--accent)] font-black">${Number(s.package_total_price || 0) > 0 ? formatIDR_(s.package_total_price) : "-"}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function openStandardPartPackageModal_(stdKey, eventName, modelName, variantName, componentName) {
+  const modal = document.getElementById('subHalamanModal');
+  const title = document.getElementById('modalTitle');
+  const filterWrap = document.getElementById('subModalFilter');
+  const content = document.getElementById('subModalContent');
+
+  if (!modal || !title || !content) return;
+
+  const std = STD_BY_KEY.get(stdKey) || {};
+const parts = findPartsForStandard_(
+  stdKey,
+  eventName,
+  modelName,
+  variantName,
+  componentName || std.component_name || std.service_scope || ""
+);
+
+  const pricedParts = parts.map(p => {
+  const price = PRICE_BY_PART.get(normU(p.part_no));
+  const unitPrice = price == null ? null : Number(price || 0);
+  const qty = Number(p.qty || 0);
+
+  return {
+    part_desc: p.part_desc || "-",
+    part_no: p.part_no || "-",
+    qty,
+    unit_price: unitPrice,
+    subtotal: unitPrice == null ? null : qty * unitPrice
+  };
+}).filter(p => p.part_no !== "-" || p.part_desc !== "-");
+
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  title.innerText = `DETAIL PART PACKAGE - ${componentName || "-"}`;
+  title.className = "text-2xl font-black uppercase tracking-tight text-[var(--text)]";
+
+  filterWrap.innerHTML = `
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="text-[12px] font-black uppercase text-[var(--text)]">Job Type: ${normU(eventName)}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Model: ${modelName}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Variant: ${variantName || "-"}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Component: ${componentName || "-"}</div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="openStandardComponentsModal_('${String(eventName).replace(/'/g, "\\'")}', '${String(modelName).replace(/'/g, "\\'")}', '${String(variantName || "").replace(/'/g, "\\'")}')"
+          class="border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-2)] px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
+          Kembali ke Komponen
+        </button>
+
+        <button onclick="closeSubHalaman()"
+          class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
+          Kembali ke Standard
+        </button>
+      </div>
+    </div>
+  `;
+
+  if (!pricedParts.length) {
+  console.warn("PART LOOKUP EMPTY", {
+    stdKey,
+    eventName,
+    modelName,
+    variantName,
+    componentName,
+    partsByKeySize: PARTS_BY_KEY.size
+  });
+
+  content.innerHTML = `
+    <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+      <div class="py-16 text-center text-[var(--muted)] font-bold">Detail part package belum tersedia.</div>
+    </div>
+  `;
+  return;
+}
+
+  content.innerHTML = `
+    <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4 text-[12px]">Part Desc</th>
+              <th class="p-4 text-[12px]">Part No</th>
+              <th class="p-4 text-[12px] text-right">Qty</th>
+              <th class="p-4 text-[12px] text-right">Unit Price</th>
+              <th class="p-4 text-[12px] text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${pricedParts.map(p => `
+              <tr class="hover:bg-black/5 transition-colors text-xs">
+                <td class="p-4 text-[var(--text)] font-bold">${p.part_desc || "-"}</td>
+                <td class="p-4 text-[var(--text)] font-mono font-bold">${p.part_no || "-"}</td>
+                <td class="p-4 text-right text-[var(--text)] font-black">${Number(p.qty || 0)}</td>
+                <td class="p-4 text-right text-[var(--text)] font-black">${p.unit_price == null ? "-" : formatIDR_(p.unit_price)}</td>
+                <td class="p-4 text-right text-[var(--accent)] font-black">${p.subtotal == null ? "-" : formatIDR_(p.subtotal)}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -4696,6 +5163,64 @@ function renderPlanningStandardsTable_(selectedModel, selectedEvents){
       </div>
     </div>
   `;
+}
+
+function renderPlanningStandardsTable_(selectedModel, selectedEvents){
+  const wrap = document.getElementById("planningStandardsTable");
+  if (!wrap) return;
+
+  const groupedRows = groupPlanningStandards_(selectedModel, selectedEvents);
+
+  if (!groupedRows.length) {
+    wrap.innerHTML = `
+      <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+        <div class="py-10 text-center text-[var(--muted)] font-bold">
+          Standard MIDLIFE / GOH / CYLINDER belum tersedia.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+  <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+    <div class="planning-scroll-10 custom-scrollbar">
+      <table class="w-full text-[11px] text-left whitespace-nowrap">
+        <thead class="sticky top-0 z-10 bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+          <tr>
+            <th class="p-4">Job Typpe</th>
+            <th class="p-4">Model</th>
+            <th class="p-4">Variant</th>
+            <th class="p-4 text-center">Detail Komponen</th>
+            <th class="p-4 text-right">HM Trigger</th>
+            <th class="p-4 text-right">Batas Ideal</th>
+            <th class="p-4 text-right">Package Total Price</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)]">
+          ${groupedRows.map(g => `
+            <tr class="hover:bg-black/5 transition-colors">
+              <td class="p-4 font-black ${g.event === "GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${g.event || "-"}</td>
+              <td class="p-4 text-[var(--text)] font-bold">${g.model_number || "-"}</td>
+              <td class="p-4 text-[var(--text)] font-bold">${g.service_variant || "-"}</td>
+              <td class="p-4 text-center">
+                <button
+                  onclick="openStandardComponentsModal_('${String(g.event).replace(/'/g, "\\'")}', '${String(g.model_number).replace(/'/g, "\\'")}', '${String(g.service_variant || "").replace(/'/g, "\\'")}')"
+                  class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+                >
+                  Lihat Detail
+                </button>
+              </td>
+              <td class="p-4 text-right text-[var(--text)] font-black">${Number(g.hm_trigger || 0) > 0 ? Number(g.hm_trigger).toLocaleString("id-ID") : "-"}</td>
+              <td class="p-4 text-right text-[var(--text)] font-black">${Number(g.batas_ideal || 0) > 0 ? Number(g.batas_ideal).toLocaleString("id-ID") : "-"}</td>
+              <td class="p-4 text-right text-[var(--accent)] font-black">${Number(g.package_total_price || 0) > 0 ? formatIDR_(g.package_total_price) : "-"}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  </div>
+`;
 }
 
 function renderPlanningFromSupabase(){
@@ -4897,55 +5422,56 @@ if (elShare) {
   const tbl = document.getElementById("planningTable");
   if (tbl){
     tbl.innerHTML = `
-      <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
-        <div class="p-4 border-b border-[var(--border)] flex justify-between">
-          <div class="text-[var(--text)] font-black uppercase text-[12px]">Opportunity Unit</div>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-[11px] text-left whitespace-nowrap">
-            <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
-            <tr>
-              <th class="p-4">Job Typpe</th>
-              <th class="p-4">Customer</th>
-              <th class="p-4">Model</th>
-              <th class="p-4">Serial</th>
-              <th class="p-4 text-right">HM Actual</th>
-              <th class="p-4 text-center">Service Product</th>
-              <th class="p-4 text-right">Cost</th>
-              <th class="p-4 text-right">Missing Price</th>
+  <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+    <div class="p-4 border-b border-[var(--border)] flex justify-between">
+      <div class="text-[var(--text)] font-black uppercase text-[12px]">Opportunity Unit</div>
+    </div>
+
+    <div class="planning-scroll-10 custom-scrollbar">
+      <table class="w-full text-[11px] text-left whitespace-nowrap">
+        <thead class="sticky top-0 z-10 bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+          <tr>
+            <th class="p-4">Job Typpe</th>
+            <th class="p-4">Customer</th>
+            <th class="p-4">Model</th>
+            <th class="p-4">Serial</th>
+            <th class="p-4 text-right">HM Actual</th>
+            <th class="p-4 text-center">Service Product</th>
+            <th class="p-4 text-right">Cost</th>
+            <th class="p-4 text-right">Missing Price</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[var(--border)]">
+          ${viewItems.map(it=>`
+            <tr class="hover:bg-black/5 transition-colors">
+              <td class="p-4 font-black ${it.event==="GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${it.event}</td>
+              <td class="p-4 text-[var(--text)] font-bold">${it.customer}</td>
+              <td class="p-4 text-[var(--text)]">${it.model}</td>
+              <td class="p-4 text-[var(--text)] font-mono font-bold">${it.serial}</td>
+              <td class="p-4 text-right text-[var(--text)] font-bold">${it.current_hm ?? "-"}</td>
+              <td class="p-4 text-center">
+                <button
+                  data-std-key="${escHtmlAttr_(it.std_key)}"
+                  data-event="${escHtmlAttr_(it.event)}"
+                  data-model="${escHtmlAttr_(it.model)}"
+                  data-label="${escHtmlAttr_(it.service_product_label)}"
+                  onclick="openServiceProductsModal(this.dataset.stdKey,this.dataset.event,this.dataset.model,this.dataset.label)"
+                  class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+                >
+                  ${it.service_product_label}
+                </button>
+              </td>
+              <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>
+              <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
+                ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
+              </td>
             </tr>
-            </thead>
-            <tbody class="divide-y divide-[var(--border)]">
-              ${viewItems.map(it=>`
-                <tr class="hover:bg-black/5 transition-colors">
-                  <td class="p-4 font-black ${it.event==="GOH" ? "text-[var(--bad)]" : "text-[var(--text)]"}">${it.event}</td>
-                  <td class="p-4 text-[var(--text)] font-bold">${it.customer}</td>
-                  <td class="p-4 text-[var(--text)]">${it.model}</td>
-                  <td class="p-4 text-[var(--text)] font-mono font-bold">${it.serial}</td>
-                  <td class="p-4 text-right text-[var(--text)] font-bold">${it.current_hm ?? "-"}</td>
-                  <td class="p-4 text-center">
-                    <button
-                      data-std-key="${escHtmlAttr_(it.std_key)}"
-                      data-event="${escHtmlAttr_(it.event)}"
-                      data-model="${escHtmlAttr_(it.model)}"
-                      data-label="${escHtmlAttr_(it.service_product_label)}"
-                      onclick="openServiceProductsModal(this.dataset.stdKey,this.dataset.event,this.dataset.model,this.dataset.label)"
-                      class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
-                    >
-                      ${it.service_product_label}
-                    </button>
-                  </td>
-                  <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>
-                  <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
-                    ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
-                  </td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  </div>
+`;
   }
 
 renderPlanningCharts_(
