@@ -261,6 +261,154 @@ th {
   letter-spacing: 0.06em;
 }
 
+.market-share-poster{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.market-share-stage{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  height:320px;
+}
+
+.market-share-donut-wrap{
+  position:absolute;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:240px;
+  height:240px;
+}
+
+.market-share-note{
+  position:absolute;
+  max-width:120px;
+  font-size:12px;
+  font-weight:900;
+  line-height:1.2;
+  color:var(--text);
+}
+
+.market-share-note-left-top{
+  left:-6px;
+  top:26px;
+  text-align:left;
+}
+
+.market-share-note-right-bottom{
+  right:-20px;
+  top:142px;
+  text-align:right;
+}
+
+.market-share-unit{
+  position:absolute;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  padding:6px 12px;
+  background:rgba(122,129,0,0.92);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  line-height:1;
+  box-shadow:0 8px 16px rgba(0,0,0,0.14);
+}
+
+.market-share-unit-left{
+  left:-6px;
+  top:74px;
+}
+
+.market-share-unit-right{
+  right:-6px;
+  top:98px;
+}
+
+.market-share-machine{
+  position:absolute;
+  left:50%;
+  bottom:-6px;
+  transform:translateX(-50%);
+  width:min(270px,72%);
+  max-height:150px;
+  object-fit:contain;
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,0.18));
+  pointer-events:none;
+}
+
+.market-share-footer{
+  margin-top:10px;
+  background:var(--accent);
+  color:#000;
+  font-size:13px;
+  font-weight:900;
+  line-height:1.2;
+  text-transform:uppercase;
+  padding:6px 12px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.10);
+}
+
+@media (max-width: 767px){
+  .market-share-stage{
+    max-width:320px;
+    height:285px;
+  }
+
+  .market-share-donut-wrap{
+    top:20px;
+    width:190px;
+    height:190px;
+  }
+
+  .market-share-note{
+    max-width:96px;
+    font-size:11px;
+  }
+
+  .market-share-note-left-top{
+    left:0;
+    top:18px;
+  }
+
+  .market-share-note-right-bottom{
+  right:-6px;
+  top:122px;
+}
+
+  .market-share-unit{
+    min-height:30px;
+    padding:5px 10px;
+    font-size:11px;
+  }
+
+  .market-share-unit-left{
+    left:0;
+    top:58px;
+  }
+
+  .market-share-unit-right{
+    right:0;
+    top:88px;
+  }
+
+  .market-share-machine{
+    width:min(220px,74%);
+    max-height:120px;
+    bottom:-2px;
+  }
+
+  .market-share-footer{
+    font-size:12px;
+    text-align:center;
+  }
+}
+
 /* scrollbar - versi lebih clean */
 .custom-scrollbar{
   scrollbar-width: thin;
@@ -1125,14 +1273,52 @@ header{
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
       Perbandingan Unit UT vs Competitor - KPP (PCB)
     </h3>
-    <div class="w-full h-[250px]"><canvas id="chartKppPcbPie"></canvas></div>
+
+    <div class="market-share-poster">
+      <div class="market-share-stage">
+        <div id="kppCompPct" class="market-share-note market-share-note-left-top">Competitor; 0%</div>
+        <div id="kppCompUnit" class="market-share-unit market-share-unit-left">0 Unit</div>
+
+        <div class="market-share-donut-wrap">
+          <canvas id="chartKppPcbPie"></canvas>
+        </div>
+
+        <div id="kppUtUnit" class="market-share-unit market-share-unit-right">0 Unit</div>
+        <div id="kppUtPct" class="market-share-note market-share-note-right-bottom">UT Product; 0%</div>
+
+        <img src="./PC2000-11R.png" alt="PC2000-11R" class="market-share-machine">
+      </div>
+
+      <div id="kppShareHeadline" class="market-share-footer">
+        UT Market Share 0%
+      </div>
+    </div>
   </div>
 
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
       Perbandingan Unit UT vs Competitor - GAM (PCB)
     </h3>
-    <div class="w-full h-[250px]"><canvas id="chartGamPcbPie"></canvas></div>
+
+    <div class="market-share-poster">
+      <div class="market-share-stage">
+        <div id="gamCompPct" class="market-share-note market-share-note-left-top">Competitor; 0%</div>
+        <div id="gamCompUnit" class="market-share-unit market-share-unit-left">0 Unit</div>
+
+        <div class="market-share-donut-wrap">
+          <canvas id="chartGamPcbPie"></canvas>
+        </div>
+
+        <div id="gamUtUnit" class="market-share-unit market-share-unit-right">0 Unit</div>
+        <div id="gamUtPct" class="market-share-note market-share-note-right-bottom">UT Product; 0%</div>
+
+        <img src="./PC2000-11R.png" alt="PC2000-11R" class="market-share-machine">
+      </div>
+
+      <div id="gamShareHeadline" class="market-share-footer">
+        UT Market Share 0%
+      </div>
+    </div>
   </div>
 </div>
 </div>
@@ -2577,6 +2763,36 @@ function getUtVsCompetitorByBucketAndTyppe_(bucket, typpe){
   };
 }
 
+function getMarketShareMeta_(ut, competitor){
+  const safeUT = Number(ut || 0);
+  const safeCompetitor = Number(competitor || 0);
+  const total = safeUT + safeCompetitor;
+
+  const utPct = total > 0 ? (safeUT * 100 / total) : 0;
+  const compPct = total > 0 ? (safeCompetitor * 100 / total) : 0;
+
+  return {
+    ut: safeUT,
+    competitor: safeCompetitor,
+    total,
+    utPct,
+    compPct
+  };
+}
+
+function updateMarketSharePosterText_(prefix, meta){
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText(`${prefix}CompPct`, `Competitor; ${meta.compPct.toFixed(1)}%`);
+  setText(`${prefix}CompUnit`, `${meta.competitor} Unit`);
+  setText(`${prefix}UtUnit`, `${meta.ut} Unit`);
+  setText(`${prefix}UtPct`, `UT Product; ${meta.utPct.toFixed(1)}%`);
+  setText(`${prefix}ShareHeadline`, `UT Market Share ${meta.utPct.toFixed(0)}%`);
+}
+
 const BAR_ANIMATION_ = {
   duration: 900,
   easing: 'easeOutQuart',
@@ -2892,45 +3108,78 @@ const brandVals = topBrands.map(([, value]) => value);
 if (charts.j) charts.j.destroy();
 const ctxJ = document.getElementById('chartJenisBar');
 if (ctxJ){
-  // 9b KPP PCB pie
-const kppPcb = getUtVsCompetitorByBucketAndTyppe_("KPP", "PCB");
-if (charts.kppPcbPie) charts.kppPcbPie.destroy();
-const ctxKppPcb = document.getElementById('chartKppPcbPie');
-if (ctxKppPcb){
-  charts.kppPcbPie = new Chart(ctxKppPcb, {
-    type:'pie',
-    data:{
-      labels:['UT','Competitor'],
-      datasets:[{
-        data:[kppPcb.ut, kppPcb.competitor],
-        backgroundColor:['#FFCC00','#111827'],
-        borderWidth: 0,
-        borderColor: 'transparent'
-      }]
+  const sharePosterOptions = {
+    responsive:true,
+    maintainAspectRatio:false,
+    cutout:'56%',
+    animation:{
+      duration:1000,
+      easing:'easeOutQuart',
+      animateRotate:true,
+      animateScale:true
     },
-    options: commonPie
-  });
-}
+    plugins:{
+      legend:{ display:false },
+      datalabels:{ display:false },
+      tooltip:{
+        callbacks:{
+          label:(ctx)=>{
+            const val = ctx.parsed ?? 0;
+            const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+            const pct = total > 0 ? ((val * 100) / total).toFixed(1) : "0.0";
+            return `${ctx.label}: ${val} unit (${pct}%)`;
+          }
+        }
+      }
+    }
+  };
 
-// 9c GAM PCB pie
-const gamPcb = getUtVsCompetitorByBucketAndTyppe_("GAM", "PCB");
-if (charts.gamPcbPie) charts.gamPcbPie.destroy();
-const ctxGamPcb = document.getElementById('chartGamPcbPie');
-if (ctxGamPcb){
-  charts.gamPcbPie = new Chart(ctxGamPcb, {
-    type:'pie',
-    data:{
-      labels:['UT','Competitor'],
-      datasets:[{
-        data:[gamPcb.ut, gamPcb.competitor],
-        backgroundColor:['#FFCC00','#111827'],
-        borderWidth: 0,
-        borderColor: 'transparent'
-      }]
-    },
-    options: commonPie
-  });
-}
+  // 9b KPP PCB doughnut
+  const kppPcb = getUtVsCompetitorByBucketAndTyppe_("KPP", "PCB");
+  const kppMeta = getMarketShareMeta_(kppPcb.ut, kppPcb.competitor);
+  updateMarketSharePosterText_("kpp", kppMeta);
+
+  if (charts.kppPcbPie) charts.kppPcbPie.destroy();
+  const ctxKppPcb = document.getElementById('chartKppPcbPie');
+  if (ctxKppPcb){
+    charts.kppPcbPie = new Chart(ctxKppPcb, {
+      type:'doughnut',
+      data:{
+        labels:['UT','Competitor'],
+        datasets:[{
+          data:[kppMeta.ut, kppMeta.competitor],
+          backgroundColor:['#FFCC00','#111827'],
+          borderWidth:0,
+          borderColor:'transparent'
+        }]
+      },
+      options: sharePosterOptions
+    });
+  }
+
+  // 9c GAM PCB doughnut
+  const gamPcb = getUtVsCompetitorByBucketAndTyppe_("GAM", "PCB");
+  const gamMeta = getMarketShareMeta_(gamPcb.ut, gamPcb.competitor);
+  updateMarketSharePosterText_("gam", gamMeta);
+
+  if (charts.gamPcbPie) charts.gamPcbPie.destroy();
+  const ctxGamPcb = document.getElementById('chartGamPcbPie');
+  if (ctxGamPcb){
+    charts.gamPcbPie = new Chart(ctxGamPcb, {
+      type:'doughnut',
+      data:{
+        labels:['UT','Competitor'],
+        datasets:[{
+          data:[gamMeta.ut, gamMeta.competitor],
+          backgroundColor:['#FFCC00','#111827'],
+          borderWidth:0,
+          borderColor:'transparent'
+        }]
+      },
+      options: sharePosterOptions
+    });
+  }
+
   charts.j = new Chart(ctxJ, {
     type:'bar',
     data:{
