@@ -959,9 +959,14 @@ header{
     </a>
 
     <button onclick="exportToExcelFromSupabase()"
-      class="mobile-action-rect mobile-action-outline">
-      Export Excel
-    </button>
+  class="mobile-action-rect mobile-action-outline">
+  Export Excel
+</button>
+
+<button onclick="openAdminDeleteModal_()"
+  class="admin-delete-trigger mobile-action-rect border border-red-500 text-red-500 bg-transparent">
+  Admin Login
+</button>
   </div>
 </div>
 
@@ -1048,10 +1053,17 @@ header{
           Ajukan Update
         </a>
 
-        <button onclick="exportToExcelFromSupabase()"
-          class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 rounded-full text-[12px] font-black uppercase transition-all">
-          Export Excel
-        </button>
+        <div class="flex items-center gap-3">
+  <button onclick="exportToExcelFromSupabase()"
+    class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 rounded-full text-[12px] font-black uppercase transition-all">
+    Export Excel
+  </button>
+
+  <button onclick="openAdminDeleteModal_()"
+    class="admin-delete-trigger border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-5 py-2 rounded-full text-[12px] font-black uppercase transition-all">
+    Mutasi unit
+  </button>
+</div>
 
         <div class="flex items-center gap-2 ml-4">
           <span class="relative flex h-2 w-2">
@@ -1119,7 +1131,7 @@ header{
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
   <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
-    <span class="card-title-lg text-[var(--text)] font-black uppercase">Populasi Sangkulirang</span>
+    <span class="card-title-lg text-[var(--text)] font-black uppercase">Population Sangkulirang</span>
     <span id="res-total-ut" class="card-value-hero font-black block mt-3 tracking-tighter text-[var(--accent)]">0</span>
   </div>
 
@@ -1179,7 +1191,7 @@ header{
 
       <div class="soft-panel p-8 rounded-3xl">
         <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
-          <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Grafik Populasi per Model Number
+          <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Grafik Population per Model Number
         </h3>
       <div class="overflow-x-auto overflow-y-hidden custom-scrollbar">
         <div id="container-model-chart" class="h-[450px]" style="min-width: 1400px;">
@@ -1218,17 +1230,17 @@ header{
 <div id="page-charts" class="tab-content hidden">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
     <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Sangkulirang Unit UT vs Competitor (%)</h3>
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Sangkulirang Population</h3>
       <div class="w-full h-[250px]"><canvas id="chartUnitComposition"></canvas></div>
     </div>
 
     <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Work Center Distribution (%)</h3>
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Work Center</h3>
       <div class="w-full h-[250px]"><canvas id="chartWorkCenter"></canvas></div>
     </div>
 
     <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
-      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Status Warranty (%)</h3>
+      <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Status Warranty</h3>
       <div class="w-full h-[250px]"><canvas id="chartWarranty"></canvas></div>
     </div>
   </div>
@@ -1240,7 +1252,7 @@ header{
   </div>
 
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
-    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Populasi per Sektor</h3>
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">Population per Sektor</h3>
     <div class="w-full h-[250px]"><canvas id="chartSector"></canvas></div>
   </div>
 </div>
@@ -1263,7 +1275,7 @@ header{
 
 <div class="soft-panel p-8 rounded-3xl mb-6">
   <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-8 tracking-widest italic text-center">
-    Populasi Berdasarkan Brand (Prod Hier)
+    Population Berdasarkan Brand (Prod Hier)
   </h3>
   <div class="w-full h-[400px]"><canvas id="chartJenisBar"></canvas></div>
 </div>
@@ -1271,7 +1283,7 @@ header{
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      Perbandingan Unit UT vs Competitor - KPP (PCB)
+      KPP (PCB) Population 
     </h3>
 
     <div class="market-share-poster">
@@ -1297,7 +1309,7 @@ header{
 
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      Perbandingan Unit UT vs Competitor - GAM (PCB)
+      GAM (PCB) Population
     </h3>
 
     <div class="market-share-poster">
@@ -1321,13 +1333,67 @@ header{
     </div>
   </div>
 </div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
+      KPP (RDT) Population
+    </h3>
+
+    <div class="market-share-poster">
+      <div class="market-share-stage">
+        <div id="kppRdtCompPct" class="market-share-note market-share-note-left-top">Competitor; 0%</div>
+        <div id="kppRdtCompUnit" class="market-share-unit market-share-unit-left">0 Unit</div>
+
+        <div class="market-share-donut-wrap">
+          <canvas id="chartKppRdtPie"></canvas>
+        </div>
+
+        <div id="kppRdtUtUnit" class="market-share-unit market-share-unit-right">0 Unit</div>
+        <div id="kppRdtUtPct" class="market-share-note market-share-note-right-bottom">UT Product; 0%</div>
+
+        <img src="./Scania.png" alt="Scania" class="market-share-machine">
+      </div>
+
+      <div id="kppRdtShareHeadline" class="market-share-footer">
+        UT Market Share 0%
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
+    <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
+      GAM (RDT) Population
+    </h3>
+
+    <div class="market-share-poster">
+      <div class="market-share-stage">
+        <div id="gamRdtCompPct" class="market-share-note market-share-note-left-top">Competitor; 0%</div>
+        <div id="gamRdtCompUnit" class="market-share-unit market-share-unit-left">0 Unit</div>
+
+        <div class="market-share-donut-wrap">
+          <canvas id="chartGamRdtPie"></canvas>
+        </div>
+
+        <div id="gamRdtUtUnit" class="market-share-unit market-share-unit-right">0 Unit</div>
+        <div id="gamRdtUtPct" class="market-share-note market-share-note-right-bottom">UT Product; 0%</div>
+
+        <img src="./Scania.png" alt="Scania" class="market-share-machine">
+      </div>
+
+      <div id="gamRdtShareHeadline" class="market-share-footer">
+        UT Market Share 0%
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
     <!-- PAGE TREND -->
 <div id="page-trend" class="tab-content hidden">
   <div class="glass-panel p-8 rounded-3xl mb-6">
     <h3 class="text-[var(--text)] font-black uppercase text-xs mb-8 flex items-center italic">
-      <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Populasi Unit Year to Year
+      <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Trend Population Unit Year to Year
     </h3>
     <div class="w-full h-[450px]">
       <canvas id="chartTrendYoY"></canvas>
@@ -1358,7 +1424,7 @@ header{
 <div id="page-planning" class="tab-content hidden">
 
   <div class="glass-panel p-6 rounded-2xl mb-6">
-    <div class="text-[12px] text-[var(--muted)] font-black uppercase mb-3">Market Share (Populasi)</div>
+    <div class="text-[12px] text-[var(--muted)] font-black uppercase mb-3">Market Share (Population)</div>
     <div class="h-[360px]"><canvas id="chartPlanMarketShare"></canvas></div>
   </div>
 
@@ -1669,7 +1735,30 @@ header{
     </div>
   </div>
 
-  <div id="csvReport" class="hidden"></div>
+  <!-- ADMIN DELETE MODAL -->
+<div id="adminDeleteModal" class="hidden fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col border border-[var(--border)] overflow-hidden">
+    <div class="p-6 border-b border-[var(--border)] flex justify-between items-center bg-[var(--surface-2)]">
+      <div>
+        <h2 class="text-2xl font-black text-[var(--text)] uppercase tracking-tight">Mutasi Unit by SN</h2>
+        <p class="text-[var(--muted)] text-[12px] font-bold uppercase tracking-widest mt-1">Mutasi / Hapus Unit - Admin Only</p>
+      </div>
+      <button onclick="closeAdminDeleteModal_()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+        ✕
+      </button>
+    </div>
+
+    <div id="adminDeleteContent" class="p-6 overflow-y-auto flex-grow bg-white"></div>
+
+    <div class="p-4 border-t border-[var(--border)] text-right bg-[var(--surface-2)] rounded-b-2xl">
+      <button onclick="closeAdminDeleteModal_()" class="bg-[var(--accent)] text-black px-8 py-2 rounded-lg text-[12px] font-black uppercase shadow-sm hover:brightness-95">
+        Tutup
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="csvReport" class="hidden"></div>
 
   <script>
     // Safe register plugin (biar gak crash kalau CDN ke-block)
@@ -1687,7 +1776,24 @@ header{
     // ===== SUPABASE CONFIG =====
     const SUPABASE_URL = 'https://nhubmgvjhuqayssohvei.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odWJtZ3ZqaHVxYXlzc29odmVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NTM4MTgsImV4cCI6MjA4NjMyOTgxOH0.hmEJgrZZzi1DYw-3zFNTE8do_5oVwKzu1cdo5L1vQ4A';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Client utama dashboard: khusus baca data, jangan ikut session admin
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false
+  }
+});
+
+// Client admin: khusus Login Akses Mutasi Unit + RPC delete
+const _supabaseAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    storageKey: "ut-sangkulirang-admin-session",
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false
+  }
+});
 
     // Nama tabel unit (pakai fallback otomatis biar gak nyangkut kalau beda penamaan)
     const NAMA_TABEL_PRIMARY = 'Persebaran Unit_Sangkulirang';
@@ -1720,17 +1826,31 @@ header{
     let CURRENT_PLANNING_EXPORT_META = {};
     const CUSTOMER_TAB_WHITELIST = new Set(["KALIMANTAN PRIMA PERSADA", "GHJ TRIAGUNG MANDIRI", "MEGA GLOBAL ENERGI", "BERLIAN DUTA ENERGI", "UNGGUL DINAMIKA UTAMA"]);
 
-    function getCustomerTabData() {
-      return globalData.filter(d => CUSTOMER_TAB_WHITELIST.has(norm(d.customer)));
-    }
+function getCustomerTabData() {
+  return globalData.filter(d => {
+    return isUT(d) && String(d.customer || "").trim();
+  });
+}
+
+function getCustomerFilterDropdownData() {
+  return globalData.filter(d => {
+    return isUT(d) && CUSTOMER_TAB_WHITELIST.has(norm(d.customer));
+  });
+}
 
     // modal data
     let currentModalData = [];
-    let currentWarrantyRows = [];
-    let utRowsCache = [];
-    let nonUtRowsCache = [];
+let currentWarrantyRows = [];
+let utRowsCache = [];
+let nonUtRowsCache = [];
 
-    window.onload = loadDataFromCloud;
+// admin delete
+let ADMIN_SESSION = null;
+let IS_APP_ADMIN = false;
+let ADMIN_PREVIEW_SERIALS = [];
+let ADMIN_PREVIEW_ROWS = [];
+
+window.onload = loadDataFromCloud;
 
     // ===== TOAST =====
     function showToast(title, msg){
@@ -1743,9 +1863,421 @@ header{
       el.style.display = "block";
     }
     function hideToast(){
-      const el = document.getElementById("toast");
-      if (el) el.style.display = "none";
+  const el = document.getElementById("toast");
+  if (el) el.style.display = "none";
+}
+
+// ===== Mutasi Unit by SN =====
+_supabaseAdmin.auth.onAuthStateChange((_event, session) => {
+  ADMIN_SESSION = session || null;
+
+  refreshAdminDeleteAccess_().catch(err => {
+    console.warn("Admin auth state check skipped:", err);
+  });
+});
+
+function updateAdminDeleteButton_(){
+  const buttons = document.querySelectorAll(".admin-delete-trigger");
+  if (!buttons.length) return;
+
+  let label = "Mutasi Unit";
+
+  if (ADMIN_SESSION && IS_APP_ADMIN) {
+    label = "Mutasi Unit";
+  } else if (ADMIN_SESSION && !IS_APP_ADMIN) {
+    label = "Akses Ditolak";
+  }
+
+  buttons.forEach(btn => {
+    btn.textContent = label;
+  });
+}
+
+async function initAdminSession_(){
+  const { data, error } = await _supabaseAdmin.auth.getSession();
+
+  if (error) {
+    console.warn("Admin get session error:", error);
+    ADMIN_SESSION = null;
+    IS_APP_ADMIN = false;
+    updateAdminDeleteButton_();
+    return;
+  }
+
+  ADMIN_SESSION = data?.session || null;
+  await refreshAdminDeleteAccess_();
+}
+
+function isAdminDeleteModalOpen_(){
+  const modal = document.getElementById("adminDeleteModal");
+  return modal && !modal.classList.contains("hidden");
+}
+
+function isAdminDeleteModalOpen_(){
+  const modal = document.getElementById("adminDeleteModal");
+  return modal && !modal.classList.contains("hidden");
+}
+
+async function refreshAdminDeleteAccess_(){
+  IS_APP_ADMIN = false;
+
+  if (ADMIN_SESSION?.user?.id) {
+    const { data, error } = await _supabaseAdmin.rpc("is_current_user_app_admin");
+
+    if (error) {
+      console.warn("Admin access check error:", error);
+      showToast("Admin Check Error", error.message || "Gagal cek akses admin.");
     }
+
+    IS_APP_ADMIN = data === true;
+
+    console.log("ADMIN CHECK:", {
+      auth_user_id: ADMIN_SESSION.user.id,
+      auth_email: ADMIN_SESSION.user.email,
+      rpc_result: data,
+      error,
+      is_admin: IS_APP_ADMIN
+    });
+  }
+
+  updateAdminDeleteButton_();
+
+  if (isAdminDeleteModalOpen_()) {
+    renderAdminDeleteModal_();
+  }
+}
+
+async function openAdminDeleteModal_(){
+  const modal = document.getElementById("adminDeleteModal");
+  const content = document.getElementById("adminDeleteContent");
+  if (!modal) return;
+
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+
+  if (content) {
+    content.innerHTML = `
+      <div class="py-12 text-center">
+        <div class="text-[14px] font-black uppercase text-[var(--text)] mb-2">
+          Memeriksa akses admin...
+        </div>
+        <div class="text-[12px] font-bold text-[var(--muted)]">
+          Mohon tunggu sebentar.
+        </div>
+      </div>
+    `;
+  }
+
+  try {
+    await initAdminSession_();
+    renderAdminDeleteModal_();
+  } catch (err) {
+    console.warn("Open admin modal error:", err);
+    ADMIN_SESSION = null;
+    IS_APP_ADMIN = false;
+    updateAdminDeleteButton_();
+    renderAdminDeleteModal_();
+  }
+}
+
+function closeAdminDeleteModal_(){
+  const modal = document.getElementById("adminDeleteModal");
+  if (modal) modal.classList.add("hidden");
+  document.body.style.overflow = "auto";
+}
+
+function normalizeAdminSerialList_(text){
+  return Array.from(
+    new Set(
+      String(text || "")
+        .split(/[\n,;]+/)
+        .map(v => norm(v))
+        .filter(Boolean)
+    )
+  );
+}
+
+function getAdminSerialFromRow_(d){
+  const sn = getSerial(d);
+  return sn && sn !== "-" ? norm(sn) : "";
+}
+
+function renderAdminDeletePreviewResult_(){
+  const wrap = document.getElementById("adminDeletePreviewWrap");
+  if (!wrap) return;
+
+  if (!ADMIN_PREVIEW_SERIALS.length) {
+    wrap.innerHTML = `
+      <div class="bg-[var(--surface-2)] rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)] font-bold">
+        Masukkan daftar SN lalu klik Preview.
+      </div>
+    `;
+    return;
+  }
+
+  const foundSet = new Set(ADMIN_PREVIEW_ROWS.map(d => getAdminSerialFromRow_(d)));
+  const notFound = ADMIN_PREVIEW_SERIALS.filter(sn => !foundSet.has(sn));
+
+  wrap.innerHTML = `
+    <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="text-[12px] font-black uppercase text-[var(--text)]">
+        Preview SN ditemukan: ${ADMIN_PREVIEW_ROWS.length}
+      </div>
+      <div class="text-[12px] font-black uppercase text-[var(--muted)]">
+        SN tidak ditemukan: ${notFound.length}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+      <div class="overflow-x-auto max-h-[320px]">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4">Serial Number</th>
+              <th class="p-4">Customer</th>
+              <th class="p-4">Model Number</th>
+              <th class="p-4">Typpe</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${ADMIN_PREVIEW_ROWS.map(d => `
+              <tr class="hover:bg-black/5 transition-colors">
+                <td class="p-4 font-mono font-black text-[var(--text)]">${getSerial(d)}</td>
+                <td class="p-4 font-bold text-[var(--text)]">${d.customer || "-"}</td>
+                <td class="p-4 font-bold text-[var(--text)]">${d.model_number || "-"}</td>
+                <td class="p-4 font-bold text-[var(--text)]">${typeof getTyppeValue_ === "function" ? (getTyppeValue_(d) || "-") : (d.Typpe || d.typpe || "-")}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    ${
+      notFound.length
+        ? `
+          <div class="mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
+            <div class="text-[12px] font-black uppercase text-red-600 mb-2">SN Tidak Ditemukan</div>
+            <div class="text-[12px] font-bold text-red-500 break-words">${notFound.join(", ")}</div>
+          </div>
+        `
+        : ""
+    }
+  `;
+}
+
+function renderAdminDeleteModal_(){
+  const content = document.getElementById("adminDeleteContent");
+  if (!content) return;
+
+  if (!ADMIN_SESSION) {
+    content.innerHTML = `
+      <div class="max-w-xl mx-auto">
+        <div class="bg-[var(--surface-2)] rounded-2xl border border-[var(--border)] p-5">
+          <div class="text-[12px] font-black uppercase text-[var(--text)] mb-4">Login Akses Mutasi Unit</div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="text-[10px] font-black uppercase text-[var(--muted)] block mb-2">Email</label>
+              <input id="adminLoginEmail" type="email"
+                class="w-full bg-white text-[var(--text)] text-[12px] font-bold border border-[var(--border)] rounded-lg px-3 py-3 outline-none focus:border-[var(--accent)]"
+                placeholder="email admin" />
+            </div>
+
+            <div>
+              <label class="text-[10px] font-black uppercase text-[var(--muted)] block mb-2">Password</label>
+              <input id="adminLoginPassword" type="password"
+                class="w-full bg-white text-[var(--text)] text-[12px] font-bold border border-[var(--border)] rounded-lg px-3 py-3 outline-none focus:border-[var(--accent)]"
+                placeholder="password admin" />
+            </div>
+
+            <div class="flex justify-end">
+              <button onclick="adminLogin_()"
+                class="bg-[var(--accent)] text-black px-6 py-3 rounded-lg text-[12px] font-black uppercase shadow-sm hover:brightness-95">
+                Login Akses Mutasi Unit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (!IS_APP_ADMIN) {
+    content.innerHTML = `
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-red-50 rounded-2xl border border-red-200 p-6 text-center">
+          <div class="text-[14px] font-black uppercase text-red-600 mb-2">Akses Ditolak</div>
+          <div class="text-[12px] font-bold text-[var(--text)]">
+            Akun ini berhasil login, tetapi belum terdaftar sebagai admin aktif.
+          </div>
+
+          <div class="mt-5 flex items-center justify-center gap-3">
+            <button onclick="adminLogout_()"
+              class="border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-2)] px-5 py-2 rounded-lg text-[12px] font-black uppercase">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  content.innerHTML = `
+    <div class="space-y-5">
+      <div class="bg-[var(--surface-2)] rounded-2xl border border-[var(--border)] p-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <div class="text-[10px] font-black uppercase text-[var(--muted)]">Admin Aktif</div>
+            <div class="text-[13px] font-black text-[var(--text)]">${ADMIN_SESSION.user.email || "-"}</div>
+          </div>
+
+          <button onclick="adminLogout_()"
+            class="border border-[var(--border)] text-[var(--text)] hover:bg-white px-5 py-2 rounded-lg text-[12px] font-black uppercase">
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-[var(--surface-2)] rounded-2xl border border-[var(--border)] p-5">
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label class="text-[10px] font-black uppercase text-[var(--muted)] block mb-2">Daftar Serial Number</label>
+            <textarea id="adminDeleteSerialInput"
+              class="w-full min-h-[140px] bg-white text-[var(--text)] text-[12px] font-bold border border-[var(--border)] rounded-lg px-3 py-3 outline-none focus:border-red-400"
+              placeholder="Masukkan SN, pisahkan dengan enter / koma / titik koma"></textarea>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black uppercase text-[var(--muted)] block mb-2">Alasan Hapus</label>
+            <input id="adminDeleteReason"
+              class="w-full bg-white text-[var(--text)] text-[12px] font-bold border border-[var(--border)] rounded-lg px-3 py-3 outline-none focus:border-red-400"
+              placeholder="contoh: mutasi ke Jawa Timur" />
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black uppercase text-[var(--muted)] block mb-2">Ketik HAPUS untuk konfirmasi</label>
+            <input id="adminDeleteConfirm"
+              class="w-full bg-white text-[var(--text)] text-[12px] font-bold border border-[var(--border)] rounded-lg px-3 py-3 outline-none focus:border-red-400"
+              placeholder="HAPUS" />
+          </div>
+
+          <div class="flex flex-wrap justify-end gap-3">
+            <button onclick="adminPreviewDeleteUnits_()"
+              class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-3 rounded-lg text-[12px] font-black uppercase transition-all">
+              Preview SN
+            </button>
+
+            <button onclick="adminDeleteUnitsBySn_()"
+              class="bg-red-500 text-white hover:bg-red-600 px-5 py-3 rounded-lg text-[12px] font-black uppercase transition-all">
+              Hapus Permanen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminDeletePreviewWrap"></div>
+    </div>
+  `;
+
+  renderAdminDeletePreviewResult_();
+}
+
+async function adminLogin_(){
+  const email = String(document.getElementById("adminLoginEmail")?.value || "").trim();
+  const password = String(document.getElementById("adminLoginPassword")?.value || "");
+
+  if (!email || !password) {
+    showToast("Login Gagal", "Email dan password wajib diisi.");
+    return;
+  }
+
+  const { error } = await _supabaseAdmin.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    showToast("Login Gagal", error.message || "Tidak dapat Login Akses Mutasi Unit.");
+    return;
+  }
+
+  await initAdminSession_();
+
+  if (IS_APP_ADMIN) {
+    showToast("Login Berhasil", "Admin berhasil login.");
+  } else {
+    showToast("Login Berhasil", "Akun login, tetapi belum terdaftar sebagai admin.");
+  }
+}
+
+async function adminLogout_(){
+  await _supabaseAdmin.auth.signOut();
+  ADMIN_SESSION = null;
+  IS_APP_ADMIN = false;
+  ADMIN_PREVIEW_SERIALS = [];
+  ADMIN_PREVIEW_ROWS = [];
+  updateAdminDeleteButton_();
+  renderAdminDeleteModal_();
+}
+
+function adminPreviewDeleteUnits_(){
+  const textarea = document.getElementById("adminDeleteSerialInput");
+  const serials = normalizeAdminSerialList_(textarea?.value || "");
+
+  ADMIN_PREVIEW_SERIALS = serials;
+
+  const foundMap = new Map();
+  globalData.forEach(d => {
+    const sn = getAdminSerialFromRow_(d);
+    if (!sn) return;
+    if (!serials.includes(sn)) return;
+    if (!foundMap.has(sn)) foundMap.set(sn, d);
+  });
+
+  ADMIN_PREVIEW_ROWS = Array.from(foundMap.values());
+  renderAdminDeletePreviewResult_();
+}
+
+async function adminDeleteUnitsBySn_(){
+  if (!IS_APP_ADMIN) {
+    showToast("Akses Ditolak", "Fitur ini hanya untuk admin.");
+    return;
+  }
+
+  if (!ADMIN_PREVIEW_SERIALS.length) {
+    showToast("Delete Gagal", "Lakukan preview SN terlebih dahulu.");
+    return;
+  }
+
+  const confirmText = String(document.getElementById("adminDeleteConfirm")?.value || "").trim().toUpperCase();
+  const reason = String(document.getElementById("adminDeleteReason")?.value || "").trim();
+
+  if (confirmText !== "HAPUS") {
+    showToast("Delete Gagal", "Ketik HAPUS untuk konfirmasi.");
+    return;
+  }
+
+  const { data, error } = await _supabaseAdmin.rpc("delete_units_by_sn", {
+  p_serials: ADMIN_PREVIEW_SERIALS,
+  p_reason: reason || null
+});
+
+  if (error) {
+    showToast("Delete Gagal", error.message || "Tidak dapat menghapus unit.");
+    return;
+  }
+
+  ADMIN_PREVIEW_SERIALS = [];
+  ADMIN_PREVIEW_ROWS = [];
+
+  closeAdminDeleteModal_();
+  await loadDataFromCloud();
+
+  showToast(
+    "Delete Berhasil",
+    `Requested: ${data?.requested_count || 0} | Deleted: ${data?.deleted_count || 0}`
+  );
+}
    function syncMobileUpdateText_(){
   const desktopText = document.getElementById("teks-update-live")?.textContent || "Sedang memuat...";
   const mobileText1 = document.getElementById("teks-update-live-mobile");
@@ -2272,18 +2804,37 @@ function openEquipmentMonitoringPage_(brand){
 
     // ===== LOAD DATA (Supabase) =====
     async function fetchUnitsWithFallback(){
-      const candidates = [NAMA_TABEL_PRIMARY, ...NAMA_TABEL_FALLBACKS];
+  const candidates = [NAMA_TABEL_PRIMARY, ...NAMA_TABEL_FALLBACKS];
 
-      for (const name of candidates){
-        const res = await _supabase.from(name).select("*").range(0, 5000);
-        if (!res.error){
-          NAMA_TABEL_ACTIVE = name;
-          return res;
-        }
-      }
-      // return last attempt
-      return await _supabase.from(NAMA_TABEL_PRIMARY).select("*").range(0, 5000);
+  let lastRes = null;
+
+  for (const name of candidates){
+    const res = await _supabase
+      .from(name)
+      .select("*", { count: "exact" })
+      .range(0, 5000);
+
+    console.log("UNIT FETCH CHECK:", {
+      table: name,
+      error: res.error,
+      count: res.count,
+      rows: res.data?.length || 0,
+      firstRow: res.data?.[0] || null
+    });
+
+    lastRes = res;
+
+    if (!res.error && Array.isArray(res.data) && res.data.length > 0){
+      NAMA_TABEL_ACTIVE = name;
+      return res;
     }
+  }
+
+  return lastRes || await _supabase
+    .from(NAMA_TABEL_PRIMARY)
+    .select("*", { count: "exact" })
+    .range(0, 5000);
+}
 
     async function loadDataFromCloud() {
       try{
@@ -2310,10 +2861,22 @@ function openEquipmentMonitoringPage_(brand){
         }
 
         globalData = unitsRes.data || [];
-        syncMobileUpdateText_();
-        if (!globalData.length){
-          showToast("Data Kosong", "Data unit dari Supabase kosong. Pastikan tabel "+NAMA_TABEL_ACTIVE+" ada dan ada datanya.");
-        } else {
+
+console.log("GLOBAL DATA LOADED:", {
+  activeTable: NAMA_TABEL_ACTIVE,
+  totalRows: globalData.length,
+  firstRow: globalData[0] || null,
+  sampleKeys: globalData[0] ? Object.keys(globalData[0]) : []
+});
+
+syncMobileUpdateText_();
+
+if (!globalData.length){
+  showToast(
+    "Data Kosong",
+    "Browser belum bisa membaca data Supabase. Cek RLS policy SELECT untuk tabel " + NAMA_TABEL_ACTIVE + "."
+  );
+} else {
           showToast("Load Berhasil", `Data unit loaded: ${globalData.length} rows (tabel: ${NAMA_TABEL_ACTIVE})`);
 
           setTimeout(() => {
@@ -2348,7 +2911,11 @@ function openEquipmentMonitoringPage_(brand){
         initPlanningFromSupabase();
         fillCustomerTopDropdown();
 
-        setTimeout(() => {
+initAdminSession_().catch(err => {
+  console.warn("Admin session init skipped:", err);
+});
+
+setTimeout(() => {
   animateMainStats_();
 }, 180);
 
@@ -3180,6 +3747,52 @@ if (ctxJ){
     });
   }
 
+  // 9d KPP RDT doughnut
+  const kppRdt = getUtVsCompetitorByBucketAndTyppe_("KPP", "RDT");
+  const kppRdtMeta = getMarketShareMeta_(kppRdt.ut, kppRdt.competitor);
+  updateMarketSharePosterText_("kppRdt", kppRdtMeta);
+
+  if (charts.kppRdtPie) charts.kppRdtPie.destroy();
+  const ctxKppRdt = document.getElementById('chartKppRdtPie');
+  if (ctxKppRdt){
+    charts.kppRdtPie = new Chart(ctxKppRdt, {
+      type:'doughnut',
+      data:{
+        labels:['UT','Competitor'],
+        datasets:[{
+          data:[kppRdtMeta.ut, kppRdtMeta.competitor],
+          backgroundColor:['#FFCC00','#111827'],
+          borderWidth:0,
+          borderColor:'transparent'
+        }]
+      },
+      options: sharePosterOptions
+    });
+  }
+
+  // 9e GAM RDT doughnut
+  const gamRdt = getUtVsCompetitorByBucketAndTyppe_("GAM", "RDT");
+  const gamRdtMeta = getMarketShareMeta_(gamRdt.ut, gamRdt.competitor);
+  updateMarketSharePosterText_("gamRdt", gamRdtMeta);
+
+  if (charts.gamRdtPie) charts.gamRdtPie.destroy();
+  const ctxGamRdt = document.getElementById('chartGamRdtPie');
+  if (ctxGamRdt){
+    charts.gamRdtPie = new Chart(ctxGamRdt, {
+      type:'doughnut',
+      data:{
+        labels:['UT','Competitor'],
+        datasets:[{
+          data:[gamRdtMeta.ut, gamRdtMeta.competitor],
+          backgroundColor:['#FFCC00','#111827'],
+          borderWidth:0,
+          borderColor:'transparent'
+        }]
+      },
+      options: sharePosterOptions
+    });
+  }
+
   charts.j = new Chart(ctxJ, {
     type:'bar',
     data:{
@@ -3232,9 +3845,10 @@ if (ctxJ){
 
       // 10 Customer bar + click
 const custMap = {};
-globalData.forEach(d=>{
-  const c = String(d.customer||"").trim().toUpperCase();
-  if (c) custMap[c] = (custMap[c]||0)+1;
+getCustomerTabData().forEach(d=>{
+  const c = String(d.customer || "").trim().toUpperCase();
+  if (!c) return;
+  custMap[c] = (custMap[c] || 0) + getRowPopulation_(d);
 });
 
 const sortedCustAll = Object.keys(custMap).sort((a,b)=>custMap[b]-custMap[a]);
@@ -3387,32 +4001,32 @@ function animatePlanningBarCharts_(){
 
     // ===== CUSTOMER TOP DROPDOWN =====
     function fillCustomerTopDropdown(){
-      const sel = document.getElementById("customerSelectTop");
-      if (!sel) return;
+  const sel = document.getElementById("customerSelectTop");
+  if (!sel) return;
 
-      const customers = [...new Set(
-  getCustomerTabData().map(d => norm(d.customer)).filter(Boolean)
-)].sort((a,b)=>a.localeCompare(b));
+  const customers = [...new Set(
+    getCustomerFilterDropdownData().map(d => norm(d.customer)).filter(Boolean)
+  )].sort((a,b)=>a.localeCompare(b));
 
-      sel.innerHTML = `<option value="">-- Pilih Customer --</option>` +
-        customers.map(c=>`<option value="${c.replaceAll('"','&quot;')}">${c}</option>`).join("");
-    }
+  sel.innerHTML = `<option value="">-- Pilih Customer --</option>` +
+    customers.map(c=>`<option value="${c.replaceAll('"','&quot;')}">${c}</option>`).join("");
+}
 
     // ===== CUSTOMER MODAL DETAIL =====
     function showCustomerDetail(name) {
-      currentModalData = getCustomerTabData()
-        .filter(d => norm(d.customer) === norm(name))
-        .sort((a,b)=> String(a.Typpe||"").localeCompare(String(b.Typpe||"")));
+  currentModalData = getCustomerTabData()
+    .filter(d => norm(d.customer) === norm(name))
+    .sort((a,b)=> getTyppeValue_(a).localeCompare(getTyppeValue_(b)));
 
-      const typeSummary = {};
-      currentModalData.forEach(d=>{
-  const t = String(d.Typpe||"N/A").toUpperCase();
-  const qty = getRowPopulation_(d);
-  if (!typeSummary[t]) typeSummary[t] = { count:0, war:0, out:0 };
-  typeSummary[t].count += qty;
-  if (normStatus(d.warranty_status)==="WARRANTY") typeSummary[t].war += qty;
-  else if (normStatus(d.warranty_status)==="OUT WARRANTY") typeSummary[t].out += qty;
-});
+  const typeSummary = {};
+  currentModalData.forEach(d=>{
+    const t = getTyppeValue_(d) || "N/A";
+    const qty = getRowPopulation_(d);
+    if (!typeSummary[t]) typeSummary[t] = { count:0, war:0, out:0 };
+    typeSummary[t].count += qty;
+    if (normStatus(d.warranty_status)==="WARRANTY") typeSummary[t].war += qty;
+    else if (normStatus(d.warranty_status)==="OUT WARRANTY") typeSummary[t].out += qty;
+  });
 
       let summaryHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">`;
       for (const [type,data] of Object.entries(typeSummary)){
@@ -3498,8 +4112,8 @@ function animatePlanningBarCharts_(){
       let filtered = currentModalData.slice();
 
       if (typpeVal !== "ALL"){
-        filtered = filtered.filter(d => String(d.Typpe||"").toUpperCase() === typpeVal);
-      }
+  filtered = filtered.filter(d => getTyppeValue_(d) === typpeVal);
+}
       if (statusVal !== "ALL"){
         filtered = filtered.filter(d => normStatus(d.warranty_status) === statusVal);
       }
@@ -3524,7 +4138,7 @@ function animatePlanningBarCharts_(){
                 return `
                   <tr class="hover:bg-black/5">
                     <td class="p-4 font-bold text-[var(--text)]">${d.model_number || '-'}</td>
-                    <td class="p-4 font-bold text-[var(--text)]">${d.Typpe || '-'}</td>
+                    <td class="p-4 font-bold text-[var(--text)]">${getTyppeValue_(d) || '-'}</td>
                     <td class="p-4 text-right font-black ${stClass}">${st}</td>
                   </tr>
                 `;
@@ -4876,6 +5490,10 @@ function calcCostFromStdKey_(std_key){
   };
 }
 
+function hasStandardPackageAvailable_(stdRow){
+  return Number(stdRow?.package_total_price || 0) > 0;
+}
+
 function calcFallbackCostFromPriceRows_(modelName, labelName){
   const normCompact = (v) => String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
   const modelCompact = normCompact(modelName);
@@ -5272,33 +5890,25 @@ function openStandardComponentsModal_(eventName, modelName, variantName) {
           <tbody class="divide-y divide-[var(--border)]">
             ${rows.map(s => {
               const stdKey = s.standard_key || s.std_key || "";
-              const parts = findPartsForStandard_(
-  stdKey,
-  eventName,
-  modelName,
-  variantName,
-  s.component_name || s.service_scope || ""
-);
-              const hasParts = parts.length > 0;
-              const pkgLabel = String(s.service_scope || s.component_name || "Detail Part Package").trim() || "Detail Part Package";
+const pkgLabel = String(s.service_scope || s.component_name || "Detail Part Package").trim() || "Detail Part Package";
 
-              return `
-                <tr class="hover:bg-black/5 transition-colors">
-                  <td class="p-4 text-[var(--text)] font-bold">${s.component_name || "-"}</td>
-                  <td class="p-4">
-                    <button
-                      onclick="openStandardPartPackageModal_('${String(stdKey).replace(/'/g, "\\'")}', '${String(eventName).replace(/'/g, "\\'")}', '${String(modelName).replace(/'/g, "\\'")}', '${String(variantName || "").replace(/'/g, "\\'")}', '${String(s.component_name || "-").replace(/'/g, "\\'")}')"
-                      class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
-                    >
-                      ${hasParts ? pkgLabel : "Lihat Detail"}
-                    </button>
-                  </td>
-                  <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.ramp_lifetime || 0) > 0 ? Number(s.ramp_lifetime).toLocaleString("id-ID") : "-"}</td>
-                  <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.hm_trigger || 0) > 0 ? Number(s.hm_trigger).toLocaleString("id-ID") : "-"}</td>
-                  <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.batas_ideal || 0) > 0 ? Number(s.batas_ideal).toLocaleString("id-ID") : "-"}</td>
-                  <td class="p-4 text-right text-[var(--accent)] font-black">${Number(s.package_total_price || 0) > 0 ? formatIDR_(s.package_total_price) : "-"}</td>
-                </tr>
-              `;
+return `
+  <tr class="hover:bg-black/5 transition-colors">
+    <td class="p-4 text-[var(--text)] font-bold">${s.component_name || "-"}</td>
+    <td class="p-4">
+      <button
+        onclick="openStandardPartPackageModal_('${String(stdKey).replace(/'/g, "\\'")}', '${String(eventName).replace(/'/g, "\\'")}', '${String(modelName).replace(/'/g, "\\'")}', '${String(variantName || "").replace(/'/g, "\\'")}', '${String(s.component_name || "-").replace(/'/g, "\\'")}')"
+        class="text-[var(--accent)] hover:text-black text-[11px] font-black underline underline-offset-2 transition-all"
+      >
+        ${pkgLabel}
+      </button>
+    </td>
+    <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.ramp_lifetime || 0) > 0 ? Number(s.ramp_lifetime).toLocaleString("id-ID") : "-"}</td>
+    <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.hm_trigger || 0) > 0 ? Number(s.hm_trigger).toLocaleString("id-ID") : "-"}</td>
+    <td class="p-4 text-right text-[var(--text)] font-black">${Number(s.batas_ideal || 0) > 0 ? Number(s.batas_ideal).toLocaleString("id-ID") : "-"}</td>
+    <td class="p-4 text-right text-[var(--accent)] font-black">${Number(s.package_total_price || 0) > 0 ? formatIDR_(s.package_total_price) : "-"}</td>
+  </tr>
+`;
             }).join("")}
           </tbody>
         </table>
@@ -5316,6 +5926,46 @@ function openStandardPartPackageModal_(stdKey, eventName, modelName, variantName
   if (!modal || !title || !content) return;
 
   const std = STD_BY_KEY.get(stdKey) || {};
+const hasPackage = hasStandardPackageAvailable_(std);
+
+modal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+
+if (!hasPackage) {
+  title.innerText = `DETAIL PART PACKAGE - ${componentName || "-"}`;
+  title.className = "text-2xl font-black uppercase tracking-tight text-[var(--text)]";
+
+  filterWrap.innerHTML = `
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-[var(--surface-2)] p-3 rounded-xl border border-[var(--border)]">
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="text-[12px] font-black uppercase text-[var(--text)]">Job Type: ${normU(eventName)}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Model: ${modelName}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Variant: ${variantName || "-"}</div>
+        <div class="text-[12px] font-black uppercase text-[var(--muted)]">Component: ${componentName || "-"}</div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="openStandardComponentsModal_('${String(eventName).replace(/'/g, "\\'")}', '${String(modelName).replace(/'/g, "\\'")}', '${String(variantName || "").replace(/'/g, "\\'")}')"
+          class="border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-2)] px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
+          Kembali ke Komponen
+        </button>
+
+        <button onclick="closeSubHalaman()"
+          class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-4 py-2 rounded-lg text-[12px] font-black uppercase transition-all">
+          Kembali ke Standard
+        </button>
+      </div>
+    </div>
+  `;
+
+  content.innerHTML = `
+    <div class="bg-white rounded-2xl border border-[var(--border)] overflow-hidden">
+      <div class="py-16 text-center text-[var(--muted)] font-bold">Detail part package belum tersedia.</div>
+    </div>
+  `;
+  return;
+}
+
 const parts = findPartsForStandard_(
   stdKey,
   eventName,
@@ -5324,7 +5974,7 @@ const parts = findPartsForStandard_(
   componentName || std.component_name || std.service_scope || ""
 );
 
-  const pricedParts = parts.map(p => {
+const pricedParts = parts.map(p => {
   const price = PRICE_BY_PART.get(normU(p.part_no));
   const unitPrice = price == null ? null : Number(price || 0);
   const qty = Number(p.qty || 0);
@@ -5337,9 +5987,6 @@ const parts = findPartsForStandard_(
     subtotal: unitPrice == null ? null : qty * unitPrice
   };
 }).filter(p => p.part_no !== "-" || p.part_desc !== "-");
-
-  modal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
 
   title.innerText = `DETAIL PART PACKAGE - ${componentName || "-"}`;
   title.className = "text-2xl font-black uppercase tracking-tight text-[var(--text)]";
@@ -5921,17 +6568,17 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
     });
   }
 
-  // BAR: Market Share (Populasi) - samakan dengan section Customer
+  // BAR: Market Share (Population) - samakan dengan section Customer
   const shareCanvas = document.getElementById("chartPlanMarketShare");
   if (shareCanvas){
     if (charts.planShare) charts.planShare.destroy();
 
     const custMap = {};
-    globalData.forEach(d => {
-      const c = String(d.customer || "").trim().toUpperCase();
-      if (!c) return;
-      custMap[c] = (custMap[c] || 0) + 1;
-    });
+getCustomerTabData().forEach(d=>{
+  const c = String(d.customer || "").trim().toUpperCase();
+  if (!c) return;
+  custMap[c] = (custMap[c] || 0) + getRowPopulation_(d);
+});
 
     const sorted = Object.entries(custMap).sort((a,b) => b[1] - a[1]);
     const TOP_N = 10;
