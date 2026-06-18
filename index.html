@@ -14,6 +14,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <style>
 header img{
   display:block;
@@ -233,6 +236,18 @@ th {
   box-shadow: 0 10px 22px rgba(0,0,0,0.12);
 }
 
+.module-placeholder-wrap{
+  display: flex; align-items: center; justify-content: center;
+  min-height: 70vh; padding: 24px 0;
+}
+.module-placeholder-card{
+  width: 100%; max-width: 800px; min-height: 400px;
+  background: #FFFFFF; border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+  padding: 48px 40px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+}
+
 .dashboard-card .card-title-lg{
   color: #111827 !important;
   text-shadow: 0 1px 0 rgba(255,255,255,0.18);
@@ -248,9 +263,10 @@ th {
   text-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
-/* wrapper lebih lebar */
-.page-shell{
-  width: min(96vw, 1800px);
+/* wrapper full width */
+.page-shell {
+  width: 100%;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -945,11 +961,13 @@ header{
     <button onclick="switchTab('customer'); closeMobileMenu();" id="m-btn-customer" class="mobile-menu-btn">Customer</button>
     <button onclick="switchTab('trend'); closeMobileMenu();" id="m-btn-trend" class="mobile-menu-btn">Trend</button>
     <button onclick="switchTab('planning'); closeMobileMenu();" id="m-btn-planning" class="mobile-menu-btn">Market Analytics</button>
+    <button onclick="switchTab('service-accuracy'); closeMobileMenu();" id="m-btn-service-accuracy" class="mobile-menu-btn">Service Accuracy Analytics</button>
   </div>
 
   <div id="mobileUnitSubmenu" class="mobile-unit-submenu hidden">
     <button onclick="switchTab('unit-ut'); closeMobileMenu();" class="mobile-subbtn">Unit UT</button>
     <button onclick="switchTab('unit-nonut'); closeMobileMenu();" class="mobile-subbtn">Unit Competitor</button>
+    <button onclick="switchTab('mutasi'); renderMutasiTable_(); closeMobileMenu();" class="mobile-subbtn">Unit Mutasi</button>
   </div>
 
   <div class="mobile-action-row">
@@ -1023,6 +1041,10 @@ header{
               class="w-full text-left px-4 py-2 text-[12px] font-black uppercase text-[var(--text)] hover:bg-[var(--accent)] hover:text-black">
               Unit Competitor
             </button>
+            <button onclick="switchTab('mutasi'); renderMutasiTable_(); closeUnitDropdown();"
+              class="w-full text-left px-4 py-2 text-[12px] font-black uppercase text-[var(--text)] hover:bg-[var(--accent)] hover:text-black">
+              Unit Mutasi
+            </button>
           </div>
         </div>
 
@@ -1045,6 +1067,11 @@ header{
           class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white">
           Market Analytics
         </button>
+
+        <button onclick="switchTab('service-accuracy')" id="btn-service-accuracy"
+  class="px-6 py-2 rounded-full text-[12px] font-black uppercase transition-all text-gray-200 hover:text-white">
+  Service Accuracy Analytics
+</button>
       </div>
 
       <div class="flex items-center space-x-3 mt-2 md:mt-0 pb-2 md:pb-0">
@@ -1283,7 +1310,7 @@ header{
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      KPP (PCB) Population 
+      INDEXIM (PCB) Population 
     </h3>
 
     <div class="market-share-poster">
@@ -1337,7 +1364,7 @@ header{
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      KPP (RDT) Population
+      INDEXIM (RDT) Population
     </h3>
 
     <div class="market-share-poster">
@@ -1607,6 +1634,26 @@ header{
       </div>
     </div>
 
+    <div id="page-service-accuracy" class="tab-content hidden">
+  <div class="module-placeholder-wrap">
+    <div class="module-placeholder-card">
+      <div class="module-placeholder-icon">🚧</div>
+      <div class="module-placeholder-title">Coming Soon</div>
+      <div class="module-placeholder-subtitle">Service Accuracy Analytics Module</div>
+      <div class="module-placeholder-features">
+        <div class="module-placeholder-features-title">Fitur yang akan dikembangkan</div>
+        <ul>
+          <li>1.Schedule Accuracy Analysis</li>
+          <li>2.Service Accuracy</li>
+          <li>3.Mechanical Availability (MA)</li>
+          <li>4.Improvement Recommendation By data</li>
+        </ul>
+      </div>
+      <div class="module-placeholder-badge">Version 2.0</div>
+    </div>
+  </div>
+</div>
+
     <!-- PAGE UNIT UT -->
     <div id="page-unit-ut" class="tab-content hidden">
       <div class="soft-panel p-8 rounded-3xl">
@@ -1646,7 +1693,13 @@ header{
         <div id="unit-nonut-table"></div>
       </div>
     </div>
-
+<div id="page-mutasi" class="tab-content hidden">
+      <div class="soft-panel p-8 rounded-3xl">
+        <h3 class="text-[var(--text)] font-black uppercase text-xs mb-6 italic">Monitoring Unit Mutasi</h3>
+        <div id="unit-mutasi-summary" class="text-[var(--text)] text-sm font-bold mb-3"></div>
+        <div id="unit-mutasi-table"></div>
+      </div>
+    </div>
     <!-- PAGE CUSTOMER -->
     <div id="page-customer" class="tab-content hidden">
       <div class="glass-panel p-5 md:p-8 rounded-3xl flex flex-col h-auto md:h-[750px]">
@@ -1776,7 +1829,6 @@ header{
     // ===== SUPABASE CONFIG =====
     const SUPABASE_URL = 'https://nhubmgvjhuqayssohvei.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odWJtZ3ZqaHVxYXlzc29odmVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NTM4MTgsImV4cCI6MjA4NjMyOTgxOH0.hmEJgrZZzi1DYw-3zFNTE8do_5oVwKzu1cdo5L1vQ4A';
-    // Client utama dashboard: khusus baca data, jangan ikut session admin
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     persistSession: false,
@@ -1785,7 +1837,6 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   }
 });
 
-// Client admin: khusus Login Akses Mutasi Unit + RPC delete
 const _supabaseAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     storageKey: "ut-sangkulirang-admin-session",
@@ -1795,7 +1846,7 @@ const _supabaseAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   }
 });
 
-    // Nama tabel unit (pakai fallback otomatis biar gak nyangkut kalau beda penamaan)
+    // Nama tabel unit 
     const NAMA_TABEL_PRIMARY = 'Persebaran Unit_Sangkulirang';
     const NAMA_TABEL_FALLBACKS = [
       'Persebaran_Unit_Sangkulirang',
@@ -2257,13 +2308,14 @@ async function adminDeleteUnitsBySn_(){
     return;
   }
 
-  const { data, error } = await _supabaseAdmin.rpc("delete_units_by_sn", {
-  p_serials: ADMIN_PREVIEW_SERIALS,
-  p_reason: reason || null
-});
+  // Panggil RPC mutasi
+  const { data, error } = await _supabaseAdmin.rpc("mutasi_unit_by_sn", {
+    p_serials: ADMIN_PREVIEW_SERIALS,
+    p_reason: reason || null
+  });
 
   if (error) {
-    showToast("Delete Gagal", error.message || "Tidak dapat menghapus unit.");
+    showToast("Mutasi Gagal", error.message || "Tidak dapat memutasi unit.");
     return;
   }
 
@@ -2271,11 +2323,11 @@ async function adminDeleteUnitsBySn_(){
   ADMIN_PREVIEW_ROWS = [];
 
   closeAdminDeleteModal_();
-  await loadDataFromCloud();
+  await loadDataFromCloud(); // Refresh data dengan filter ACTIVE
 
   showToast(
-    "Delete Berhasil",
-    `Requested: ${data?.requested_count || 0} | Deleted: ${data?.deleted_count || 0}`
+    "Mutasi Berhasil",
+    "Unit telah dipindahkan dari dashboard utama."
   );
 }
    function syncMobileUpdateText_(){
@@ -2340,7 +2392,7 @@ document.addEventListener('click', function(e) {
       if (page) page.classList.remove('hidden');
 
       // reset button highlight
-      const btnIds = ['main','charts','customer','trend','planning'];
+      const btnIds = ['main','charts','customer','trend','planning','service-accuracy'];
       btnIds.forEach(id=>{
         const b = document.getElementById('btn-'+id);
         if (!b) return;
@@ -2353,7 +2405,7 @@ document.addEventListener('click', function(e) {
         active.classList.remove('text-gray-200');
         active.classList.add('bg-[var(--accent)]','text-black','shadow-sm');
       }
-      const mobileBtnIds = ['main','charts','customer','trend','planning'];
+      const mobileBtnIds = ['main','charts','customer','trend','planning','service-accuracy'];
 mobileBtnIds.forEach(id => {
   const b = document.getElementById('m-btn-'+id);
   if (!b) return;
@@ -2404,7 +2456,15 @@ if (target === 'planning') {
     }, 180);
   }, 100);
 }
+if (target === 'service-accuracy') {
+  renderServiceAccuracyAnalytics_();
+}
     }
+
+    function renderServiceAccuracyAnalytics_(){
+  // TODO: isi logika fetch data & render chart di sini nanti
+  return;
+}
 
     function replayPopAnimation_(elements){
   (elements || []).forEach((el, idx) => {
@@ -2572,7 +2632,7 @@ function showDataQualityWarningToast_(){
 
   showToast(
     "Data Quality Notice",
-    "Sebagian data Unit UT belum memenuhi kelengkapan untuk seluruh analisis."
+    "Sebagian data Unit UT belum memenuhi kelengkapan."
   );
 }
 
@@ -2812,6 +2872,7 @@ function openEquipmentMonitoringPage_(brand){
     const res = await _supabase
       .from(name)
       .select("*", { count: "exact" })
+      .eq('status_unit', 'ACTIVE') // Filter unit mutasi
       .range(0, 5000);
 
     console.log("UNIT FETCH CHECK:", {
@@ -2833,6 +2894,7 @@ function openEquipmentMonitoringPage_(brand){
   return lastRes || await _supabase
     .from(NAMA_TABEL_PRIMARY)
     .select("*", { count: "exact" })
+    .eq('status_unit', 'ACTIVE') // Filter unit mutasi (fallback)
     .range(0, 5000);
 }
 
@@ -2877,7 +2939,7 @@ if (!globalData.length){
     "Browser belum bisa membaca data Supabase. Cek RLS policy SELECT untuk tabel " + NAMA_TABEL_ACTIVE + "."
   );
 } else {
-          showToast("Load Berhasil", `Data unit loaded: ${globalData.length} rows (tabel: ${NAMA_TABEL_ACTIVE})`);
+          showToast("Load Berhasil", `Data unit loaded: ${globalData.length}`);
 
           setTimeout(() => {
   hideToast();
@@ -2925,8 +2987,9 @@ setTimeout(() => {
       }
     }
 
-    // ===== EXPORT EXCEL =====
+    // ===== EXPORT DATA =====
     async function exportToExcelFromSupabase() {
+      // 1. Fetch data dari Supabase
       const { data, error } = await _supabase
         .from(NAMA_TABEL_ACTIVE)
         .select("*")
@@ -2941,22 +3004,79 @@ setTimeout(() => {
         return;
       }
 
-      const OMIT_KEYS = new Set(["id"]);
+      // Bersihkan data (hapus kolom yang tidak diinginkan)
+      const OMIT_KEYS = new Set([
+        "id",
+        "SMR[H]",
+        "smr_h",                 // Tambahan jaga-jaga jika di database terbaca lowercase
+        "competitor_record_key",
+        "competitor_cluster_key",
+        "competitor_qty",
+        "competitor_mode"
+      ]);
+
       const rows = data.map((row) => {
         const out = {};
         for (const k in row) {
+          // Pastikan kolom tidak ada di daftar OMIT_KEYS
           if (!OMIT_KEYS.has(k)) out[k] = row[k];
         }
         return out;
       });
 
+      const d = new Date();
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+
+      // ==========================================
+      // 2. PROSES EXPORT EXCEL
+      // ==========================================
       const ws = XLSX.utils.json_to_sheet(rows);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "SupabaseDump");
+      const excelFname = `Supabase_Export_${dateStr}.xlsx`;
+      
+      // Download Excel
+      XLSX.writeFile(wb, excelFname);
 
-      const d = new Date();
-      const fname = `Supabase_Export_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}.xlsx`;
-      XLSX.writeFile(wb, fname);
+      // ==========================================
+      // 3. PROSES EXPORT PDF
+      // ==========================================
+      // Pastikan library jsPDF sudah ter-load
+      if (window.jspdf && window.jspdf.jsPDF) {
+        const { jsPDF } = window.jspdf;
+        // Gunakan mode 'landscape' agar kolom tabel yang banyak bisa muat
+        const doc = new jsPDF('landscape'); 
+
+        // Ambil nama-nama kolom (headers) dari data pertama
+        const headers = Object.keys(rows[0]);
+        
+        // Ubah format rows menjadi array of arrays untuk jsPDF-AutoTable
+        const pdfData = rows.map(row => 
+          headers.map(header => row[header] !== null && row[header] !== undefined ? String(row[header]) : "-")
+        );
+
+        // Tambahkan Judul di PDF
+        doc.setFontSize(14);
+        doc.text("Sangkulirang Unit Population Export", 14, 15);
+
+        // Buat tabel di PDF
+        doc.autoTable({
+          head: [headers],
+          body: pdfData,
+          startY: 20,
+          styles: { fontSize: 7, cellPadding: 1 },
+          headStyles: { fillColor: [255, 204, 0], textColor: [17, 24, 39] }, // Warna kuning UT
+          margin: { top: 20, right: 10, bottom: 20, left: 10 },
+          horizontalPageBreak: true // Mencegah kolom terpotong jika terlalu lebar
+        });
+
+        const pdfFname = `Supabase_Export_${dateStr}.pdf`;
+        
+        // Download PDF
+        doc.save(pdfFname);
+      } else {
+        alert("Library PDF belum termuat dengan benar. Cek koneksi internet atau script tag jsPDF.");
+      }
     }
 
     function exportMonthlyTrendDetail_(){
@@ -2977,9 +3097,6 @@ setTimeout(() => {
     "HM Actual": it.current_hm ?? "-",
     "Service Product": it.service_product_label || "-",
     Cost: it.cost_total == null ? "" : Number(it.cost_total || 0),
-    "Missing Price": it.std_key
-      ? (it.missing_parts.length ? it.missing_parts.length : 0)
-      : ""
   }));
 
   const wsData = XLSX.utils.json_to_sheet(rows);
@@ -3031,9 +3148,6 @@ setTimeout(() => {
   "HM Actual": it.current_hm ?? "-",
   "Service Product": it.service_product_label || "-",
   Cost: it.cost_total == null ? "" : Number(it.cost_total || 0),
-  "Missing Price": it.std_key
-    ? (it.missing_parts.length ? it.missing_parts.length : 0)
-    : ""
 }));
 
   const ws = XLSX.utils.json_to_sheet(rows);
@@ -4593,7 +4707,6 @@ CURRENT_MONTHLY_TREND_DETAIL_META = {
             <th class="p-4 text-[12px] text-right">HM Actual</th>
             <th class="p-4 text-[12px] text-center">Service Product</th>
             <th class="p-4 text-[12px] text-right">Cost</th>
-            <th class="p-4 text-[12px] text-right">Missing Price</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-[var(--border)]">
@@ -4617,9 +4730,6 @@ CURRENT_MONTHLY_TREND_DETAIL_META = {
                 </button>
               </td>
               <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>
-              <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
-                ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
-              </td>
             </tr>
           `).join("")}
         </tbody>
@@ -6335,7 +6445,6 @@ if (elShare) {
             <th class="p-4 text-right">HM Actual</th>
             <th class="p-4 text-center">Service Product</th>
             <th class="p-4 text-right">Cost</th>
-            <th class="p-4 text-right">Missing Price</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-[var(--border)]">
@@ -6359,10 +6468,7 @@ if (elShare) {
                 </button>
               </td>
               <td class="p-4 text-right text-[var(--accent)] font-black">${it.cost_total == null ? "-" : formatIDR_(it.cost_total)}</td>
-              <td class="p-4 text-right ${it.std_key ? (it.missing_parts.length ? "text-[var(--bad)]" : "text-[var(--good)]") : "text-[var(--muted)]"} font-bold">
-                ${it.std_key ? (it.missing_parts.length ? it.missing_parts.length : "OK") : "-"}
-              </td>
-            </tr>
+              </tr>
           `).join("")}
         </tbody>
       </table>
@@ -6663,6 +6769,72 @@ getCustomerTabData().forEach(d=>{
       if (target && target.innerHTML.includes(String(new Date().getFullYear()))) clearInterval(forceUpdate);
     }, 500);
     setStaticUpdate();
+
+    // ===== RENDER TABEL MUTASI =====
+async function renderMutasiTable_() {
+  const tableContainer = document.getElementById("unit-mutasi-table");
+  const summaryContainer = document.getElementById("unit-mutasi-summary");
+  if (!tableContainer) return;
+
+  tableContainer.innerHTML = `<div class="p-4 text-center text-[12px] font-bold text-[var(--muted)]">Memuat data mutasi...</div>`;
+
+  // Fetch khusus unit yang statusnya 'MUTATED'
+  const { data, error } = await _supabase
+    .from(NAMA_TABEL_ACTIVE)
+    .select("*")
+    .eq('status_unit', 'MUTATED')
+    .order('updated_at', { ascending: false });
+
+  if (error) {
+    tableContainer.innerHTML = `<div class="p-4 text-red-500">Error: ${error.message}</div>`;
+    return;
+  }
+
+  if (summaryContainer) {
+    summaryContainer.innerText = `Total Unit Dimutasi: ${data.length}`;
+  }
+
+  if (!data || data.length === 0) {
+    tableContainer.innerHTML = `
+      <div class="bg-white rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)] font-bold">
+        Belum ada data unit yang dimutasi.
+      </div>
+    `;
+    return;
+  }
+
+  tableContainer.innerHTML = `
+    <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
+            <tr>
+              <th class="p-4">Tanggal Mutasi</th>
+              <th class="p-4">Model Number</th>
+              <th class="p-4">Serial Number</th>
+              <th class="p-4">Customer Sebelumnya</th>
+              <th class="p-4">Alasan Mutasi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${data.map(d => {
+              const dateStr = d.updated_at ? new Date(d.updated_at).toLocaleDateString('id-ID') : "-";
+              return `
+              <tr class="hover:bg-black/5 transition-colors">
+                <td class="p-4 text-[var(--muted)] font-bold">${dateStr}</td>
+                <td class="p-4 text-[var(--text)] font-bold">${d.model_number || "-"}</td>
+                <td class="p-4 text-[var(--text)] font-mono font-bold uppercase">${getSerial(d)}</td>
+                <td class="p-4 text-[var(--text)] font-bold">${d.customer || "-"}</td>
+                <td class="p-4 text-[var(--bad)] font-black italic">${d.mutasi_reason || "-"}</td>
+              </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
   </script>
 
 </body>
