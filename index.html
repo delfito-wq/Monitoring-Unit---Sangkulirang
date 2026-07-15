@@ -1364,7 +1364,7 @@ header{
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      INDEXIM (RDT) Population
+      INDEXIM (Trucks) Population
     </h3>
 
     <div class="market-share-poster">
@@ -1390,7 +1390,7 @@ header{
 
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      GAM (RDT) Population
+      GAM (Trucks) Population
     </h3>
 
     <div class="market-share-poster">
@@ -3856,10 +3856,10 @@ if (ctxJ){
     });
   }
 
-  // 9d KPP RDT doughnut
-  const kppRdt = getUtVsCompetitorByBucketAndTyppe_("KPP", "RDT");
-  const kppRdtMeta = getMarketShareMeta_(kppRdt.ut, kppRdt.competitor);
-  updateMarketSharePosterText_("kppRdt", kppRdtMeta);
+  // 9d KPP A2B doughnut
+const kppRdt = getUtVsCompetitorByBucketAndTyppe_("KPP", "DT"); 
+const kppRdtMeta = getMarketShareMeta_(kppRdt.ut, kppRdt.competitor);
+updateMarketSharePosterText_("kppRdt", kppRdtMeta);
 
   if (charts.kppRdtPie) charts.kppRdtPie.destroy();
   const ctxKppRdt = document.getElementById('chartKppRdtPie');
@@ -3879,10 +3879,10 @@ if (ctxJ){
     });
   }
 
-  // 9e GAM RDT doughnut
-  const gamRdt = getUtVsCompetitorByBucketAndTyppe_("GAM", "RDT");
-  const gamRdtMeta = getMarketShareMeta_(gamRdt.ut, gamRdt.competitor);
-  updateMarketSharePosterText_("gamRdt", gamRdtMeta);
+  // 9e GAM A2B doughnut
+  const gamRdt = getUtVsCompetitorByBucketAndTyppe_("GAM", "DT"); 
+const gamRdtMeta = getMarketShareMeta_(gamRdt.ut, gamRdt.competitor);
+updateMarketSharePosterText_("gamRdt", gamRdtMeta);
 
   if (charts.gamRdtPie) charts.gamRdtPie.destroy();
   const ctxGamRdt = document.getElementById('chartGamRdtPie');
