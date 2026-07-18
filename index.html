@@ -1115,47 +1115,56 @@ header{
     <!-- PAGE MAIN -->
     <div id="page-main" class="tab-content">
       <div class="soft-panel p-5 md:p-8 rounded-3xl mb-6">
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-    <h3 class="text-[var(--text)] font-black uppercase text-xs italic flex items-center">
-      <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Equipment Monitoring
-    </h3>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+          <h3 class="text-[var(--text)] font-black uppercase text-xs italic flex items-center">
+            <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Equipment Monitoring
+          </h3>
+          <div class="text-[12px] text-[var(--muted)] font-black uppercase tracking-widest italic"></div>
+        </div>
 
-    <div class="text-[12px] text-[var(--muted)] font-black uppercase tracking-widest italic">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+  <!-- KOMATSU -->
+  <button onclick="openEquipmentMonitoringPage_('KOMATSU')" class="w-full bg-white p-3 py-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:scale-105 transition-all duration-300 flex flex-col items-center justify-between min-h-[110px] md:min-h-[140px]">
+    <div class="flex-grow flex items-center justify-center mb-2">
+      <img src="Komatsu.jpeg" alt="Komatsu" class="max-h-6 md:max-h-10 w-auto object-contain mix-blend-multiply"/>
     </div>
-  </div>
-
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-  <button onclick="openEquipmentMonitoringPage_('KOMATSU')" class="equipment-logo-card">
-    <div class="equipment-logo-frame equipment-logo-komatsu">
-      <img src="Komatsu.jpeg" alt="Komatsu">
-    </div>
+    <div class="text-[12px] md:text-[14px] font-black text-[var(--accent)] tracking-wide" id="res-brand-total-komatsu">0 Unit</div>
   </button>
 
-  <button onclick="openEquipmentMonitoringPage_('SCANIA')" class="equipment-logo-card">
-    <div class="equipment-logo-frame equipment-logo-scania">
-      <img src="Scania.jpeg" alt="Scania">
+  <!-- SCANIA -->
+  <button onclick="openEquipmentMonitoringPage_('SCANIA')" class="w-full bg-white p-3 py-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:scale-105 transition-all duration-300 flex flex-col items-center justify-between min-h-[110px] md:min-h-[140px]">
+    <div class="flex-grow flex items-center justify-center mb-2">
+      <img src="Scania.jpeg" alt="Scania" class="max-h-6 md:max-h-10 w-auto object-contain mix-blend-multiply"/>
     </div>
+    <div class="text-[12px] md:text-[14px] font-black text-[var(--accent)] tracking-wide" id="res-brand-total-scania">0 Unit</div>
   </button>
 
-  <button onclick="openEquipmentMonitoringPage_('TADANO')" class="equipment-logo-card">
-    <div class="equipment-logo-frame equipment-logo-tadano">
-      <img src="Tadano.jpeg" alt="Tadano">
+  <!-- TADANO -->
+  <button onclick="openEquipmentMonitoringPage_('TADANO')" class="w-full bg-white p-3 py-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:scale-105 transition-all duration-300 flex flex-col items-center justify-between min-h-[110px] md:min-h-[140px]">
+    <div class="flex-grow flex items-center justify-center mb-2">
+      <img src="Tadano.jpeg" alt="Tadano" class="max-h-6 md:max-h-10 w-auto object-contain mix-blend-multiply"/>
     </div>
+    <div class="text-[12px] md:text-[14px] font-black text-[var(--accent)] tracking-wide" id="res-brand-total-tadano">0 Unit</div>
   </button>
 
-  <button onclick="openEquipmentMonitoringPage_('UD TRUCKS')" class="equipment-logo-card">
-    <div class="equipment-logo-frame equipment-logo-ud">
-      <img src="UD Trucks.jpeg" alt="UD Trucks">
+  <!-- UD TRUCKS -->
+  <button onclick="openEquipmentMonitoringPage_('UD TRUCKS')" class="w-full bg-white p-3 py-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:scale-105 transition-all duration-300 flex flex-col items-center justify-between min-h-[110px] md:min-h-[140px]">
+    <div class="flex-grow flex items-center justify-center mb-2">
+      <img src="UD Trucks.jpeg" alt="UD Trucks" class="max-h-6 md:max-h-20 w-auto object-contain mix-blend-multiply"/>
     </div>
+    <div class="text-[12px] md:text-[14px] font-black text-[var(--accent)] tracking-wide" id="res-brand-total-udtrucks">0 Unit</div>
   </button>
 
-  <button onclick="openEquipmentMonitoringPage_('BOMAG')" class="equipment-logo-card">
-    <div class="equipment-logo-frame equipment-logo-bomag">
-      <img src="Bomag.jpeg" alt="Bomag">
-    </div>
-  </button>
-</div>
-</div>
+  <!-- BOMAG -->
+          <button onclick="openEquipmentMonitoringPage_('BOMAG')" class="w-full bg-white p-3 py-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-2 hover:scale-105 transition-all duration-300 flex flex-col items-center justify-between min-h-[110px] md:min-h-[140px]">
+            <div class="flex-grow flex items-center justify-center mb-2">
+              <img src="Bomag.jpeg" alt="Bomag" class="max-h-6 md:max-h-20 w-auto object-contain mix-blend-multiply"/>
+            </div>
+            <div class="text-[12px] md:text-[14px] font-black text-[var(--accent)] tracking-wide" id="res-brand-total-bomag">0 Unit</div>
+          </button>
+        </div>
+      </div>
+
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
   <div class="dashboard-card p-8 rounded-3xl text-center md:text-left">
     <span class="card-title-lg text-[var(--text)] font-black uppercase">Population Sangkulirang</span>
@@ -1228,28 +1237,58 @@ header{
       </div>
     </div>
 
-   <!-- PAGE EQUIPMENT DETAIL -->
+<!-- PAGE EQUIPMENT DETAIL -->
 <div id="page-equipment" class="tab-content hidden">
   <div class="soft-panel p-5 md:p-8 rounded-3xl mb-6">
-    <div class="mb-6">
+    
+    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <button onclick="switchTab('main')"
-        class="inline-flex items-center gap-2 bg-[var(--accent)] text-black px-4 py-2 rounded-full text-[12px] font-black uppercase shadow-sm hover:brightness-95 transition-all">
+        class="inline-flex items-center justify-center gap-2 bg-[var(--accent)] text-black px-6 py-2.5 rounded-full text-[12px] font-black uppercase shadow-sm hover:brightness-95 transition-all w-full md:w-auto">
         ← Kembali ke Beranda
       </button>
 
-      <h3 id="equipmentPageTitle"
-        class="text-[var(--text)] font-black uppercase text-sm md:text-base italic flex items-center mt-4">
-        <span class="w-8 h-1 bg-[var(--accent)] mr-3"></span>
-        Equipment Monitoring - Komatsu
+      <h3 id="equipmentPageTitle" class="text-[var(--text)] font-black uppercase text-sm md:text-lg italic flex items-center">
+        <!-- Judul akan diisi oleh JS -->
       </h3>
     </div>
 
-    <div class="soft-panel p-5 md:p-6 rounded-3xl">
-      <h4 class="text-[var(--text)] font-black uppercase text-[12px] mb-4 italic">
-        Detail Unit Brand
+    <!-- KONTAINER GRAFIK BRAND -->
+    <div id="equipmentChartsWrap" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8 hidden">
+      
+      <!-- Grafik 1: Model (Dibuat Full Width / Membentang 2 Kolom) -->
+      <div class="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm flex flex-col lg:col-span-2">
+        <h4 class="text-[var(--text)] font-black uppercase text-[10px] mb-3 text-center tracking-widest text-[var(--muted)]">Sebaran Model</h4>
+        <div class="w-full flex-grow min-h-[220px]">
+          <canvas id="chartEquipModel"></canvas>
+        </div>
+      </div>
+      
+      <!-- Grafik 2: Customer (Dibagi 50% di baris bawah) -->
+      <div class="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm flex flex-col lg:col-span-1">
+        <h4 class="text-[var(--text)] font-black uppercase text-[10px] mb-3 text-center tracking-widest text-[var(--muted)]">Distribusi Customer</h4>
+        <div class="w-full flex-grow min-h-[220px]">
+          <canvas id="chartEquipCustomer"></canvas>
+        </div>
+      </div>
+
+      <!-- Grafik 3: Work Center (Dibagi 50% di baris bawah bersandingan dengan Customer) -->
+      <div class="bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm flex flex-col lg:col-span-1">
+        <h4 class="text-[var(--text)] font-black uppercase text-[10px] mb-3 text-center tracking-widest text-[var(--muted)]">Lokasi Work Center</h4>
+        <div class="w-full flex-grow min-h-[220px]">
+          <canvas id="chartEquipLocation"></canvas>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- KONTAINER TABEL -->
+    <div class="bg-[var(--surface-2)] p-5 md:p-6 rounded-3xl border border-[var(--border)]">
+      <h4 class="text-[var(--text)] font-black uppercase text-[12px] mb-4 italic flex items-center">
+        <span class="w-4 h-4 bg-[var(--accent)] rounded-full mr-2"></span> Detail Unit 
       </h4>
       <div id="equipmentDetailTable"></div>
     </div>
+
   </div>
 </div>
 
@@ -1310,7 +1349,7 @@ header{
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      INDEXIM (PCB) Population 
+      INDEXIM (A2B) Population 
     </h3>
 
     <div class="market-share-poster">
@@ -1336,7 +1375,7 @@ header{
 
   <div class="glass-panel p-8 rounded-3xl flex flex-col items-center">
     <h3 class="text-[var(--text)] font-black uppercase text-[12px] mb-6 tracking-widest italic text-center">
-      GAM (PCB) Population
+      GAM (A2B) Population
     </h3>
 
     <div class="market-share-poster">
@@ -2674,9 +2713,21 @@ function showDataQualityWarningToast_(){
       const v = norm(pickKeyInsensitive(d, ["unit UT","unit_ut","unitut","unit ut"]));
       return v === "UT";
     }
-    function isNonUT(d){
-  const v = norm(pickKeyInsensitive(d, ["unit non-UT","unit_non_ut","unit nonut","non_ut","unit non ut"]));
-  return v.includes("NON");
+
+    function isNonUT(d) {
+  // 1. Ambil nilai kolom 'unit UT' secara robus
+  const unitUtVal = String(d.unit_ut || d["unit UT"] || pickKeyInsensitive(d, ["unit UT", "unit_ut", "unitut"]) || "").trim().toUpperCase();
+  
+  // 2. Ambil nilai kolom 'unit non-UT'
+  const unitNonUtVal = String(d.unit_non_ut || d["unit non-UT"] || pickKeyInsensitive(d, ["unit non-UT", "unit_non_ut"]) || "").trim().toUpperCase();
+
+  // 3. Logika Koreksi: Jika kolom unit UT JELAS-JELAS berisi "UT", maka dia BUKAN competitor
+  if (unitUtVal === "UT") {
+    return false;
+  }
+
+  // 4. Jika kolom unit UT kosong/bukan UT, ATAU kolom non-UT berisi "NON-UT" / "COMPETITOR", maka dia adalah Competitor
+  return (unitUtVal === "" || unitNonUtVal.includes("NON") || unitNonUtVal !== "");
 }
 
 function getCompetitorQty_(d){
@@ -2833,25 +2884,171 @@ function makeEquipmentDetailTable_(rows){
 function renderEquipmentMonitoringPage_(brand){
   currentEquipmentBrand_ = String(brand || "KOMATSU").trim().toUpperCase();
 
+  // 1. Ambil & Urutkan Data Tabel
   const rows = getEquipmentRows_(currentEquipmentBrand_).sort((a,b) => {
     const modelA = String(a.model_number || "").toUpperCase();
     const modelB = String(b.model_number || "").toUpperCase();
     return modelA.localeCompare(modelB);
   });
 
-  const totals = getEquipmentBrandTotals_();
-  const selectedTotal = totals[currentEquipmentBrand_] || 0;
-
   const titleEl = document.getElementById("equipmentPageTitle");
-  const subtitleEl = document.getElementById("equipmentPageSubtitle");
   const detailTableEl = document.getElementById("equipmentDetailTable");
+  const chartsWrap = document.getElementById("equipmentChartsWrap");
 
+  // Update Judul
   if (titleEl) {
-    titleEl.innerHTML = `<span class="w-8 h-1 bg-[var(--accent)] mr-3"></span> Equipment Monitoring - ${currentEquipmentBrand_}`;
+    titleEl.innerHTML = `<span class="w-8 h-1 bg-[var(--accent)] mr-3 hidden md:block"></span> Equipment Analytics - ${currentEquipmentBrand_}`;
   }
 
-  if (detailTableEl) {
-    detailTableEl.innerHTML = makeEquipmentDetailTable_(rows);
+  // Jika data kosong, sembunyikan grafik dan tampilkan tabel kosong
+  if (!rows.length) {
+    if (chartsWrap) chartsWrap.classList.add("hidden");
+    if (detailTableEl) detailTableEl.innerHTML = makeEquipmentDetailTable_([]);
+    return;
+  }
+
+  // 2. Munculkan Kontainer Grafik
+  if (chartsWrap) chartsWrap.classList.remove("hidden");
+  if (detailTableEl) detailTableEl.innerHTML = makeEquipmentDetailTable_(rows);
+
+  // 3. Olah Data untuk Grafik
+  const modelMap = {};
+  const custMap = {};
+  const wcMap = {};
+
+  rows.forEach(d => {
+    const m = String(d.model_number || "N/A").trim();
+    const c = String(d.customer || "N/A").trim();
+    const w = String(d.wrk_cntr || "N/A").trim();
+    const qty = getRowPopulation_(d);
+
+    modelMap[m] = (modelMap[m] || 0) + qty;
+    custMap[c] = (custMap[c] || 0) + qty;
+    wcMap[w] = (wcMap[w] || 0) + qty;
+  });
+
+  // Urutkan data model dari terbesar ke terkecil
+  const sortedModels = Object.entries(modelMap).sort((a,b) => b[1] - a[1]);
+  // Ambil top 10 model saja agar grafik bar tidak terlalu padat ke bawah
+  const topModels = sortedModels.slice(0, 10); 
+  
+  const modelLabels = topModels.map(x => x[0]);
+  const modelVals = topModels.map(x => x[1]);
+
+  const custLabels = Object.keys(custMap);
+  const custVals = custLabels.map(k => custMap[k]);
+
+  const wcLabels = Object.keys(wcMap);
+  const wcVals = wcLabels.map(k => wcMap[k]);
+
+  // Palet Warna Khas Dashboard (Diperbanyak agar variasi customer tidak kehabisan warna)
+  const themeColors = ['#111827', '#FFCC00', '#16A34A', '#DC2626', '#6B7280', '#D97706', '#2563EB', '#4B5563', '#9333EA', '#059669', '#E11D48', '#0F766E', '#4338CA', '#B45309', '#BE123C'];
+
+  // Hancurkan grafik lama jika sudah ada (mencegah glitch saat ganti brand)
+  if (window.eqChartModel) window.eqChartModel.destroy();
+  if (window.eqChartCust) window.eqChartCust.destroy();
+  if (window.eqChartWc) window.eqChartWc.destroy();
+
+  // Opsi Khusus Grafik Customer (Legenda MATI, Tooltip MENYALA)
+  const custPieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }, // Legenda nama customer dihilangkan agar tidak menumpuk
+      datalabels: {
+        color: '#ffffff',
+        font: { weight: 'bold', size: 10 },
+        formatter: (value, context) => {
+          let sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+          // Hanya tampilkan persen jika porsinya > 2% agar angka tidak bertabrakan di potongan kecil
+          const pct = Math.round((value * 100) / sum);
+          return pct > 2 ? pct + "%" : ""; 
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) => ` ${context.label}: ${context.parsed} Unit` // Saat disentuh, muncul nama customer + unit
+        }
+      }
+    }
+  };
+
+  // Opsi Khusus Grafik Work Center (Legenda MENYALA karena datanya sedikit)
+  const wcPieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 9, weight: 'bold' }, boxWidth: 10 } },
+      datalabels: {
+        color: '#ffffff',
+        font: { weight: 'bold', size: 10 },
+        formatter: (value, context) => {
+          let sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+          return value > 0 ? Math.round((value * 100) / sum) + "%" : ""; 
+        }
+      }
+    }
+  };
+
+  // 4. Render Grafik 1: Model (Bar Horizontal)
+  const ctxModel = document.getElementById('chartEquipModel');
+  if (ctxModel) {
+    window.eqChartModel = new Chart(ctxModel, {
+      type: 'bar',
+      data: {
+        labels: modelLabels,
+        datasets: [{
+          data: modelVals,
+          backgroundColor: '#FFCC00',
+          borderRadius: 4,
+          barThickness: 12
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: { anchor: 'end', align: 'right', color: '#111827', font: { weight: 'bold', size: 9 } },
+          tooltip: {
+            callbacks: {
+              label: (context) => ` Total: ${context.parsed.x} Unit`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { display: false }, grace: '15%' },
+          y: { grid: { display: false }, ticks: { color: '#111827', font: { size: 9, weight: 'bold' } } }
+        }
+      }
+    });
+  }
+
+  // 5. Render Grafik 2: Customer (Doughnut)
+  const ctxCust = document.getElementById('chartEquipCustomer');
+  if (ctxCust) {
+    window.eqChartCust = new Chart(ctxCust, {
+      type: 'doughnut',
+      data: {
+        labels: custLabels,
+        datasets: [{ data: custVals, backgroundColor: themeColors, borderWidth: 0 }]
+      },
+      options: custPieOptions
+    });
+  }
+
+  // 6. Render Grafik 3: Work Center (Pie)
+  const ctxWc = document.getElementById('chartEquipLocation');
+  if (ctxWc) {
+    window.eqChartWc = new Chart(ctxWc, {
+      type: 'pie',
+      data: {
+        labels: wcLabels,
+        datasets: [{ data: wcVals, backgroundColor: ['#14213D','#C9A227','#6F8A6D','#A56A5B', '#4E8B63'], borderWidth: 0 }]
+      },
+      options: wcPieOptions
+    });
   }
 }
 
@@ -3168,6 +3365,21 @@ setTimeout(() => {
 
     // ===== MAIN SUMMARY + MAIN BAR =====
     function calculateSummary() {
+  // 1. Ambil data total unit per brand menggunakan fungsi bawaan yang tepat (_)
+  const brandTotals = getEquipmentBrandTotals_(); // Menggunakan akhiran underscore
+  
+  const elKomatsu = document.getElementById('res-brand-total-komatsu');
+  const elScania  = document.getElementById('res-brand-total-scania');
+  const elTadano  = document.getElementById('res-brand-total-tadano');
+  const elUd      = document.getElementById('res-brand-total-udtrucks');
+  const elBomag   = document.getElementById('res-brand-total-bomag');
+
+  if (elKomatsu) elKomatsu.innerText = (brandTotals["KOMATSU"] || 0) + " Unit";
+  if (elScania)  elScania.innerText  = (brandTotals["SCANIA"] || 0) + " Unit";
+  if (elTadano)  elTadano.innerText  = (brandTotals["TADANO"] || 0) + " Unit";
+  if (elUd)      elUd.innerText      = (brandTotals["UD TRUCKS"] || 0) + " Unit";
+  if (elBomag)   elBomag.innerText   = (brandTotals["BOMAG"] || 0) + " Unit";
+
   const totalEl = document.getElementById('res-total-ut');
   if (totalEl) totalEl.innerText = sumPopulation_(globalData);
 
@@ -3300,6 +3512,29 @@ setTimeout(() => {
   });
 }
 
+function animateMainStats_(){
+  const els = [
+    ...document.querySelectorAll('#page-main .card-title-lg'),
+    document.getElementById('res-total-ut'),
+    document.getElementById('res-total-unit-ut'),
+    document.getElementById('res-total-unit-nonut'),
+    document.getElementById('res-warranty'),
+    document.getElementById('res-out-warranty'),
+    document.getElementById('res-skl'),
+    document.getElementById('res-sku'),
+    document.getElementById('res-skh'),
+    document.getElementById('res-kla'),
+    // Tambahkan baris di bawah ini
+    document.getElementById('res-brand-total-komatsu'),
+    document.getElementById('res-brand-total-scania'),
+    document.getElementById('res-brand-total-tadano'),
+    document.getElementById('res-brand-total-udtrucks'),
+    document.getElementById('res-brand-total-bomag')
+  ].filter(Boolean);
+
+  replayPopAnimation_(els);
+}
+
     // ===== CHARTS PAGE + CUSTOMER CHART =====
 // ===== CHARTS PAGE + CUSTOMER CHART =====
 function getBouwheerGroup_(d){
@@ -3394,43 +3629,34 @@ function getTyppeValue_(d){
   return norm(d.Typpe || d.typpe || pickKeyInsensitive(d, ["Typpe", "typpe", "type", "Type"]));
 }
 
-function getKppGamBucket_(d){
-  const customer = norm(d.customer);
-  const areaLike = norm(
-    pickKeyInsensitive(d, [
-      "area",
-      "Area",
-      "bouwheer",
-      "Bouwheer",
-      "group_bouwheer",
-      "bouwheer_group",
-      "customer_group",
-      "owner_group"
-    ])
-  );
+function getIndeximGamMiningBucket_(d) {
+  const area = String(d.area || pickKeyInsensitive(d, ["area", "Area"]) || "").trim().toUpperCase();
+  const indust = String(d.indust || d.sector || pickKeyInsensitive(d, ["indust", "industri", "sector", "sektor"]) || "").trim().toUpperCase();
 
-  if (
-    customer === "KALIMANTAN PRIMA PERSADA" ||
-    customer === "KPP" ||
-    areaLike === "KPP" ||
-    areaLike.includes("KPP")
-  ) return "KPP";
+  // PERBAIKAN: Izinkan unit dari sektor MNG (Mining) DAN HAULING masuk ke dalam kalkulasi
+  if (indust !== "MNG" && indust !== "MINING" && indust !== "HAULING") {
+    return null;
+  }
 
-  if (
-    areaLike === "GAM" ||
-    areaLike.includes("GAM") ||
-    customer === "GAM"
-  ) return "GAM";
+  // Kelompokkan berdasarkan data kolom area asli di database
+  if (area === "INDEXIM" || area === "IDX") {
+    return "INDEXIM";
+  }
+  if (area === "GAM") {
+    return "GAM";
+  }
 
   return null;
 }
 
-function getUtVsCompetitorByBucketAndTyppe_(bucket, typpe){
+function getUtVsCompetitorMining_(targetArea, targetTypesArray) {
+  const targetTypes = (targetTypesArray || []).map(t => String(t).trim().toUpperCase());
+
   const filtered = globalData.filter(d => {
-    return (
-      getKppGamBucket_(d) === bucket &&
-      getTyppeValue_(d) === norm(typpe)
-    );
+    const bucketArea = getIndeximGamMiningBucket_(d);
+    const currentType = String(getTyppeValue_(d) || "").trim().toUpperCase();
+    
+    return bucketArea === targetArea && targetTypes.includes(currentType);
   });
 
   return {
@@ -3456,16 +3682,146 @@ function getMarketShareMeta_(ut, competitor){
   };
 }
 
-function updateMarketSharePosterText_(prefix, meta){
+function showCompetitorDetail(customerName) {
+  // 1. Ambil data unit kompetitor untuk customer yang diklik
+  const compData = globalData.filter(d => 
+    norm(d.customer) === norm(customerName) && isNonUT(d)
+  );
+
+  // 2. Kelompokkan data untuk Grafik (Berdasarkan Brand dan Typpe)
+  const chartMap = {};
+  compData.forEach(d => {
+    const brand = String(d.prod_hier || "UNKNOWN").trim().toUpperCase();
+    const type = String(getTyppeValue_(d) || "UNKNOWN").trim().toUpperCase();
+    
+    // Format label: "BRAND (TIPE)", contoh: "CATERPILLAR (GDB)"
+    const key = brand !== "UNKNOWN" ? `${brand} (${type})` : type;
+    
+    chartMap[key] = (chartMap[key] || 0) + getRowPopulation_(d);
+  });
+
+  // Urutkan dari jumlah terbanyak ke sedikit
+  const sortedChart = Object.entries(chartMap).sort((a,b) => b[1] - a[1]);
+  const labels = sortedChart.map(x => x[0]);
+  const values = sortedChart.map(x => x[1]);
+
+  // 3. Render HTML ke dalam Modal
+  document.getElementById('modalCustName').innerText = "UNIT COMPETITOR: " + customerName;
+  const modalContent = document.getElementById('modalContent');
+  
+  modalContent.innerHTML = `
+    <!-- Kontainer Grafik Bar Horizontal -->
+    <div class="mb-6 h-[260px] w-full bg-white p-5 rounded-2xl border border-[var(--border)] shadow-sm">
+      <h3 class="text-[var(--text)] font-black uppercase text-[11px] mb-4 italic text-center text-[var(--muted)]">
+        Sebaran Unit Berdasarkan Brand & Tipe
+      </h3>
+      <div class="relative w-full h-[180px] custom-scrollbar">
+        <canvas id="chartModalCompetitor"></canvas>
+      </div>
+    </div>
+
+    <!-- Kontainer Tabel Detail -->
+    <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-[11px] text-left whitespace-nowrap">
+          <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black">
+            <tr>
+              <th class="p-4">Brand / Prod Hier</th>
+              <th class="p-4">Typpe</th>
+              <th class="p-4">Model Number</th>
+              <th class="p-4 text-right">Qty</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border)]">
+            ${compData.map(d => `
+              <tr class="hover:bg-black/5">
+                <td class="p-4 font-bold text-[var(--text)]">${d.prod_hier || '-'}</td>
+                <td class="p-4 font-bold text-[var(--text)]">${getTyppeValue_(d) || '-'}</td>
+                <td class="p-4 font-bold text-[var(--text)]">${d.model_number || '-'}</td>
+                <td class="p-4 font-black text-[var(--accent)] text-right">${getRowPopulation_(d)} Unit</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('customerModal').classList.remove('hidden');
+
+  // 4. Inisialisasi Chart.js setelah Modal terbuka
+  setTimeout(() => {
+    const ctx = document.getElementById('chartModalCompetitor');
+    if (!ctx) return;
+    
+    // Hancurkan grafik sebelumnya jika ada agar tidak menumpuk (glitch)
+    if (window.modalCompChart) window.modalCompChart.destroy();
+    
+    window.modalCompChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: '#111827', // Warna gelap khas Competitor
+          borderRadius: 6,
+          barThickness: 18
+        }]
+      },
+      options: {
+        indexAxis: 'y', // Perintah sakti untuk mengubah chart menjadi horizontal
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 800,
+          easing: 'easeOutQuart'
+        },
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#111827',
+            font: { weight: 'bold', size: 10 },
+            formatter: (value) => value + ' Unit'
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => ` Total: ${context.parsed.x} Unit`
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: { color: '#E5E7EB' },
+            ticks: { color: '#111827', font: { weight: 'bold' } },
+            // Menambah ekstra space di sebelah kanan agar label 'Unit' tidak terpotong batas canvas
+            grace: '10%' 
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: '#111827', font: { weight: 'bold', size: 10 } }
+          }
+        }
+      }
+    });
+  }, 80);
+}
+
+function updateMarketSharePosterText_(prefix, meta) {
   const setText = (id, value) => {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
   };
 
-  setText(`${prefix}CompPct`, `Competitor; ${meta.compPct.toFixed(1)}%`);
+  // Jika prefix mengandung kata 'kpp', tampilkan label visual sebagai 'INDEXIM'
+  const displayLabel = (prefix.toLowerCase().includes("kpp")) ? "INDEXIM" : "GAM";
+
+  setText(`${prefix}CompPct`, `${displayLabel} Competitor; ${meta.compPct.toFixed(1)}%`);
   setText(`${prefix}CompUnit`, `${meta.competitor} Unit`);
   setText(`${prefix}UtUnit`, `${meta.ut} Unit`);
-  setText(`${prefix}UtPct`, `UT Product; ${meta.utPct.toFixed(1)}%`);
+  setText(`${prefix}UtPct`, `UT ${displayLabel} Product; ${meta.utPct.toFixed(1)}%`);
   setText(`${prefix}ShareHeadline`, `UT Market Share ${meta.utPct.toFixed(0)}%`);
 }
 
@@ -3480,35 +3836,60 @@ const BAR_ANIMATION_ = {
 
     function renderAllCharts() {
       const commonPie = {
-  responsive:true,
-  maintainAspectRatio:false,
-  animation:{
-    duration: 1000,
-    easing: 'easeOutQuart',
-    animateRotate: true,
-    animateScale: true
-  },
-  plugins:{
-    legend:{
-      position:'bottom',
-      labels:{
-        color:'#111827',
-        font:{ size:12, weight:'bold' },
-        padding:15,
-        boxWidth:18,
-        boxHeight:10
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart',
+        animateRotate: true,
+        animateScale: true
+      },
+      plugins: {
+        legend: {
+          position: 'right', // Keterangan detail unit di sebelah kanan
+          labels: {
+            color: '#111827',
+            font: {
+              size: 11,
+              weight: 'bold'
+            },
+            padding: 12,
+            boxWidth: 12,
+            generateLabels: function(chart) {
+              const data = chart.data;
+              if (data.labels.length && data.datasets.length) {
+                return data.labels.map(function(label, i) {
+                  const value = data.datasets[0].data[i];
+                  return {
+                    text: `${label} (${value} Unit)`, // Teks List di kanan: "Model (X Unit)"
+                    fillStyle: data.datasets[0].backgroundColor[i],
+                    hidden: isNaN(value) || chart.getDatasetMeta(0).data[i].hidden,
+                    index: i
+                  };
+                });
+              }
+              return [];
+            }
+          }
+        },
+        // 
+        datalabels: {
+          display: true, 
+          color: '#ffffff', // Warna font persentase (putih)
+          font: {
+            weight: 'bold',
+            size: 11
+          },
+          formatter: (value, context) => {
+            // Rumus menghitung persentase otomatis
+            let sum = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+            let percentage = (value * 100 / sum).toFixed(1) + "%";
+            // Menyembunyikan tulisan jika persentasenya 0% agar grafik tidak berantakan
+            return value > 0 ? percentage : ""; 
+          }
+        }
       }
-    },
-    datalabels:{
-      color:'#ffffff',
-      font:{ weight:'bold', size:10 },
-      formatter:(v,c)=>{
-        let s = c.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
-        return s>0 ? ((v*100)/s).toFixed(1)+"%" : "0%";
-      }
-    }
-  }
-};
+    };
 
       // 1 Wilayah pie
       const areas = [...new Set(globalData.map(d => String(d.area || "N/A").toUpperCase()))];
@@ -3703,6 +4084,14 @@ if (ctxBouwheer){
             indexAxis:'y',
             responsive:true,
             maintainAspectRatio:false,
+            onClick: (e, items) => {
+    if (items.length) {
+      const idx = items[0].index;
+      const customerName = charts.topCustomerNonUT.data.labels[idx];
+      // Panggil fungsi khusus kompetitor di atas
+      showCompetitorDetail(customerName);
+    }
+  },
             plugins:{
               legend:{ display:false },
               datalabels:{
@@ -3810,92 +4199,95 @@ if (ctxJ){
     }
   };
 
-  // 9b KPP PCB doughnut
-  const kppPcb = getUtVsCompetitorByBucketAndTyppe_("KPP", "PCB");
-  const kppMeta = getMarketShareMeta_(kppPcb.ut, kppPcb.competitor);
-  updateMarketSharePosterText_("kpp", kppMeta);
+  const tipeA2B = ["PCB", "BDS", "BDB", "BW", "WAB", "WAS", "GDB", "GDS", "PCS", "TDN"];
+  const tipeTrucks = ["DT", "HD"]; 
+
+ // 1. INDEXIM (A2B)
+  const indeximA2BData = getUtVsCompetitorMining_("INDEXIM", tipeA2B);
+  const indeximA2BMeta = getMarketShareMeta_(indeximA2BData.ut, indeximA2BData.competitor);
+  updateMarketSharePosterText_("kpp", indeximA2BMeta); // ID 'kpp' tetap dipertahankan agar link elemen HTML tidak broken
 
   if (charts.kppPcbPie) charts.kppPcbPie.destroy();
   const ctxKppPcb = document.getElementById('chartKppPcbPie');
-  if (ctxKppPcb){
+  if (ctxKppPcb) {
     charts.kppPcbPie = new Chart(ctxKppPcb, {
-      type:'doughnut',
-      data:{
-        labels:['UT','Competitor'],
-        datasets:[{
-          data:[kppMeta.ut, kppMeta.competitor],
-          backgroundColor:['#FFCC00','#111827'],
-          borderWidth:0,
-          borderColor:'transparent'
+      type: 'doughnut',
+      data: {
+        labels: ['UT', 'Competitor'],
+        datasets: [{
+          data: [indeximA2BMeta.ut, indeximA2BMeta.competitor],
+          backgroundColor: ['#FFCC00', '#111827'],
+          borderWidth: 0,
+          borderColor: 'transparent'
         }]
       },
       options: sharePosterOptions
     });
   }
 
-  // 9c GAM PCB doughnut
-  const gamPcb = getUtVsCompetitorByBucketAndTyppe_("GAM", "PCB");
-  const gamMeta = getMarketShareMeta_(gamPcb.ut, gamPcb.competitor);
-  updateMarketSharePosterText_("gam", gamMeta);
+  // 2. GAM (A2B)
+  const gamA2BData = getUtVsCompetitorMining_("GAM", tipeA2B);
+  const gamA2BMeta = getMarketShareMeta_(gamA2BData.ut, gamA2BData.competitor);
+  updateMarketSharePosterText_("gam", gamA2BMeta);
 
   if (charts.gamPcbPie) charts.gamPcbPie.destroy();
   const ctxGamPcb = document.getElementById('chartGamPcbPie');
-  if (ctxGamPcb){
+  if (ctxGamPcb) {
     charts.gamPcbPie = new Chart(ctxGamPcb, {
-      type:'doughnut',
-      data:{
-        labels:['UT','Competitor'],
-        datasets:[{
-          data:[gamMeta.ut, gamMeta.competitor],
-          backgroundColor:['#FFCC00','#111827'],
-          borderWidth:0,
-          borderColor:'transparent'
+      type: 'doughnut',
+      data: {
+        labels: ['UT', 'Competitor'],
+        datasets: [{
+          data: [gamA2BMeta.ut, gamA2BMeta.competitor],
+          backgroundColor: ['#FFCC00', '#111827'],
+          borderWidth: 0,
+          borderColor: 'transparent'
         }]
       },
       options: sharePosterOptions
     });
   }
 
-  // 9d KPP A2B doughnut
-const kppRdt = getUtVsCompetitorByBucketAndTyppe_("KPP", "DT"); 
-const kppRdtMeta = getMarketShareMeta_(kppRdt.ut, kppRdt.competitor);
-updateMarketSharePosterText_("kppRdt", kppRdtMeta);
+  // 3. INDEXIM (Trucks)
+  const indeximTrucksData = getUtVsCompetitorMining_("INDEXIM", tipeTrucks);
+  const indeximTrucksMeta = getMarketShareMeta_(indeximTrucksData.ut, indeximTrucksData.competitor);
+  updateMarketSharePosterText_("kppRdt", indeximTrucksMeta);
 
   if (charts.kppRdtPie) charts.kppRdtPie.destroy();
   const ctxKppRdt = document.getElementById('chartKppRdtPie');
-  if (ctxKppRdt){
+  if (ctxKppRdt) {
     charts.kppRdtPie = new Chart(ctxKppRdt, {
-      type:'doughnut',
-      data:{
-        labels:['UT','Competitor'],
-        datasets:[{
-          data:[kppRdtMeta.ut, kppRdtMeta.competitor],
-          backgroundColor:['#FFCC00','#111827'],
-          borderWidth:0,
-          borderColor:'transparent'
+      type: 'doughnut',
+      data: {
+        labels: ['UT', 'Competitor'],
+        datasets: [{
+          data: [indeximTrucksMeta.ut, indeximTrucksMeta.competitor],
+          backgroundColor: ['#FFCC00', '#111827'],
+          borderWidth: 0,
+          borderColor: 'transparent'
         }]
       },
       options: sharePosterOptions
     });
   }
 
-  // 9e GAM A2B doughnut
-  const gamRdt = getUtVsCompetitorByBucketAndTyppe_("GAM", "DT"); 
-const gamRdtMeta = getMarketShareMeta_(gamRdt.ut, gamRdt.competitor);
-updateMarketSharePosterText_("gamRdt", gamRdtMeta);
+  // 4. GAM (Trucks)
+  const gamTrucksData = getUtVsCompetitorMining_("GAM", tipeTrucks);
+  const gamTrucksMeta = getMarketShareMeta_(gamTrucksData.ut, gamTrucksData.competitor);
+  updateMarketSharePosterText_("gamRdt", gamTrucksMeta);
 
   if (charts.gamRdtPie) charts.gamRdtPie.destroy();
   const ctxGamRdt = document.getElementById('chartGamRdtPie');
-  if (ctxGamRdt){
+  if (ctxGamRdt) {
     charts.gamRdtPie = new Chart(ctxGamRdt, {
-      type:'doughnut',
-      data:{
-        labels:['UT','Competitor'],
-        datasets:[{
-          data:[gamRdtMeta.ut, gamRdtMeta.competitor],
-          backgroundColor:['#FFCC00','#111827'],
-          borderWidth:0,
-          borderColor:'transparent'
+      type: 'doughnut',
+      data: {
+        labels: ['UT', 'Competitor'],
+        datasets: [{
+          data: [gamTrucksMeta.ut, gamTrucksMeta.competitor],
+          backgroundColor: ['#FFCC00', '#111827'],
+          borderWidth: 0,
+          borderColor: 'transparent'
         }]
       },
       options: sharePosterOptions
