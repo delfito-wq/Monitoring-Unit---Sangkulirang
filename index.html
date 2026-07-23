@@ -976,6 +976,13 @@ header{
       Ajukan Update
     </a>
 
+    <button id="mobileAuthButton"
+  type="button"
+  onclick="handleApplicationAuthButton_()"
+  class="mobile-action-rect border border-white text-white bg-transparent">
+  Login
+</button>
+
     <button onclick="exportToExcelFromSupabase()"
   class="mobile-action-rect mobile-action-outline">
   Export Excel
@@ -1081,6 +1088,13 @@ header{
         </a>
 
         <div class="flex items-center gap-3">
+          <button id="desktopAuthButton"
+  type="button"
+  onclick="handleApplicationAuthButton_()"
+  class="border border-white/40 text-white hover:bg-white hover:text-black px-5 py-2 rounded-full text-[12px] font-black uppercase transition-all">
+  Login
+</button>
+
   <button onclick="exportToExcelFromSupabase()"
     class="border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-5 py-2 rounded-full text-[12px] font-black uppercase transition-all">
     Export Excel
@@ -1827,6 +1841,77 @@ header{
     </div>
   </div>
 
+<!-- APPLICATION LOGIN MODAL -->
+<div id="appLoginModal"
+  class="hidden fixed inset-0 z-[130] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+
+  <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-[var(--border)] overflow-hidden">
+
+    <div class="p-6 border-b border-[var(--border)] bg-[var(--surface-2)] flex items-start justify-between gap-4">
+      <div>
+        <h2 class="text-xl font-black text-[var(--text)] uppercase tracking-tight">
+          Login Akses Sistem
+        </h2>
+
+        <p class="text-[12px] font-bold text-[var(--muted)] mt-1">
+          Masuk menggunakan akun staff atau administrator.
+        </p>
+      </div>
+
+      <button type="button"
+        onclick="closeAppLoginModal_()"
+        class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+        ✕
+      </button>
+    </div>
+
+    <div class="p-6">
+
+      <div class="mb-4">
+        <label for="appLoginEmail"
+          class="block text-[11px] font-black uppercase text-[var(--muted)] mb-2">
+          Email
+        </label>
+
+        <input id="appLoginEmail"
+          type="email"
+          autocomplete="username"
+          placeholder="nama@perusahaan.com"
+          class="w-full border border-[var(--border)] rounded-xl px-4 py-3 text-[13px] font-bold outline-none focus:border-[var(--accent)]">
+      </div>
+
+      <div class="mb-4">
+        <label for="appLoginPassword"
+          class="block text-[11px] font-black uppercase text-[var(--muted)] mb-2">
+          Password
+        </label>
+
+        <input id="appLoginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Masukkan password"
+          onkeydown="if(event.key === 'Enter') appLogin_();"
+          class="w-full border border-[var(--border)] rounded-xl px-4 py-3 text-[13px] font-bold outline-none focus:border-[var(--accent)]">
+      </div>
+
+      <div id="appLoginStatus"
+        class="hidden mb-4 rounded-xl border p-3 text-[12px] font-bold">
+      </div>
+
+      <button id="appLoginSubmitButton"
+        type="button"
+        onclick="appLogin_()"
+        class="w-full bg-[var(--accent)] text-black px-5 py-3 rounded-xl text-[12px] font-black uppercase shadow-sm hover:brightness-95 transition-all">
+        Login
+      </button>
+
+      <p class="mt-4 text-[11px] leading-relaxed text-center text-[var(--muted)] font-bold">
+        Akun harus terdaftar aktif pada sistem akses aplikasi.
+      </p>
+    </div>
+  </div>
+</div>
+
   <!-- ADMIN DELETE MODAL -->
 <div id="adminDeleteModal" class="hidden fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
   <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col border border-[var(--border)] overflow-hidden">
@@ -1868,22 +1953,22 @@ header{
     // ===== SUPABASE CONFIG =====
     const SUPABASE_URL = 'https://nhubmgvjhuqayssohvei.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odWJtZ3ZqaHVxYXlzc29odmVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NTM4MTgsImV4cCI6MjA4NjMyOTgxOH0.hmEJgrZZzi1DYw-3zFNTE8do_5oVwKzu1cdo5L1vQ4A';
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false,
-    detectSessionInUrl: false
+const _supabase = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      storageKey: "ut-sangkulirang-app-session",
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false
+    }
   }
-});
+);
 
-const _supabaseAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    storageKey: "ut-sangkulirang-admin-session",
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: false
-  }
-});
+// Alias sementara agar kode admin lama tetap berjalan.
+// Keduanya menggunakan session pengguna yang sama.
+const _supabaseAdmin = _supabase;
 
     // Nama tabel unit 
     const NAMA_TABEL_PRIMARY = 'Persebaran Unit_Sangkulirang';
@@ -1904,10 +1989,14 @@ const _supabaseAdmin = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     let PARTS_BY_KEY = new Map();   
     let PRICE_BY_PART = new Map();  
     let PRICE_ROWS = [];
-    let PLAN_OPP_ROWS = [];
+let PLAN_OPP_ROWS = [];
 
-    let globalData = [];
-    let charts = {};
+let globalData = [];
+let charts = {};
+
+// Data tabel mentah hanya boleh dimuat sesudah login.
+let PROTECTED_DATA_LOADED = false;
+let PROTECTED_DATA_LOADING = false;
     let CURRENT_MONTHLY_TREND_DETAIL_ITEMS = [];
     let CURRENT_MONTHLY_TREND_DETAIL_META = {};
     let CURRENT_PLANNING_VIEW_ITEMS = [];
@@ -1933,12 +2022,45 @@ let utRowsCache = [];
 let nonUtRowsCache = [];
 
 // admin delete
+// ===== APPLICATION AUTH & ACCESS =====
+let APP_SESSION = null;
+
+let APP_ACCESS_PROFILE = {
+  user_id: null,
+  email: null,
+  full_name: null,
+  is_active_user: false,
+  is_admin: false,
+  access_level: "public"
+};
+
+let PENDING_PROTECTED_TAB = null;
+
+// Semua menu ini hanya boleh dibuka staff aktif atau admin.
+const STAFF_PROTECTED_TABS = new Set([
+  "unit-ut",
+  "unit-nonut",
+  "charts",
+  "customer",
+  "trend",
+  "planning",
+  "service-accuracy",
+  "equipment"
+]);
+
+// Menu ini khusus admin.
+const ADMIN_PROTECTED_TABS = new Set([
+  "mutasi"
+]);
+
+// Variabel admin lama tetap dipertahankan.
 let ADMIN_SESSION = null;
 let IS_APP_ADMIN = false;
 let ADMIN_PREVIEW_SERIALS = [];
 let ADMIN_PREVIEW_ROWS = [];
 
-window.onload = loadDataFromCloud;
+// Gunakan initializer baru, bukan langsung load seluruh data.
+window.addEventListener("load", initApplication_);
 
     // ===== TOAST =====
     function showToast(title, msg){
@@ -1956,13 +2078,541 @@ window.onload = loadDataFromCloud;
 }
 
 // ===== Mutasi Unit by SN =====
-_supabaseAdmin.auth.onAuthStateChange((_event, session) => {
-  ADMIN_SESSION = session || null;
+_supabase.auth.onAuthStateChange((_event, session) => {
+  // Jalankan pada task berikutnya agar tidak bertabrakan
+  // dengan proses internal perubahan session Supabase.
+  setTimeout(async () => {
+    APP_SESSION = session || null;
+    ADMIN_SESSION = APP_SESSION;
 
-  refreshAdminDeleteAccess_().catch(err => {
-    console.warn("Admin auth state check skipped:", err);
-  });
+    try {
+      await refreshApplicationAccess_();
+    } catch (err) {
+      console.warn("Application auth state check error:", err);
+    }
+  }, 0);
 });
+
+function createPublicAccessProfile_() {
+  return {
+    user_id: null,
+    email: null,
+    full_name: null,
+    is_active_user: false,
+    is_admin: false,
+    access_level: "public"
+  };
+}
+
+function hasStaffAccess_() {
+  return Boolean(
+    APP_SESSION &&
+    (
+      APP_ACCESS_PROFILE.access_level === "staff" ||
+      APP_ACCESS_PROFILE.access_level === "admin"
+    )
+  );
+}
+
+function hasAdminAccess_() {
+  return Boolean(
+    APP_SESSION &&
+    APP_ACCESS_PROFILE.access_level === "admin"
+  );
+}
+
+function setAppLoginStatus_(message, type = "info") {
+  const el = document.getElementById("appLoginStatus");
+  if (!el) return;
+
+  if (!message) {
+    el.textContent = "";
+    el.className = "hidden";
+    return;
+  }
+
+  el.textContent = message;
+  el.className = "mb-4 rounded-xl border p-3 text-[12px] font-bold";
+
+  if (type === "error") {
+    el.classList.add(
+      "bg-red-50",
+      "border-red-200",
+      "text-red-600"
+    );
+  } else if (type === "success") {
+    el.classList.add(
+      "bg-green-50",
+      "border-green-200",
+      "text-green-700"
+    );
+  } else {
+    el.classList.add(
+      "bg-yellow-50",
+      "border-yellow-200",
+      "text-yellow-800"
+    );
+  }
+}
+
+function updateApplicationAccessUI_() {
+  const desktopButton =
+    document.getElementById("desktopAuthButton");
+
+  const mobileButton =
+    document.getElementById("mobileAuthButton");
+
+  let label = "Login";
+
+  if (APP_SESSION && APP_ACCESS_PROFILE.access_level === "admin") {
+    label = "Admin • Logout";
+  } else if (
+    APP_SESSION &&
+    APP_ACCESS_PROFILE.access_level === "staff"
+  ) {
+    label = "Staff • Logout";
+  } else if (APP_SESSION) {
+    label = "Akses Ditolak • Logout";
+  }
+
+  if (desktopButton) {
+    desktopButton.textContent = label;
+  }
+
+  if (mobileButton) {
+    mobileButton.textContent = label;
+  }
+
+  document.body.dataset.accessLevel =
+    APP_ACCESS_PROFILE.access_level || "public";
+
+  ADMIN_SESSION = APP_SESSION;
+  IS_APP_ADMIN = hasAdminAccess_();
+
+  updateAdminDeleteButton_();
+}
+
+async function refreshApplicationAccess_() {
+  APP_ACCESS_PROFILE = createPublicAccessProfile_();
+
+  if (!APP_SESSION?.user?.id) {
+    ADMIN_SESSION = null;
+    IS_APP_ADMIN = false;
+    updateApplicationAccessUI_();
+    return APP_ACCESS_PROFILE;
+  }
+
+  const { data, error } = await _supabase.rpc(
+    "get_current_access_profile"
+  );
+
+  if (error) {
+    console.error("Access profile error:", error);
+
+    APP_ACCESS_PROFILE = {
+      ...createPublicAccessProfile_(),
+      user_id: APP_SESSION.user.id,
+      email: APP_SESSION.user.email || null,
+      access_level: "denied"
+    };
+
+    updateApplicationAccessUI_();
+    return APP_ACCESS_PROFILE;
+  }
+
+  APP_ACCESS_PROFILE = {
+    user_id: data?.user_id || APP_SESSION.user.id,
+    email: data?.email || APP_SESSION.user.email || null,
+    full_name: data?.full_name || null,
+    is_active_user: data?.is_active_user === true,
+    is_admin: data?.is_admin === true,
+    access_level: String(
+      data?.access_level || "denied"
+    ).toLowerCase()
+  };
+
+  updateApplicationAccessUI_();
+
+  console.log("APPLICATION ACCESS:", {
+    user: APP_SESSION.user.email,
+    profile: APP_ACCESS_PROFILE
+  });
+
+  return APP_ACCESS_PROFILE;
+}
+
+async function initializeApplicationSession_() {
+  const { data, error } =
+    await _supabase.auth.getSession();
+
+  if (error) {
+    console.error("Get session error:", error);
+    APP_SESSION = null;
+    ADMIN_SESSION = null;
+    APP_ACCESS_PROFILE = createPublicAccessProfile_();
+    updateApplicationAccessUI_();
+    return;
+  }
+
+  APP_SESSION = data?.session || null;
+  ADMIN_SESSION = APP_SESSION;
+
+  await refreshApplicationAccess_();
+}
+
+async function initApplication_() {
+  try {
+    await initializeApplicationSession_();
+
+// Beranda selalu memakai RPC publik.
+await loadPublicHomeDashboard_();
+
+// Tabel mentah hanya dimuat apabila session yang tersimpan
+// memiliki akses staff atau admin.
+if (hasStaffAccess_()) {
+  await loadProtectedDataFromCloud_();
+}
+
+updateApplicationAccessUI_();
+  } catch (err) {
+    console.error("Application initialization error:", err);
+
+    showToast(
+      "Initialization Error",
+      err?.message || "Aplikasi gagal dimulai."
+    );
+  }
+}
+
+function openAppLoginModal_(pendingTab = null) {
+  if (pendingTab) {
+    PENDING_PROTECTED_TAB = pendingTab;
+  }
+
+  const modal =
+    document.getElementById("appLoginModal");
+
+  if (!modal) return;
+
+  setAppLoginStatus_("", "info");
+
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+
+  setTimeout(() => {
+    document.getElementById("appLoginEmail")?.focus();
+  }, 100);
+}
+
+function closeAppLoginModal_() {
+  const modal =
+    document.getElementById("appLoginModal");
+
+  if (modal) {
+    modal.classList.add("hidden");
+  }
+
+  document.body.style.overflow = "auto";
+}
+
+async function appLogin_() {
+  const email = String(
+    document.getElementById("appLoginEmail")?.value || ""
+  ).trim();
+
+  const password = String(
+    document.getElementById("appLoginPassword")?.value || ""
+  );
+
+  const submitButton =
+    document.getElementById("appLoginSubmitButton");
+
+  if (!email || !password) {
+    setAppLoginStatus_(
+      "Email dan password wajib diisi.",
+      "error"
+    );
+    return;
+  }
+
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Memeriksa...";
+  }
+
+  setAppLoginStatus_(
+    "Sedang memeriksa akun...",
+    "info"
+  );
+
+  try {
+    const { data, error } =
+      await _supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      setAppLoginStatus_(
+        error.message || "Login gagal.",
+        "error"
+      );
+      return;
+    }
+
+    APP_SESSION = data?.session || null;
+    ADMIN_SESSION = APP_SESSION;
+
+    await refreshApplicationAccess_();
+
+    if (!hasStaffAccess_()) {
+      await _supabase.auth.signOut({
+        scope: "local"
+      });
+
+      APP_SESSION = null;
+      ADMIN_SESSION = null;
+      APP_ACCESS_PROFILE = createPublicAccessProfile_();
+
+      updateApplicationAccessUI_();
+
+      setAppLoginStatus_(
+        "Login valid, tetapi akun belum memiliki akses aktif pada app_users.",
+        "error"
+      );
+
+      return;
+    }
+
+    setAppLoginStatus_(
+  "Login berhasil. Sedang memuat data internal...",
+  "info"
+);
+
+const protectedLoaded =
+  await loadProtectedDataFromCloud_(true);
+
+if (!protectedLoaded) {
+  throw new Error(
+    "Login berhasil, tetapi data internal gagal dimuat."
+  );
+}
+
+    const roleLabel =
+      hasAdminAccess_() ? "Administrator" : "Staff";
+
+    showToast(
+      "Login Berhasil",
+      `Anda masuk sebagai ${roleLabel}.`
+    );
+
+    setAppLoginStatus_(
+      `Login berhasil sebagai ${roleLabel}.`,
+      "success"
+    );
+
+    const target = PENDING_PROTECTED_TAB;
+    PENDING_PROTECTED_TAB = null;
+
+    closeAppLoginModal_();
+
+    if (target) {
+      const opened = switchTab(target);
+
+      if (opened && target === "mutasi") {
+        await renderMutasiTable_();
+      }
+    }
+  } catch (err) {
+    console.error("Login runtime error:", err);
+
+    setAppLoginStatus_(
+      err?.message || "Terjadi kesalahan saat login.",
+      "error"
+    );
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Login";
+    }
+  }
+}
+
+function clearProtectedData_() {
+  globalData = [];
+
+  PLAN_OPP_ROWS = [];
+  PRICE_ROWS = [];
+
+  STD_BY_KEY.clear();
+  PARTS_BY_KEY.clear();
+  PRICE_BY_PART.clear();
+
+  CURRENT_MONTHLY_TREND_DETAIL_ITEMS = [];
+  CURRENT_MONTHLY_TREND_DETAIL_META = {};
+  CURRENT_PLANNING_VIEW_ITEMS = [];
+  CURRENT_PLANNING_EXPORT_META = {};
+
+  utRowsCache = [];
+  nonUtRowsCache = [];
+  currentModalData = [];
+  currentWarrantyRows = [];
+
+  if (
+    typeof PLAN_CUSTOMERS_ALL !== "undefined"
+  ) {
+    PLAN_CUSTOMERS_ALL = [];
+  }
+
+  Object.values(charts || {}).forEach(chart => {
+    try {
+      chart?.destroy?.();
+    } catch (error) {
+      console.warn(
+        "Chart cleanup skipped:",
+        error
+      );
+    }
+  });
+
+  charts = {};
+
+  [
+    "eqChartModel",
+    "eqChartCust",
+    "eqChartWc"
+  ].forEach(chartName => {
+    try {
+      window[chartName]?.destroy?.();
+    } catch (error) {
+      console.warn(
+        "Equipment chart cleanup skipped:",
+        error
+      );
+    }
+
+    window[chartName] = null;
+  });
+
+  const protectedContainers = [
+    "unit-ut-table",
+    "unit-nonut-table",
+    "equipmentDetailTable",
+    "planningTable",
+    "planningStandardsTable",
+    "unit-mutasi-table"
+  ];
+
+  protectedContainers.forEach(id => {
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.innerHTML = `
+        <div class="bg-white rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)] font-bold">
+          Login diperlukan untuk menampilkan data.
+        </div>
+      `;
+    }
+  });
+
+  const equipmentCharts =
+    document.getElementById(
+      "equipmentChartsWrap"
+    );
+
+  if (equipmentCharts) {
+    equipmentCharts.classList.add("hidden");
+  }
+
+  PROTECTED_DATA_LOADED = false;
+  PROTECTED_DATA_LOADING = false;
+}
+
+async function appLogout_() {
+  try {
+    await _supabase.auth.signOut({
+      scope: "local"
+    });
+  } catch (err) {
+    console.warn("Logout error:", err);
+  }
+
+  APP_SESSION = null;
+  ADMIN_SESSION = null;
+  IS_APP_ADMIN = false;
+  APP_ACCESS_PROFILE = createPublicAccessProfile_();
+  PENDING_PROTECTED_TAB = null;
+
+  ADMIN_PREVIEW_SERIALS = [];
+  ADMIN_PREVIEW_ROWS = [];
+  clearProtectedData_();
+
+  updateApplicationAccessUI_();
+closeAdminDeleteModal_();
+switchTab("main");
+
+// Setelah data internal dibersihkan, tampilkan kembali
+// ringkasan publik.
+await loadPublicHomeDashboard_();
+
+showToast(
+  "Logout Berhasil",
+  "Session pengguna dan data internal telah dibersihkan."
+);
+}
+
+function handleApplicationAuthButton_() {
+  if (APP_SESSION) {
+    appLogout_();
+    return;
+  }
+
+  openAppLoginModal_();
+}
+
+function requireStaffAccess_(pendingTab = null) {
+  if (hasStaffAccess_()) {
+    return true;
+  }
+
+  if (!APP_SESSION) {
+    openAppLoginModal_(pendingTab);
+
+    showToast(
+      "Login Diperlukan",
+      "Silakan login untuk membuka menu tersebut."
+    );
+  } else {
+    showToast(
+      "Akses Ditolak",
+      "Akun ini belum memiliki akses staff aktif."
+    );
+  }
+
+  return false;
+}
+
+function requireAdminAccess_(pendingTab = null) {
+  if (hasAdminAccess_()) {
+    return true;
+  }
+
+  if (!APP_SESSION) {
+    openAppLoginModal_(pendingTab);
+
+    showToast(
+      "Login Administrator",
+      "Menu tersebut hanya dapat diakses administrator."
+    );
+  } else {
+    showToast(
+      "Akses Ditolak",
+      "Akun Anda bukan administrator aktif."
+    );
+  }
+
+  return false;
+}
 
 function updateAdminDeleteButton_(){
   const buttons = document.querySelectorAll(".admin-delete-trigger");
@@ -2298,14 +2948,8 @@ async function adminLogin_(){
   }
 }
 
-async function adminLogout_(){
-  await _supabaseAdmin.auth.signOut();
-  ADMIN_SESSION = null;
-  IS_APP_ADMIN = false;
-  ADMIN_PREVIEW_SERIALS = [];
-  ADMIN_PREVIEW_ROWS = [];
-  updateAdminDeleteButton_();
-  renderAdminDeleteModal_();
+async function adminLogout_() {
+  await appLogout_();
 }
 
 function adminPreviewDeleteUnits_(){
@@ -2360,7 +3004,9 @@ async function adminDeleteUnitsBySn_(){
   ADMIN_PREVIEW_ROWS = [];
 
   closeAdminDeleteModal_();
-  await loadDataFromCloud(); // Refresh data dengan filter ACTIVE
+  await loadProtectedDataFromCloud_(true);
+await loadPublicHomeDashboard_();
+await renderMutasiTable_();
 
   showToast(
     "Mutasi Berhasil",
@@ -2424,7 +3070,21 @@ document.addEventListener('click', function(e) {
 
     // ===== TAB SWITCH =====
     function switchTab(target) {
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+  if (
+    ADMIN_PROTECTED_TABS.has(target) &&
+    !requireAdminAccess_(target)
+  ) {
+    return false;
+  }
+
+  if (
+    STAFF_PROTECTED_TABS.has(target) &&
+    !requireStaffAccess_(target)
+  ) {
+    return false;
+  }
+
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
       const page = document.getElementById('page-' + target);
       if (page) page.classList.remove('hidden');
 
@@ -2452,6 +3112,7 @@ mobileBtnIds.forEach(id => {
 const mobileActive = document.getElementById('m-btn-'+target);
 if (mobileActive){
   mobileActive.classList.add('active');
+  return true;
 }
 
 closeMobileMenu();
@@ -3052,12 +3713,299 @@ function renderEquipmentMonitoringPage_(brand){
   }
 }
 
-function openEquipmentMonitoringPage_(brand){
+function openEquipmentMonitoringPage_(brand) {
+  if (!requireStaffAccess_("equipment")) {
+    return;
+  }
+
   renderEquipmentMonitoringPage_(brand);
-  switchTab('equipment');
+  switchTab("equipment");
 }
 
     // ===== LOAD DATA (Supabase) =====
+    function setPublicDashboardText_(id, value) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.textContent = String(value ?? 0);
+  }
+}
+
+function renderPublicModelChart_(modelItems) {
+  const rows = Array.isArray(modelItems)
+    ? modelItems
+        .map(item => ({
+          model_number: String(
+            item?.model_number || "N/A"
+          ).trim(),
+          total_units: Number(
+            item?.total_units || 0
+          )
+        }))
+        .filter(item => item.total_units > 0)
+    : [];
+
+  const labels = rows.map(item => item.model_number);
+  const values = rows.map(item => item.total_units);
+
+  const modelContainer =
+    document.getElementById("container-model-chart");
+
+  if (modelContainer) {
+    const minimumWidth = 1400;
+    const widthPerItem = 42;
+
+    modelContainer.style.width =
+      Math.max(
+        minimumWidth,
+        labels.length * widthPerItem
+      ) + "px";
+  }
+
+  if (charts.mainBar) {
+    charts.mainBar.destroy();
+    delete charts.mainBar;
+  }
+
+  const canvas =
+    document.getElementById("chartModelUtama");
+
+  if (!canvas || !window.Chart) return;
+
+  charts.mainBar = new Chart(canvas, {
+    type: "bar",
+
+    data: {
+      labels,
+
+      datasets: [{
+        data: values,
+        backgroundColor: "#FFCC00",
+        borderColor: "#D4A800",
+        borderWidth: 1,
+        borderRadius: 3,
+        categoryPercentage: 0.9,
+        barPercentage: 0.8,
+        maxBarThickness: 22,
+        minBarLength: 12
+      }]
+    },
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          display: false
+        },
+
+        datalabels: {
+          display: true,
+          anchor: "end",
+          align: "top",
+          offset: 4,
+          color: "#111827",
+          clamp: true,
+          clip: false,
+
+          font: {
+            size: 10,
+            weight: "700"
+          },
+
+          formatter: value => value
+        }
+      },
+
+      scales: {
+        y: {
+          beginAtZero: true,
+
+          ticks: {
+            precision: 0,
+            color: "#111827"
+          },
+
+          grid: {
+            color: "#E5E7EB"
+          }
+        },
+
+        x: {
+          ticks: {
+            color: "#111827",
+            maxRotation: 65,
+            minRotation: 45,
+            autoSkip: false,
+            font: {
+              size: 10,
+              weight: "700"
+            }
+          },
+
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderPublicHomeDashboard_(payload) {
+  const summary = payload?.summary || {};
+  const brands = payload?.brand_totals || {};
+
+  setPublicDashboardText_(
+    "res-total-ut",
+    Number(summary.total_population || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-total-unit-ut",
+    Number(summary.total_ut || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-total-unit-nonut",
+    Number(summary.total_competitor || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-warranty",
+    Number(summary.warranty || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-out-warranty",
+    Number(summary.out_warranty || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-skl",
+    Number(summary.skl || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-sku",
+    Number(summary.sku || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-skh",
+    Number(summary.skh || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-kla",
+    Number(summary.kla || 0)
+  );
+
+  setPublicDashboardText_(
+    "res-brand-total-komatsu",
+    `${Number(brands.KOMATSU || 0)} Unit`
+  );
+
+  setPublicDashboardText_(
+    "res-brand-total-scania",
+    `${Number(brands.SCANIA || 0)} Unit`
+  );
+
+  setPublicDashboardText_(
+    "res-brand-total-tadano",
+    `${Number(brands.TADANO || 0)} Unit`
+  );
+
+  setPublicDashboardText_(
+    "res-brand-total-udtrucks",
+    `${Number(brands["UD TRUCKS"] || 0)} Unit`
+  );
+
+  setPublicDashboardText_(
+    "res-brand-total-bomag",
+    `${Number(brands.BOMAG || 0)} Unit`
+  );
+
+  renderPublicModelChart_(
+    payload?.model_population || []
+  );
+
+  const generatedAt = payload?.generated_at
+    ? new Date(payload.generated_at)
+    : new Date();
+
+  const updateText =
+    generatedAt.toLocaleString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+  const desktopUpdate =
+    document.getElementById("teks-update-live");
+
+  const mobileUpdate =
+    document.getElementById(
+      "teks-update-live-mobile"
+    );
+
+  if (desktopUpdate) {
+    desktopUpdate.textContent = updateText;
+  }
+
+  if (mobileUpdate) {
+    mobileUpdate.textContent = updateText;
+  }
+
+  setTimeout(() => {
+    animateMainStats_();
+  }, 150);
+}
+
+async function loadPublicHomeDashboard_() {
+  const { data, error } = await _supabase.rpc(
+    "get_public_home_dashboard"
+  );
+
+  if (error) {
+    console.error(
+      "Public dashboard RPC error:",
+      error
+    );
+
+    showToast(
+      "Beranda Gagal Dimuat",
+      error.message ||
+        "Ringkasan publik tidak dapat dimuat."
+    );
+
+    return false;
+  }
+
+  const payload = Array.isArray(data)
+    ? data[0]
+    : data;
+
+  if (!payload) {
+    showToast(
+      "Beranda Kosong",
+      "RPC publik tidak mengembalikan data."
+    );
+
+    return false;
+  }
+
+  renderPublicHomeDashboard_(payload);
+
+  console.log(
+    "PUBLIC HOME DASHBOARD LOADED:",
+    payload
+  );
+
+  return true;
+}
     async function fetchUnitsWithFallback(){
   const candidates = [NAMA_TABEL_PRIMARY, ...NAMA_TABEL_FALLBACKS];
 
@@ -3093,8 +4041,31 @@ function openEquipmentMonitoringPage_(brand){
     .range(0, 5000);
 }
 
-    async function loadDataFromCloud() {
-      try{
+    async function loadProtectedDataFromCloud_(
+  forceReload = false
+) {
+  if (!hasStaffAccess_()) {
+    console.warn(
+      "Protected data load blocked: staff access required."
+    );
+
+    return false;
+  }
+
+  if (
+    PROTECTED_DATA_LOADED &&
+    !forceReload
+  ) {
+    return true;
+  }
+
+  if (PROTECTED_DATA_LOADING) {
+    return false;
+  }
+
+  PROTECTED_DATA_LOADING = true;
+
+  try {
           const [
           unitsRes,
           stdRes,
@@ -3173,15 +4144,41 @@ setTimeout(() => {
   animateMainStats_();
 }, 180);
 
-      } catch(err){
-        console.error(err);
-        showToast("Runtime Error", "Ada error JS yang bikin page berhenti. Cek console. " + (err?.message || err));
-      }
-    }
+PROTECTED_DATA_LOADED = true;
+
+console.log("PROTECTED DATA LOADED:", {
+  units: globalData.length,
+  planning: PLAN_OPP_ROWS.length,
+  prices: PRICE_ROWS.length
+});
+
+return true;
+
+  } catch (err) {
+    console.error(err);
+
+    PROTECTED_DATA_LOADED = false;
+
+    showToast(
+      "Runtime Error",
+      "Ada error JS yang membuat pemuatan data internal berhenti. " +
+      (err?.message || err)
+    );
+
+    return false;
+
+  } finally {
+    PROTECTED_DATA_LOADING = false;
+  }
+}
 
     // ===== EXPORT DATA =====
     async function exportToExcelFromSupabase() {
-      // 1. Fetch data dari Supabase
+  if (!requireStaffAccess_()) {
+    return;
+  }
+
+  // 1. Fetch data dari Supabase
       const { data, error } = await _supabase
         .from(NAMA_TABEL_ACTIVE)
         .select("*")
@@ -4712,8 +5709,12 @@ function animatePlanningBarCharts_(){
       `;
     }
 
-    function openDetailModal(type){
-      const modal = document.getElementById('subHalamanModal');
+    function openDetailModal(type) {
+  if (!requireStaffAccess_()) {
+    return;
+  }
+
+  const modal = document.getElementById('subHalamanModal');
       const title = document.getElementById('modalTitle');
       const filterWrap = document.getElementById('subModalFilter');
 
@@ -7111,35 +8112,79 @@ function renderPlanningCharts_(marketSizeTotal, customerTotalCost, marketSharePc
     setStaticUpdate();
 
     // ===== RENDER TABEL MUTASI =====
+function escapeHtml_(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 async function renderMutasiTable_() {
-  const tableContainer = document.getElementById("unit-mutasi-table");
-  const summaryContainer = document.getElementById("unit-mutasi-summary");
-  if (!tableContainer) return;
-
-  tableContainer.innerHTML = `<div class="p-4 text-center text-[12px] font-bold text-[var(--muted)]">Memuat data mutasi...</div>`;
-
-  // Fetch khusus unit yang statusnya 'MUTATED'
-  const { data, error } = await _supabase
-    .from(NAMA_TABEL_ACTIVE)
-    .select("*")
-    .eq('status_unit', 'MUTATED')
-    .order('updated_at', { ascending: false });
-
-  if (error) {
-    tableContainer.innerHTML = `<div class="p-4 text-red-500">Error: ${error.message}</div>`;
+  if (!requireAdminAccess_("mutasi")) {
     return;
   }
 
-  if (summaryContainer) {
-    summaryContainer.innerText = `Total Unit Dimutasi: ${data.length}`;
-  }
+  const tableContainer =
+    document.getElementById(
+      "unit-mutasi-table"
+    );
 
-  if (!data || data.length === 0) {
+  const summaryContainer =
+    document.getElementById(
+      "unit-mutasi-summary"
+    );
+
+  if (!tableContainer) return;
+
+  tableContainer.innerHTML = `
+    <div class="p-4 text-center text-[12px] font-bold text-[var(--muted)]">
+      Memuat riwayat mutasi...
+    </div>
+  `;
+
+  const { data, error } = await _supabase.rpc(
+    "get_admin_mutation_logs",
+    {
+      p_limit: 200
+    }
+  );
+
+  if (error) {
+    console.error(
+      "Mutation log RPC error:",
+      error
+    );
+
     tableContainer.innerHTML = `
-      <div class="bg-white rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)] font-bold">
-        Belum ada data unit yang dimutasi.
+      <div class="bg-red-50 border border-red-200 rounded-xl p-5 text-red-600 font-bold">
+        ${escapeHtml_(
+          error.message ||
+          "Riwayat mutasi gagal dimuat."
+        )}
       </div>
     `;
+
+    return;
+  }
+
+  const rows = Array.isArray(data)
+    ? data
+    : [];
+
+  if (summaryContainer) {
+    summaryContainer.textContent =
+      `Total Riwayat Mutasi: ${rows.length}`;
+  }
+
+  if (!rows.length) {
+    tableContainer.innerHTML = `
+      <div class="bg-white rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)] font-bold">
+        Belum ada riwayat mutasi unit.
+      </div>
+    `;
+
     return;
   }
 
@@ -7147,6 +8192,7 @@ async function renderMutasiTable_() {
     <div class="bg-white rounded-xl border border-[var(--border)] overflow-hidden shadow-sm">
       <div class="overflow-x-auto">
         <table class="w-full text-[11px] text-left whitespace-nowrap">
+
           <thead class="bg-[var(--surface-2)] text-[var(--text)] uppercase font-black border-b border-[var(--border)]">
             <tr>
               <th class="p-4">Tanggal Mutasi</th>
@@ -7154,22 +8200,68 @@ async function renderMutasiTable_() {
               <th class="p-4">Serial Number</th>
               <th class="p-4">Customer Sebelumnya</th>
               <th class="p-4">Alasan Mutasi</th>
+              <th class="p-4">Dilakukan Oleh</th>
             </tr>
           </thead>
+
           <tbody class="divide-y divide-[var(--border)]">
-            ${data.map(d => {
-              const dateStr = d.updated_at ? new Date(d.updated_at).toLocaleDateString('id-ID') : "-";
+            ${rows.map(row => {
+              const dateValue =
+                row.mutated_at
+                  ? new Date(
+                      row.mutated_at
+                    ).toLocaleString(
+                      "id-ID",
+                      {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      }
+                    )
+                  : "-";
+
               return `
-              <tr class="hover:bg-black/5 transition-colors">
-                <td class="p-4 text-[var(--muted)] font-bold">${dateStr}</td>
-                <td class="p-4 text-[var(--text)] font-bold">${d.model_number || "-"}</td>
-                <td class="p-4 text-[var(--text)] font-mono font-bold uppercase">${getSerial(d)}</td>
-                <td class="p-4 text-[var(--text)] font-bold">${d.customer || "-"}</td>
-                <td class="p-4 text-[var(--bad)] font-black italic">${d.mutasi_reason || "-"}</td>
-              </tr>
+                <tr class="hover:bg-black/5 transition-colors">
+                  <td class="p-4 font-bold">
+                    ${escapeHtml_(dateValue)}
+                  </td>
+
+                  <td class="p-4 font-bold">
+                    ${escapeHtml_(
+                      row.model_number || "-"
+                    )}
+                  </td>
+
+                  <td class="p-4 font-mono font-black">
+                    ${escapeHtml_(
+                      row.serial_number || "-"
+                    )}
+                  </td>
+
+                  <td class="p-4 font-bold">
+                    ${escapeHtml_(
+                      row.customer || "-"
+                    )}
+                  </td>
+
+                  <td class="p-4 font-bold whitespace-normal min-w-[260px]">
+                    ${escapeHtml_(
+                      row.reason || "-"
+                    )}
+                  </td>
+
+                  <td class="p-4 font-bold">
+                    ${escapeHtml_(
+                      row.mutated_email || "-"
+                    )}
+                  </td>
+                </tr>
               `;
             }).join("")}
           </tbody>
+
         </table>
       </div>
     </div>
