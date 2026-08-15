@@ -3112,7 +3112,6 @@ mobileBtnIds.forEach(id => {
 const mobileActive = document.getElementById('m-btn-'+target);
 if (mobileActive){
   mobileActive.classList.add('active');
-  return true;
 }
 
 closeMobileMenu();
@@ -3140,9 +3139,21 @@ if (target === 'customer') {
 
 if (target === 'trend') {
   setTimeout(() => {
+
+    initTrendEventYear_();
+
     renderTrendYoY();
     renderMonthlyEventTrend();
-  }, 100);
+
+    if (charts.trendYoY) {
+      charts.trendYoY.resize();
+    }
+
+    if (charts.trendMonthlyEvent) {
+      charts.trendMonthlyEvent.resize();
+    }
+
+  }, 150);
 }
 
 if (target === 'planning') {
@@ -3151,8 +3162,12 @@ if (target === 'planning') {
 
     setTimeout(() => {
       animatePlanningBarCharts_();
+
+      if (charts.planMonthlyEvent) charts.planMonthlyEvent.resize();
+      if (charts.planSharePie) charts.planSharePie.resize();
+      if (charts.planBudget) charts.planBudget.resize();
     }, 180);
-  }, 100);
+  }, 150);
 }
 if (target === 'service-accuracy') {
   renderServiceAccuracyAnalytics_();
@@ -6345,27 +6360,63 @@ function attachMonthlyTrendClick_(chartInstance, selectedYear, sourceScope = "TR
   });
 }
 
-    function initTrendEventYear_(){
+function initTrendEventYear_(){
   const el = document.getElementById("trendEventYear");
   if (!el) return;
 
-  const years = [...new Set(
-    PLAN_OPP_ROWS
-      .map(r => getPlanningYear_(r))
-      .filter(y => Number.isFinite(y) && y > 2000)
-  )].sort((a,b) => a - b);
+  // Simpan pilihan user sebelumnya
+  const previousValue = Number(el.value);
 
-  const fallbackYear = new Date().getFullYear();
-  const finalYears = years.length ? years : [fallbackYear];
+  const currentYear = new Date().getFullYear();
 
+  // Data manual
+  const manualRows = PLAN_OPP_ROWS.slice();
+
+  // Data opportunity otomatis
+  const autoRows = generateDynamicOpportunities_();
+
+  // Gabungkan
+  const combinedRows = [...manualRows, ...autoRows];
+
+  // Ambil seluruh tahun dari data
+  const dataYears = combinedRows
+    .map(r => getPlanningYear_(r))
+    .filter(y => Number.isFinite(y) && y > 2000);
+
+  // Range standar
+  const rangeYears = [];
+
+  for (let y = currentYear - 1; y <= currentYear + 3; y++) {
+    rangeYears.push(y);
+  }
+
+  // Gabungkan + deduplikasi
+  const finalYears = [...new Set([
+    ...rangeYears,
+    ...dataYears
+  ])].sort((a,b) => a - b);
+
+  // Isi dropdown
   el.innerHTML = finalYears
     .map(y => `<option value="${y}">${y}</option>`)
     .join("");
 
-  if (finalYears.includes(fallbackYear)) {
-    el.value = String(fallbackYear);
-  } else {
-    el.value = String(finalYears[finalYears.length - 1]);
+  // Pertahankan pilihan sebelumnya jika masih tersedia
+  if (
+    Number.isFinite(previousValue) &&
+    finalYears.includes(previousValue)
+  ) {
+    el.value = String(previousValue);
+  }
+
+  // Jika belum pernah memilih, gunakan tahun sekarang
+  else if (finalYears.includes(currentYear)) {
+    el.value = String(currentYear);
+  }
+
+  // Fallback
+  else {
+    el.value = String(finalYears[0]);
   }
 }
 
